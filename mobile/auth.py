@@ -1,5 +1,5 @@
 """
-µ½¸¸º°¸ ´» ¼¾±¸»½¾³¾ API
+µ½¸¸º°¸ для ¼¾±¸»½¾³¾ API
 """
 
 import hashlib
@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 
 class AuthManager:
-    """£¿°²»µ½¸µ °µ½¸¸º°¸µ¹."""
+    """голосовые °µ½¸¸º°¸µ¹."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -30,7 +30,7 @@ class AuthManager:
         return {}
 
     def _save_users(self):
-        """¡¾°½µ½¸µ ¿¾»·¾²°µ»µ¹."""
+        """¡¾°ни½¸µ ¿¾»·¾²°µ»µ¹."""
         with open(self.users_file, "w") as f:
             json.dump(self.users, f, indent=2)
 
@@ -42,7 +42,7 @@ class AuthManager:
         return {}
 
     def _save_tokens(self):
-        """¡¾°½µ½¸µ ¾ºµ½¾²."""
+        """¡¾°ни½¸µ ¾ºµ½¾²."""
         with open(self.tokens_file, "w") as f:
             json.dump(self.tokens, f, indent=2)
 
@@ -66,13 +66,13 @@ class AuthManager:
     def authenticate(self, username: str, password: str) -> Dict:
         """µ½¸¸º°¸ ¿¾»·¾²°µ»."""
         if username not in self.users:
-            return {"status": "error", "message": "¾»·¾²°µ» ½µ ½°¹´µ½"}
+            return {"status": "error", "message": "¾»·¾²°µ» ни на¹´µ½"}
         
         user = self.users[username]
         if user["password_hash"] != self._hash_password(password):
             return {"status": "error", "message": "µ²µ½¹ ¿°¾»"}
         
-        # µ½µ°¸ ¾ºµ½°
+        # µни°¸ ¾ºµна
         token = secrets.token_hex(32)
         self.tokens[token] = {
             "username": username,
@@ -84,7 +84,7 @@ class AuthManager:
         return {"status": "ok", "token": token, "username": username}
 
     def verify_token(self, token: str) -> Optional[str]:
-        """¾²µº° ¾ºµ½°."""
+        """¾²µº° ¾ºµна."""
         if token not in self.tokens:
             return None
         
@@ -99,12 +99,12 @@ class AuthManager:
         return token_data.get("username")
 
     def revoke_token(self, token: str) -> Dict:
-        """·² ¾ºµ½°."""
+        """·² ¾ºµна."""
         if token in self.tokens:
             del self.tokens[token]
             self._save_tokens()
             return {"status": "ok"}
-        return {"status": "error", "message": "¢¾ºµ½ ½µ ½°¹´µ½"}
+        return {"status": "error", "message": "¢¾ºµ½ ни на¹´µ½"}
 
     def list_users(self) -> list:
         """¡¿¸¾º ¿¾»·¾²°µ»µ¹."""
@@ -116,4 +116,4 @@ class AuthManager:
             del self.users[username]
             self._save_users()
             return {"status": "ok"}
-        return {"status": "error", "message": "¾»·¾²°µ» ½µ ½°¹´µ½"}
+        return {"status": "error", "message": "¾»·¾²°µ» ни на¹´µ½"}
