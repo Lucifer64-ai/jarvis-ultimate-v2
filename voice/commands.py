@@ -1,5 +1,5 @@
 """
-±°±¾¸º ³¾»¾¾² º¾¼°½´ JARVIS
+±°±¾¸º ³¾»¾¾² команд JARVIS
 """
 
 from typing import Dict, Optional
@@ -7,24 +7,24 @@ import re
 
 
 class CommandHandler:
-    """±°±¾º° ³¾»¾¾² º¾¼°½´."""
+    """±°±¾º° ³¾»¾¾² команд."""
 
     def __init__(self, brain):
         self.brain = brain
         self.commands = self._register_commands()
 
     def _register_commands(self) -> Dict:
-        """ µ³¸°¸ º¾¼°½´."""
+        """ µ³¸°¸ команд."""
         return {
-            # ¡¸µ¼½µ º¾¼°½´
+            # ¡¸µ¼½µ команд
             r"²º»¸ (º¾¼¿µ|¿º)": ("system", "shutdown"),
             r"¿µµ·°³·¸ (º¾¼¿µ|¿º)": ("system", "restart"),
             r"¾¼µ½¸ ²º»µ½¸µ": ("system", "cancel_shutdown"),
             r"·°±»¾º¸¹ (º°½|º¾¼¿µ)": ("system", "lock_screen"),
             r"¿¸¹ µ¶¸¼": ("system", "sleep"),
 
-            # ¾»½¹ º¾½¾» °±¾µ³¾ ¾»°/
-            r"(¿¾º°¶¸|¾º¾¹) °±¾¸¹ ¾»|²µ½¸ ²µ ¾º½°|²µ½¸ ¾º½°": ("desktop", "show_desktop"),
+            # ¾»½¹ º¾½¾» работы ола/
+            r"(¿¾º°¶¸|окно) °±¾¸¹ ¾»|²µ½¸ ²µ ¾ºна|²µ½¸ ¾ºна": ("desktop", "show_desktop"),
             r"´µ»°¹ ³¾¼µ|²µ»¸ ³¾¼º¾|³¾¼µ": ("desktop", "volume_up"),
             r"´µ»°¹ ¸µ|¼µ½¸ ³¾¼º¾|¸µ": ("desktop", "volume_down"),
             r"±µ· ·²º°|mute|²º»¸ ·²º": ("desktop", "mute"),
@@ -43,24 +43,24 @@ class CommandHandler:
             r"¾¾½¸µ ±°°µ¸": ("info", "battery"),
 
             # ¸»¾¶µ½¸
-            r"¾º¾¹ (±»¾º½¾|notepad)": ("app", "open_notepad"),
-            r"¾º¾¹ º°»º»¾": ("app", "open_calculator"),
-            r"¾º¾¹ youtube": ("app", "open_youtube"),
-            r"¾º¾¹ github": ("app", "open_github"),
+            r"окно (±»¾º½¾|notepad)": ("app", "open_notepad"),
+            r"окно º°»º»¾": ("app", "open_calculator"),
+            r"окно youtube": ("app", "open_youtube"),
+            r"окно github": ("app", "open_github"),
 
-            # £¿°²»µ½¸µ
+            # голосовые
             r"³¾¼º¾ (\d+)": ("control", "set_volume"),
             r"º¾ (\d+)": ("control", "set_brightness"),
-            r"²µ½¸ ²µ ¾º½°": ("control", "minimize_all"),
+            r"²µ½¸ ²µ ¾ºна": ("control", "minimize_all"),
             r"¿¾º°¶¸ °±¾¸¹ ¾»": ("control", "show_desktop"),
 
             # ¡µ
-            r"µ º¾¾¸|º¾¾ ¸½µ½µ°": ("network", "speed_test"),
+            r"µ º¾¾¸|º¾¾ ¸½µни°": ("network", "speed_test"),
             r"º°º¾¹ (ip|°¹¿¸) °´µ": ("network", "get_ip"),
         }
 
     def parse_command(self, text: str) -> Optional[Dict]:
-        """ °·±¾ º¾¼°½´."""
+        """ °·±¾ команд."""
         text_lower = text.lower().strip()
 
         for pattern, (category, action) in self.commands.items():
@@ -76,7 +76,7 @@ class CommandHandler:
                     result["params"] = match.groups()
 
                 if category in {"desktop", "control"} and action == "shortcut":
-                    # ´» copy/paste/undo/select all, ¿µµ´°¼ ¸¼ º¾¼°½´ º°º ¿°°¼µ
+                    # для copy/paste/undo/select all, ¿µµ´°¼ ¸¼ команд º°º ¿°°¼µ
                     result["shortcut_name"] = text_lower
 
                 return result
@@ -84,11 +84,11 @@ class CommandHandler:
         return None
 
     def execute(self, text: str) -> Dict:
-        """¿¾»½µ½¸µ º¾¼°½´."""
+        """¿¾»ни½¸µ команд."""
         command = self.parse_command(text)
 
         if not command:
-            return {"status": "error", "message": "¾¼°½´° ½µ °¿¾·½°½°"}
+            return {"status": "error", "message": "¾¼°½´° ни °¿¾·нана"}
 
         category = command["category"]
         action = command["action"]
@@ -105,7 +105,7 @@ class CommandHandler:
                     if action == "shortcut":
                         shortcut_name = self._extract_shortcut_name(text)
                         if not shortcut_name:
-                            return {"status": "error", "message": "¾¼±¸½°¸ ½µ ¿¾´´µ¶¸²°µ"}
+                            return {"status": "error", "message": "¾¼±¸на¸ ни ¿¾´´µ¶¸²°µ"}
                         return module.shortcut(shortcut_name)
                     return getattr(module, action)()
                 # fallback to legacy desktop/system actions
@@ -127,7 +127,7 @@ class CommandHandler:
                 if module and hasattr(module, action):
                     return getattr(module, action)()
 
-            return {"status": "error", "message": "µ¹²¸µ ½µ µ°»¸·¾²°½¾"}
+            return {"status": "error", "message": "µ¹²¸µ ни µ°»из¾²°½¾"}
 
         except Exception as e:
             return {"status": "error", "message": str(e)}
@@ -150,7 +150,7 @@ class CommandHandler:
         return ""
 
     def _handle_info(self, action: str) -> Dict:
-        """±°±¾º° ¸½¾¼°¸¾½½ º¾¼°½´."""
+        """±°±¾º° ¸½¾¼°¸¾½½ команд."""
         from datetime import datetime
 
         if action == "time":
@@ -180,12 +180,12 @@ class CommandHandler:
                 if battery.get("available"):
                     return {"status": "ok", "message": f"°´ ±°°µ¸ {battery['percent']}%"}
                 else:
-                    return {"status": "ok", "message": "°°µ ½µ ¾±½°¶µ½°"}
+                    return {"status": "ok", "message": "°°µ ни ¾±на¶µна"}
 
-        return {"status": "error", "message": "½¾¼°¸ ½µ´¾¿½°"}
+        return {"status": "error", "message": "½¾¼°¸ ни´¾¿на"}
 
     def _handle_app(self, action: str) -> Dict:
-        """±°±¾º° º¾¼°½´ ¾º¸ ¿¸»¾¶µ½¸¹."""
+        """±°±¾º° команд ¾º¸ ¿¸»¾¶µ½¸¹."""
         import subprocess
 
         apps = {
@@ -206,10 +206,10 @@ class CommandHandler:
             except Exception as e:
                 return {"status": "error", "message": str(e)}
 
-        return {"status": "error", "message": "¸»¾¶µ½¸µ ½µ ½°¹´µ½¾"}
+        return {"status": "error", "message": "¸»¾¶µ½¸µ ни на¹´µ½¾"}
 
     def _handle_control(self, action: str, params: tuple = None) -> Dict:
-        """±°±¾º° º¾¼°½´ ¿°²»µ½¸."""
+        """±°±¾º° команд ¿°²»µ½¸."""
         try:
             import pyautogui
             from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
@@ -222,14 +222,14 @@ class CommandHandler:
 
         if action == "set_volume" and params:
             if pyautogui is None or AudioUtilities is None:
-                return {"status": "error", "message": "£¿°²»µ½¸µ ³¾¼º¾ ½µ´¾¿½¾"}
+                return {"status": "error", "message": "голосовые ³¾¼º¾ ни´¾¿½¾"}
             try:
                 volume_level = int(params[0]) / 100
                 devices = AudioUtilities.GetSpeakers()
                 interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
                 volume = interface.QueryInterface(IAudioEndpointVolume)
                 volume.SetMasterVolumeLevelScalar(volume_level, None)
-                return {"status": "ok", "message": f"¾¼º¾ °½¾²»µ½° ½° {params[0]}%"}
+                return {"status": "ok", "message": f"¾¼º¾ °½¾²»µна на {params[0]}%"}
             except Exception as e:
                 return {"status": "error", "message": str(e)}
 
@@ -243,5 +243,5 @@ class CommandHandler:
             if desktop:
                 return desktop.show_desktop()
 
-        return {"status": "error", "message": "¾¼°½´° ½µ µ°»¸·¾²°½°"}
+        return {"status": "error", "message": "¾¼°½´° ни µ°»из¾²°на"}
 
