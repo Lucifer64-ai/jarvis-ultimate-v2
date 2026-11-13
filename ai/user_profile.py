@@ -1,5 +1,5 @@
 """
-¾¸» ¿¾»·¾²°µ» JARVIS
+¾и» ¿¾»·¾в°µ» JARVIS
 """
 
 import json
@@ -10,7 +10,7 @@ from collections import Counter
 
 
 class UserProfile:
-    """£¿°²»µ½¸µ ¿¾¸»µ¼ ¸ ¿µ´¿¾µ½¸¼¸ ¿¾»·¾²°µ»."""
+    """£¿°в»µ½иµ ¿¾и»µ¼ и ¿µ´¿¾µ½и¼и ¿¾»·¾в°µ»."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -20,7 +20,7 @@ class UserProfile:
         self.command_history: List[Dict] = []
 
     def _load_profile(self) -> Dict:
-        """°³·º° ¿¾¸»."""
+        """°³·º° ¿¾и»."""
         if self.profile_file.exists():
             with open(self.profile_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -46,55 +46,55 @@ class UserProfile:
         }
 
     def _save_profile(self):
-        """¡¾°½µ½¸µ ¿¾¸»."""
+        """¡¾°ни½иµ ¿¾и»."""
         with open(self.profile_file, 'w', encoding='utf-8') as f:
             json.dump(self.profile, f, ensure_ascii=False, indent=2)
 
     def set_name(self, name: str) -> Dict:
-        """£°½¾²º° ¸¼µ½¸ ¿¾»·¾²°µ»."""
+        """£°½¾вº° и¼µ½и ¿¾»·¾в°µ»."""
         self.profile["name"] = name
         self._save_profile()
-        return {"status": "ok", "message": f"¼ °½¾²»µ½¾: {name}"}
+        return {"status": "ok", "message": f"¼ °½¾в»µ½¾: {name}"}
 
     def set_preferred_name(self, preferred: str) -> Dict:
-        """£°½¾²º° ¿µ´¿¾¸µ»½¾³¾ ¾±°µ½¸."""
+        """£°½¾вº° ¿µ´¿¾иµ»½¾³¾ ¾±°µ½и."""
         self.profile["preferred_name"] = preferred
         self._save_profile()
-        return {"status": "ok", "message": f"´ ¾±°° º ²°¼: {preferred}"}
+        return {"status": "ok", "message": f"´ ¾±°° º в°¼: {preferred}"}
 
     def get_greeting(self) -> str:
-        """¾»µ½¸µ ¿¸²µ²¸."""
+        """¾»µ½иµ ¿ивµви."""
         preferred = self.profile.get("preferred_name", "")
         name = self.profile.get("name")
         
         if name:
-            return f"´°²²¹µ, {name}.  °´ ²° ²¸´µ, {preferred}."
-        return f"´°²²¹µ, {preferred}."
+            return f"´°вв¹µ, {name}.  °´ в° ви´µ, {preferred}."
+        return f"´°вв¹µ, {preferred}."
 
     def update_activity(self):
-        """±½¾²»µ½¸µ ¿¾»µ´½µ¹ °º¸²½¾¸."""
+        """±½¾в»µ½иµ ¿¾»µ´ни¹ °ºив½¾и."""
         self.profile["last_active"] = datetime.now().isoformat()
         self._save_profile()
 
     def log_command(self, command: str, module: str = "unknown"):
-        """¾³¸¾²°½¸µ º¾¼°½´."""
+        """¾³и¾в°½иµ º¾¼°½´."""
         self.command_history.append({
             "command": command,
             "module": module,
             "timestamp": datetime.now().isoformat()
         })
         
-        # ³°½¸µ½¸µ ¸¾¸¸
+        # ³°½иµ½иµ и¾ии
         if len(self.command_history) > 1000:
             self.command_history = self.command_history[-1000:]
         
-        # ±½¾²»µ½¸µ °¸¸º¸
+        # ±½¾в»µ½иµ °ииºи
         self.profile["statistics"]["total_commands"] += 1
         self._update_statistics()
         self._save_profile()
 
     def _update_statistics(self):
-        """±½¾²»µ½¸µ °¸¸º¸."""
+        """±½¾в»µ½иµ °ииºи."""
         if not self.command_history:
             return
         
@@ -106,7 +106,7 @@ class UserProfile:
             for cmd, count in command_counts.most_common(5)
         ]
         
-        # ¡°¼µ ¸¿¾»·µ¼µ ¼¾´»¸
+        # ¡°¼µ и¿¾»·µ¼µ ¼¾´»и
         modules = [entry["module"] for entry in self.command_history[-100:]]
         module_counts = Counter(modules)
         self.profile["statistics"]["most_used_modules"] = [
@@ -114,7 +114,7 @@ class UserProfile:
             for mod, count in module_counts.most_common(5)
         ]
         
-        # º¸²½µ °
+        # ºив½µ °
         hours = []
         for entry in self.command_history[-100:]:
             try:
@@ -131,25 +131,25 @@ class UserProfile:
             ]
 
     def set_preference(self, key: str, value: Any) -> Dict:
-        """£°½¾²º° ¿µ´¿¾µ½¸."""
+        """£°½¾вº° ¿µ´¿¾µ½и."""
         self.profile["preferences"][key] = value
         self._save_profile()
-        return {"status": "ok", "message": f"µ´¿¾µ½¸µ '{key}' °½¾²»µ½¾"}
+        return {"status": "ok", "message": f"µ´¿¾µ½иµ '{key}' °½¾в»µ½¾"}
 
     def get_preference(self, key: str, default: Any = None) -> Any:
-        """¾»µ½¸µ ¿µ´¿¾µ½¸."""
+        """¾»µ½иµ ¿µ´¿¾µ½и."""
         return self.profile["preferences"].get(key, default)
 
     def get_profile(self) -> Dict:
-        """¾»µ½¸µ ¿¾»½¾³¾ ¿¾¸»."""
+        """¾»µ½иµ ¿¾»½¾³¾ ¿¾и»."""
         return self.profile
 
     def get_statistics(self) -> Dict:
-        """¾»µ½¸µ °¸¸º¸."""
+        """¾»µ½иµ °ииºи."""
         return self.profile.get("statistics", {})
 
     def reset_statistics(self) -> Dict:
-        """¡±¾ °¸¸º¸."""
+        """¡±¾ °ииºи."""
         self.profile["statistics"] = {
             "total_commands": 0,
             "favorite_commands": [],
@@ -158,4 +158,4 @@ class UserProfile:
         }
         self.command_history = []
         self._save_profile()
-        return {"status": "ok", "message": "¡°¸¸º° ±¾µ½°"}
+        return {"status": "ok", "message": "¡°ииº° ±¾µ½°"}
