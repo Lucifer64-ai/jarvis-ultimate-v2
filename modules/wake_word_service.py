@@ -37,7 +37,7 @@ class WakeWordService:
     def stop(self) -> Dict:
         """°½¾²º° µ²¸°."""
         if not self.running:
-            return {"status": "error", "message": "¡µ²¸ ½µ ·°¿µ½"}
+            return {"status": "error", "message": "¡µ²¸ ни ·°¿µ½"}
         
         self.running = False
         
@@ -55,7 +55,7 @@ class WakeWordService:
             recognizer = sr.Recognizer()
             microphone = sr.Microphone()
             
-            self.logger.info("Wake word: ¼¸º¾¾½ ¸½¸¸°»¸·¸¾²°½")
+            self.logger.info("Wake word: ¼¸º¾¾½ ¸½¸¸°»из¸¾²°½")
             
             while self.running:
                 try:
@@ -63,22 +63,22 @@ class WakeWordService:
                         recognizer.adjust_for_ambient_noise(source, duration=0.5)
                         audio = recognizer.listen(source, timeout=1, phrase_time_limit=2)
                     
-                    #  °¿¾·½°²°½¸µ
+                    #  °¿¾·на²°½¸µ
                     try:
                         text = recognizer.recognize_google(audio, language="ru-RU")
                         text_lower = text.lower().strip()
                         
                         # ¾²µº° wake word
                         if self.wake_word in text_lower:
-                            self.logger.info(f"Wake word ¾±½°¶µ½: {text}")
+                            self.logger.info(f"Wake word ¾±на¶µ½: {text}")
                             
                             if self.callback:
                                 self.callback(text)
                     
                     except sr.UnknownValueError:
-                        pass  # µ °¿¾·½°½¾
+                        pass  # µ °¿¾·на½¾
                     except sr.RequestError as e:
-                        self.logger.error(f"¸±º° °¿¾·½°²°½¸: {e}")
+                        self.logger.error(f"агента °¿¾·на²°½¸: {e}")
                 
                 except Exception as e:
                     # ¢°¹¼° ¸»¸ ´³° ¾¸±º° - ¿¾´¾»¶°µ¼
@@ -87,7 +87,7 @@ class WakeWordService:
                 time.sleep(0.1)
         
         except Exception as e:
-            self.logger.error(f"¸±º° wake word µ²¸°: {e}")
+            self.logger.error(f"агента wake word µ²¸°: {e}")
 
     def is_running(self) -> bool:
         """¾²µ¸, ·°¿µ½ »¸ µ²¸."""
