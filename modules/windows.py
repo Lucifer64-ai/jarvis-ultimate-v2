@@ -1,5 +1,5 @@
 """
-£¿°²»µ½¸µ ¾º½°¼¸ JARVIS
+голосовые ¾ºна¼¸ JARVIS
 """
 
 import win32gui
@@ -8,7 +8,7 @@ from typing import Dict, List
 
 
 class WindowModule:
-    """£¿°²»µ½¸µ ¾º½°¼¸ Windows."""
+    """голосовые ¾ºна¼¸ Windows."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -30,11 +30,11 @@ class WindowModule:
         return windows
 
     def minimize_all(self) -> Dict:
-        """¡²µ½ ²µ ¾º½°."""
+        """¡²µ½ ²µ ¾ºна."""
         try:
             import pyautogui
             pyautogui.hotkey('win', 'd')
-            return {"status": "ok", "message": "µ ¾º½° ²½"}
+            return {"status": "ok", "message": "µ ¾ºна ²½"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
