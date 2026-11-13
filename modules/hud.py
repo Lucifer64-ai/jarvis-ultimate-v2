@@ -51,7 +51,7 @@ class ArcReactorWidget(QWidget):
         pulse = (self.pulse_phase.sin() + 1) / 2 if hasattr(self.pulse_phase, 'sin') else 0.5
         pulse_radius = radius + pulse * 10
         
-        # ½µ½µµ ²µµ½¸µ
+        # ниниµ ²µµ½¸µ
         gradient = QRadialGradient(center_x, center_y, pulse_radius)
         gradient.setColorAt(0, QColor(0, 200, 255, 100))
         gradient.setColorAt(0.5, QColor(0, 150, 255, 50))
@@ -67,7 +67,7 @@ class ArcReactorWidget(QWidget):
         painter.setBrush(QBrush(QColor(0, 50, 100, 100)))
         painter.drawEllipse(center_x - radius, center_y - radius, radius * 2, radius * 2)
         
-        # ¾»¾¾²° ²¾»½°
+        # ¾»¾¾²° ²¾»на
         if self.voice_level > 0:
             wave_height = self.voice_level * 30
             painter.setPen(QPen(QColor(0, 255, 255, 200), 2))
@@ -80,7 +80,7 @@ class ArcReactorWidget(QWidget):
 
 
 class SystemPanel(QWidget):
-    """°½µ»  ¸µ¼½¾¹ ¸½¾¼°¸µ¹."""
+    """°ни»  ¸µ¼½¾¹ ¸½¾¼°¸µ¹."""
     
     def __init__(self, title: str, parent=None):
         super().__init__(parent)
@@ -156,7 +156,7 @@ class JarvisHUD(QMainWindow):
         self.brain = brain
         self.logger = brain.logger
         
-        # °¾¹º¸ ¾º½°
+        # °¾¹º¸ ¾ºна
         self.setWindowTitle("JARVIS HUD")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -171,7 +171,7 @@ class JarvisHUD(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
         main_layout.setContentsMargins(50, 50, 50, 50)
         
-        # µ½ ¿°½µ»
+        # µ½ ¿°ни»
         top_layout = QHBoxLayout()
         
         # µ²° ²µ½ - µ¼ ¸ ´°°
@@ -201,7 +201,7 @@ class JarvisHUD(QMainWindow):
         center_layout.addStretch()
         main_layout.addLayout(center_layout)
         
-        # ¸¶½ ¿°½µ»
+        # ¸¶½ ¿°ни»
         bottom_layout = QHBoxLayout()
         
         # µ²° ½¸¶½ - ¾¼°½´
@@ -224,10 +224,10 @@ class JarvisHUD(QMainWindow):
         self.update_timer.timeout.connect(self._update_data)
         self.update_timer.start(1000)
         
-        # ¾´º»µ½¸µ ¸³½°»° ³¾»¾°
+        # ¾´º»µ½¸µ ¸³на»° ³¾»¾°
         self.voice_level_signal.connect(self.arc_reactor.set_voice_level)
         
-        self.logger.info("JARVIS HUD ¸½¸¸°»¸·¸¾²°½")
+        self.logger.info("JARVIS HUD ¸½¸¸°»из¸¾²°½")
     
     def _update_data(self):
         """±½¾²»µ½¸µ ¸µ¼½ ´°½½."""
@@ -252,7 +252,7 @@ class JarvisHUD(QMainWindow):
             self.speed_label.setText("N/A")
     
     def update_command(self, command: str):
-        """±½¾²¸ ¿¾»µ´½ º¾¼°½´."""
+        """±½¾²¸ ¿¾»µ´½ команд."""
         self.command_label.setText(command[:30] + "..." if len(command) > 30 else command)
     
     def set_voice_level(self, level: float):
