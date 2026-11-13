@@ -1,5 +1,5 @@
 """
-Weather Module - ¾»µ½¸µ ¸½¾¼°¸¸ ¾ ¿¾³¾´µ
+Weather Module - ¾»µ½иµ и½¾¼°ии ¾ ¿¾³¾´µ
 """
 
 import requests
@@ -8,7 +8,7 @@ import logging
 
 
 class WeatherModule:
-    """¾´» ´» ¿¾»µ½¸ ¿¾³¾´."""
+    """¾´» ´» ¿¾»µ½и ¿¾³¾´."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -16,17 +16,17 @@ class WeatherModule:
         self.api_key = brain.config.get_env("OPENWEATHER_API_KEY")
         self.base_url = "https://api.openweathermap.org/data/2.5"
         
-        #  ´»¥¥° ·°¿¾¾²
+        #  ´»¥¥° ·°¿¾¾в
         self.cache = {}
-        self.cache_timeout = 600  # 10 ¼¸½
+        self.cache_timeout = 600  # 10 ¼и½
 
-    def get_weather(self, city: str = "¾º²°") -> Dict:
-        """¾»¸ µº ¿¾³¾´."""
+    def get_weather(self, city: str = "¾ºв°") -> Dict:
+        """¾»и µº ¿¾³¾´."""
         if not self.api_key:
             return {"status": "error", "message": "API º» OpenWeather ½µ ½°¾µ½"}
         
         try:
-            # ¾²µº° º°
+            # ¾вµº° º°
             cache_key = f"weather_{city}"
             if cache_key in self.cache:
                 import time
@@ -46,7 +46,7 @@ class WeatherModule:
             response.raise_for_status()
             data = response.json()
             
-            # ¤¾¼°¸¾²°½¸µ ¾²µ°
+            # ¤¾¼°и¾в°½иµ ¾вµ°
             weather_info = {
                 "status": "ok",
                 "city": city,
@@ -58,7 +58,7 @@ class WeatherModule:
                 "pressure": data["main"]["pressure"]
             }
             
-            # ¡¾°½µ½¸µ ² º
+            # ¡¾°½µ½иµ в º
             import time
             self.cache[cache_key] = {
                 "data": weather_info,
@@ -68,14 +68,14 @@ class WeatherModule:
             return weather_info
             
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"¸±º° ¿¾»µ½¸ ¿¾³¾´: {e}")
-            return {"status": "error", "message": f"µ ´°»¾ ¿¾»¸ ¿¾³¾´: {e}"}
+            self.logger.error(f"и±º° ¿¾»µ½и ¿¾³¾´: {e}")
+            return {"status": "error", "message": f"µ ´°»¾ ¿¾»и ¿¾³¾´: {e}"}
         except Exception as e:
-            self.logger.error(f"¸±º° ¾±°±¾º¸ ¿¾³¾´: {e}")
+            self.logger.error(f"и±º° ¾±°±¾ºи ¿¾³¾´: {e}")
             return {"status": "error", "message": str(e)}
 
-    def get_forecast(self, city: str = "¾º²°", days: int = 5) -> Dict:
-        """¾»¸ ¿¾³½¾· ¿¾³¾´."""
+    def get_forecast(self, city: str = "¾ºв°", days: int = 5) -> Dict:
+        """¾»и ¿¾³½¾· ¿¾³¾´."""
         if not self.api_key:
             return {"status": "error", "message": "API º» OpenWeather ½µ ½°¾µ½"}
         
@@ -86,14 +86,14 @@ class WeatherModule:
                 "appid": self.api_key,
                 "units": "metric",
                 "lang": "ru",
-                "cnt": days * 8  # 8 ¸½µ²°»¾² ² ´µ½ (º°¶´µ 3 °°)
+                "cnt": days * 8  # 8 и½µв°»¾в в ´µ½ (º°¶´µ 3 °°)
             }
             
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
             
-            # ¿¿¸¾²º° ¿¾ ´½¼
+            # ¿¿и¾вº° ¿¾ ´½¼
             forecast = []
             for i in range(0, len(data["list"]), 8):
                 day_data = data["list"][i:i+8]
@@ -113,11 +113,11 @@ class WeatherModule:
             }
             
         except Exception as e:
-            self.logger.error(f"¸±º° ¿¾»µ½¸ ¿¾³½¾·°: {e}")
+            self.logger.error(f"и±º° ¿¾»µ½и ¿¾³½¾·°: {e}")
             return {"status": "error", "message": str(e)}
 
     def format_weather_message(self, weather: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ ¿¾³¾´ ² ¾¾±µ½¸µ."""
+        """¤¾¼°и¾в°½иµ ¿¾³¾´ в ¾¾±µ½иµ."""
         if weather["status"] != "ok":
             return weather["message"]
         
@@ -125,11 +125,11 @@ class WeatherModule:
             f" ³¾¾´µ {weather['city']} µ¹° {weather['temperature']}°C, "
             f"{weather['description']}. "
             f"°µ º°º {weather['feels_like']}°C. "
-            f"»°¶½¾ {weather['humidity']}%, ²µµ {weather['wind_speed']} ¼/."
+            f"»°¶½¾ {weather['humidity']}%, вµµ {weather['wind_speed']} ¼/."
         )
 
     def format_forecast_message(self, forecast: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ ¿¾³½¾·° ² ¾¾±µ½¸µ."""
+        """¤¾¼°и¾в°½иµ ¿¾³½¾·° в ¾¾±µ½иµ."""
         if forecast["status"] != "ok":
             return forecast["message"]
         
