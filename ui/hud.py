@@ -1,5 +1,5 @@
 """
-HUD-¸½µµ¹ JARVIS ² ¸»µ Iron Man
+HUD-и½µµ¹ JARVIS в и»µ Iron Man
 """
 
 import tkinter as tk
@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 class HUDOverlay:
-    """¾»¾³°¸µº¸¹ HUD-¾²µ»µ¹."""
+    """¾»¾³°иµºи¹ HUD-¾вµ»µ¹."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -20,7 +20,7 @@ class HUDOverlay:
         self.config = brain.config.get("hud", {})
 
     def start(self):
-        """°¿º HUD ² ¾´µ»½¾¼ ¿¾¾ºµ."""
+        """°¿º HUD в ¾´µ»½¾¼ ¿¾¾ºµ."""
         if not self.config.get("enabled", True):
             return
         
@@ -28,14 +28,14 @@ class HUDOverlay:
         thread.start()
 
     def _run(self):
-        """½¾²½¾¹ ¸º» HUD."""
+        """½¾в½¾¹ иº» HUD."""
         self.root = tk.Tk()
         self.root.overrideredirect(True)
         self.root.attributes('-topmost', True)
         self.root.attributes('-alpha', 0.7)
         self.root.configure(bg='black')
         
-        #  °·¼µ ¸ ¿¾·¸¸
+        #  °·¼µ и ¿¾·ии
         width, height = 400, 300
         screen_width = self.root.winfo_screenwidth()
         
@@ -49,14 +49,14 @@ class HUDOverlay:
         
         self.root.geometry(f"{width}x{height}+{x}+{y}")
         
-        # Canvas ´» ¸¾²°½¸
+        # Canvas ´» и¾в°½и
         self.canvas = Canvas(self.root, width=width, height=height, bg='black', highlightthickness=0)
         self.canvas.pack()
         
         #  °¼º°
         self.canvas.create_rectangle(5, 5, width-5, height-5, outline='#00d4ff', width=2)
         
-        # °³¾»¾²¾º
+        # °³¾»¾в¾º
         self.canvas.create_text(width//2, 25, text="J.A.R.V.I.S.", fill='#00d4ff', font=('Consolas', 16, 'bold'))
         
         self.running = True
@@ -64,12 +64,12 @@ class HUDOverlay:
         self.root.mainloop()
 
     def _update(self):
-        """±½¾²»µ½¸µ ´°½½ HUD."""
+        """±½¾в»µ½иµ ´°½½ HUD."""
         if not self.running:
             return
         
         try:
-            # ¸º° ° ´°½½
+            # иº° ° ´°½½
             self.canvas.delete("data")
             
             # µ¼
@@ -93,19 +93,19 @@ class HUDOverlay:
             self.canvas.create_text(200, 250, text="SYSTEM ONLINE", fill='#00d4ff', font=('Consolas', 10), tags="data")
             
         except Exception as e:
-            self.brain.logger.error(f"¸±º° ¾±½¾²»µ½¸ HUD: {e}")
+            self.brain.logger.error(f"и±º° ¾±½¾в»µ½и HUD: {e}")
         
-        # ±½¾²»µ½¸µ º°¶´µ 2 µº½´
+        # ±½¾в»µ½иµ º°¶´µ 2 µº½´
         self.root.after(2000, self._update)
 
     def stop(self):
-        """°½¾²º° HUD."""
+        """°½¾вº° HUD."""
         self.running = False
         if self.root:
             self.root.quit()
 
     def show_message(self, message: str, duration: int = 3000):
-        """¾º°·° ²µ¼µ½½¾µ ¾¾±µ½¸µ."""
+        """¾º°·° вµ¼µ½½¾µ ¾¾±µ½иµ."""
         if not self.canvas:
             return
         
