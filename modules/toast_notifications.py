@@ -32,11 +32,11 @@ class ToastNotifications:
             return {"status": "ok", "message": "£²µ´¾¼»µ½¸µ ¿¾º°·°½¾"}
         
         except ImportError:
-            self.logger.warning("win10toast ½µ °½¾²»µ½. £°½¾²¸µ: pip install win10toast")
-            return {"status": "error", "message": "win10toast ½µ °½¾²»µ½"}
+            self.logger.warning("win10toast ни °½¾²»µ½. £°½¾²¸µ: pip install win10toast")
+            return {"status": "error", "message": "win10toast ни °½¾²»µ½"}
         
         except Exception as e:
-            self.logger.error(f"¸±º° ¿¾º°·° ²µ´¾¼»µ½¸: {e}")
+            self.logger.error(f"агента ¿¾º°·° ²µ´¾¼»µ½¸: {e}")
             return {"status": "error", "message": str(e)}
 
     def show_info(self, message: str) -> Dict:
@@ -48,8 +48,8 @@ class ToastNotifications:
         return self.show_toast("JARVIS - µ´¿µ¶´µ½¸µ", message)
 
     def show_error(self, message: str) -> Dict:
-        """¸±º°."""
-        return self.show_toast("JARVIS - ¸±º°", message)
+        """агента."""
+        return self.show_toast("JARVIS - агента", message)
 
     def show_success(self, message: str) -> Dict:
         """£¿µ."""
