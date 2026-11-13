@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 class AliasSystem:
-    """£¿°²»µ½¸µ ¿¾»·¾²°µ»º¸¼¸ °»¸°°¼¸ ´» º¾¼°½´."""
+    """£¿°²»µ½¸µ ¿¾»·¾²°µ»º¸¼¸ °»¸°°¼¸ для º¾¼°½´."""
 
     def __init__(self, brain):
         self.brain = brain
