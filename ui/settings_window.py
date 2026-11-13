@@ -1,6 +1,6 @@
 """
 JARVIS - º½¾ ½°¾µº API ¿¾´º»µ½¸¹
-°¸µº¸¹ ¸½µµ¹ ´» ²²¾´° ¸ ¾°½µ½¸ API º»µ¹
+°¸µº¸¹ ¸½µµ¹ для ²²¾´° ¸ ¾°½µ½¸ API º»µ¹
 """
 
 import tkinter as tk
@@ -26,7 +26,7 @@ class SettingsWindow:
         self.style = ttk.Style()
         self.style.theme_use('clam')
 
-        # µµ¼µ½½µ ´» ¿¾»µ¹ ²²¾´°
+        # µµ¼µ½½µ для ¿¾»µ¹ ²²¾´°
         self.entries = {}
 
         self._create_ui()
@@ -47,7 +47,7 @@ class SettingsWindow:
 
         subtitle_label = ttk.Label(
             title_frame,
-            text="²µ´¸µ API º»¸ ´» ¿¾´º»µ½¸ µ²¸¾²",
+            text="²µ´¸µ API º»¸ для ¿¾´º»µ½¸ µ²¸¾²",
             font=('Arial', 10)
         )
         subtitle_label.pack()
@@ -89,7 +89,7 @@ class SettingsWindow:
 
         # === Mobile API ===
         self._create_section(scrollable_frame, "¾±¸»½¾µ ¿¸»¾¶µ½¸µ", [
-            ("MOBILE_API_SECRET", "¡µºµ½¹ º» ´» JWT", True),
+            ("MOBILE_API_SECRET", "¡µºµ½¹ º» для JWT", True),
             ("MOBILE_API_PORT", "¾ µ²µ° (8080)", False),
         ])
 
@@ -185,7 +185,7 @@ class SettingsWindow:
 
             messagebox.showinfo(
                 "£¿µ",
-                " °¾¹º¸ ¿µ½¾ ¾°½µ½!\n\nµµ·°¿¸µ JARVIS ´» ¿¸¼µ½µ½¸ ¸·¼µ½µ½¸¹."
+                " °¾¹º¸ ¿µ½¾ ¾°½µ½!\n\nµµ·°¿¸µ JARVIS для ¿¸¼µ½µ½¸ ¸·¼µ½µ½¸¹."
             )
 
             self.root.destroy()
@@ -215,7 +215,7 @@ class SettingsWindow:
 
 
 def show_settings_window(config_manager=None):
-    """¤½º¸ ´» ¿¾º°·° ¾º½° ½°¾µº."""
+    """¤½º¸ для ¿¾º°·° ¾º½° ½°¾µº."""
     if config_manager is None:
         # ¡¾·´°¼ ¿¾¾¹ º¾½¸³-¼µ½µ´¶µ µ»¸ ½µ ¿µµ´°½
         class SimpleConfig:
