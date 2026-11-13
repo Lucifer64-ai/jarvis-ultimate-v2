@@ -12,7 +12,7 @@ from agents.file_saver import get_file_saver
 
 
     def _handle_agent_voice_command(self, text: str) -> Dict:
-        """±°±¾º° ³¾»¾¾² º¾¼°½´ ´» ¿°²»µ½¸ °³µ½°¼¸."""
+        """±°±¾º° ³¾»¾¾² º¾¼°½´ для ¿°²»µ½¸ агента¼¸."""
         text_lower = text.lower()
 
         # ¾¼°½´°: ¿¸¾º °³µ½¾²
@@ -45,9 +45,9 @@ from agents.file_saver import get_file_saver
                 "type": "task_history"
             }
 
-        # ¾¼°½´°: ²¾·¼¾¶½¾¸ °³µ½°
-        elif any(phrase in text_lower for phrase in ["²¾·¼¾¶½¾¸ °³µ½°", "¾ ¼¾¶µ °³µ½"]):
-            # °µ¼ ¾¿µ´µ»¸ ¸¼ °³µ½° ¸· µº°
+        # ¾¼°½´°: ²¾·¼¾¶½¾¸ агента
+        elif any(phrase in text_lower for phrase in ["²¾·¼¾¶½¾¸ агента", "¾ ¼¾¶µ °³µ½"]):
+            # °µ¼ ¾¿µ´µ»¸ ¸¼ агента ¸· µº°
             for agent_name in ["Web Developer", "Programmer", "Data Analyst", "Designer", "DevOps"]:
                 if agent_name.lower() in text_lower:
                     agent = self.agent_manager.get_agent(agent_name)
@@ -61,11 +61,11 @@ from agents.file_saver import get_file_saver
 
             return {
                 "status": "error",
-                "message": "£º°¶¸µ ¸¼ °³µ½°: Web Developer, Programmer, Data Analyst, Designer ¸»¸ DevOps"
+                "message": "£º°¶¸µ ¸¼ агента: Web Developer, Programmer, Data Analyst, Designer ¸»¸ DevOps"
             }
 
-        # ¾¼°½´°: ° °³µ½°
-        elif any(phrase in text_lower for phrase in ["° °³µ½°", "¾¾½¸µ °³µ½°"]):
+        # ¾¼°½´°: ° агента
+        elif any(phrase in text_lower for phrase in ["° агента", "¾¾½¸µ агента"]):
             for agent_name in ["Web Developer", "Programmer", "Data Analyst", "Designer", "DevOps"]:
                 if agent_name.lower() in text_lower:
                     agent = self.agent_manager.get_agent(agent_name)
@@ -79,12 +79,12 @@ from agents.file_saver import get_file_saver
 
             return {
                 "status": "error",
-                "message": "£º°¶¸µ ¸¼ °³µ½°"
+                "message": "£º°¶¸µ ¸¼ агента"
             }
 
         return {
             "status": "error",
-            "message": "µ¸·²µ½° º¾¼°½´° ¿°²»µ½¸ °³µ½°¼¸"
+            "message": "µ¸·²µ½° º¾¼°½´° ¿°²»µ½¸ агента¼¸"
         }
 
 
@@ -313,8 +313,8 @@ class JarvisBrain:
         """¿¾»½µ½¸µ º¾¼°½´ ¿¸»¾¶µ½¸."""
         text_lower = text.lower().strip()
         # ¾²µº° ·°´° ´» °³µ½¾²
-        # ¾²µº° ³¾»¾¾² º¾¼°½´ ¿°²»µ½¸ °³µ½°¼¸
-        if any(phrase in text_lower for phrase in ["º°º¸µ °³µ½", "¿¸¾º °³µ½¾²", "¸¾¸ ·°´°", "²¾·¼¾¶½¾¸ °³µ½°", "° °³µ½°"]):
+        # ¾²µº° ³¾»¾¾² º¾¼°½´ ¿°²»µ½¸ агента¼¸
+        if any(phrase in text_lower for phrase in ["º°º¸µ °³µ½", "¿¸¾º °³µ½¾²", "¸¾¸ ·°´°", "²¾·¼¾¶½¾¸ агента", "° агента"]):
             return self._handle_agent_voice_command(text_lower)
 
 
