@@ -1,5 +1,5 @@
 """
-£¿°²»µ½¸µ ¿¾µ°¼¸ JARVIS
+голосовые ¿¾µ°¼¸ JARVIS
 """
 
 import psutil
@@ -7,7 +7,7 @@ from typing import Dict, List
 
 
 class ProcessModule:
-    """£¿°²»µ½¸µ ¿¾µ°¼¸ ¸µ¼."""
+    """голосовые ¿¾µ°¼¸ ¸µ¼."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -42,7 +42,7 @@ class ProcessModule:
 
         if killed:
             return {"status": "ok", "killed": killed}
-        return {"status": "error", "message": f"¾µ '{name}' ½µ ½°¹´µ½"}
+        return {"status": "error", "message": f"¾µ '{name}' ни на¹´µ½"}
 
     def get_process_info(self, name: str) -> Dict:
         """½¾¼°¸ ¾ ¿¾µµ."""
@@ -62,4 +62,4 @@ class ProcessModule:
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
 
-        return {"status": "error", "message": f"¾µ '{name}' ½µ ½°¹´µ½"}
+        return {"status": "error", "message": f"¾µ '{name}' ни на¹´µ½"}
