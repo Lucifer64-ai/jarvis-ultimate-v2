@@ -9,7 +9,7 @@ from typing import Dict
 
 
 class SystemModule:
-    """£¿°²»µ½¸µ ¸µ¼½¼¸ ¾¿µ°¸¼¸."""
+    """голосовые ¸µ¼½¼¸ ¾¿µ°¸¼¸."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -31,15 +31,15 @@ class SystemModule:
             return {"status": "error", "message": str(e)}
 
     def cancel_shutdown(self) -> Dict:
-        """¼µ½° ²º»µ½¸."""
+        """¼µна ²º»µ½¸."""
         try:
             os.system("shutdown /a")
-            return {"status": "ok", "message": "º»µ½¸µ ¾¼µ½µ½¾"}
+            return {"status": "ok", "message": "º»µ½¸µ ¾¼µни½¾"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def lock_screen(self) -> Dict:
-        """»¾º¸¾²º° º°½°."""
+        """»¾º¸¾²º° º°на."""
         try:
             ctypes.windll.user32.LockWorkStation()
             return {"status": "ok", "message": "­º°½ ·°±»¾º¸¾²°½"}
@@ -55,17 +55,17 @@ class SystemModule:
             return {"status": "error", "message": str(e)}
 
     def hibernate(self) -> Dict:
-        """¸±µ½°¸."""
+        """¸±µна¸."""
         try:
             os.system("shutdown /h")
-            return {"status": "ok", "message": "µµ¾´ ² µ¶¸¼ ³¸±µ½°¸¸"}
+            return {"status": "ok", "message": "µµ¾´ ² µ¶¸¼ ³¸±µна¸¸"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def logoff(self) -> Dict:
-        """¾´ ¸· ¸µ¼."""
+        """¾´ из ¸µ¼."""
         try:
             os.system("shutdown /l")
-            return {"status": "ok", "message": "¾´ ¸· ¸µ¼"}
+            return {"status": "ok", "message": "¾´ из ¸µ¼"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
