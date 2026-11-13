@@ -1,5 +1,5 @@
 """
-API µ²µ JARVIS ´» ¼¾±¸»½¾³¾ ¿¸»¾¶µ½¸
+API µ²µ JARVIS для ¼¾±¸»½¾³¾ ¿¸»¾¶µ½¸
 """
 
 import asyncio
@@ -17,12 +17,12 @@ except ImportError:
 
 
 class MobileServer:
-    """HTTP/WebSocket µ²µ ´» ¼¾±¸»½¾³¾ ¿¸»¾¶µ½¸."""
+    """HTTP/WebSocket µ²µ для ¼¾±¸»½¾³¾ ¿¸»¾¶µ½¸."""
 
     def __init__(self, brain):
         self.brain = brain
         
-        # §µ½¸µ ¸· ¿µµ¼µ½½ ¾º¶µ½¸
+        # §µ½¸µ из ¿µµ¼µ½½ ¾º¶µ½¸
         self.host = brain.config.mobile_api_host
         self.port = brain.config.mobile_api_port
         self.secret = brain.config.mobile_api_secret
@@ -40,7 +40,7 @@ class MobileServer:
                 self.tokens = json.load(f)
 
     def _save_tokens(self):
-        """¡¾°½µ½¸µ ¾ºµ½¾²."""
+        """¡¾°ни½¸µ ¾ºµ½¾²."""
         self.tokens_file.parent.mkdir(exist_ok=True)
         with open(self.tokens_file, "w") as f:
             json.dump(self.tokens, f, indent=2)
@@ -58,7 +58,7 @@ class MobileServer:
         self.app.router.add_get("/ws", self.websocket_handler)
 
     def _verify_token(self, request) -> Optional[str]:
-        """¾²µº° ¾ºµ½° °²¾¸·°¸¸."""
+        """¾²µº° ¾ºµна °²¾из°¸¸."""
         auth = request.headers.get("Authorization", "")
         if auth.startswith("Bearer "):
             token = auth[7:]
@@ -67,7 +67,7 @@ class MobileServer:
         return None
 
     async def handle_login(self, request):
-        """²¾¸·°¸."""
+        """²¾из°¸."""
         data = await request.json()
         username = data.get("username")
         password = data.get("password")
@@ -109,7 +109,7 @@ class MobileServer:
         return web.json_response(status)
 
     async def handle_command(self, request):
-        """¿¾»½µ½¸µ ³¾»¾¾²¾¹ º¾¼°½´."""
+        """¿¾»ни½¸µ ³¾»¾¾²¾¹ команд."""
         user = self._verify_token(request)
         if not user:
             return web.json_response({"error": "Unauthorized"}, status=401)
@@ -140,10 +140,10 @@ class MobileServer:
             devices = await ha.get_states()
             return web.json_response({"devices": devices})
         
-        return web.json_response({"devices": [], "message": "Home Assistant ½µ ¿¾´º»µ½"})
+        return web.json_response({"devices": [], "message": "Home Assistant ни ¿¾´º»µ½"})
 
     async def handle_device_control(self, request):
-        """£¿°²»µ½¸µ ¾¹²¾¼."""
+        """голосовые ¾¹²¾¼."""
         user = self._verify_token(request)
         if not user:
             return web.json_response({"error": "Unauthorized"}, status=401)
@@ -184,7 +184,7 @@ class MobileServer:
         return web.json_response({"sensors": []})
 
     async def websocket_handler(self, request):
-        """WebSocket ´» real-time ¾±½¾²»µ½¸¹."""
+        """WebSocket для real-time ¾±½¾²»µ½¸¹."""
         ws = web.WebSocketResponse()
         await ws.prepare(request)
         
@@ -207,7 +207,7 @@ class MobileServer:
 
     def start(self):
         """°¿º µ²µ°."""
-        self.brain.logger.info(f"Mobile API µ²µ ·°¿µ½ ½° {self.host}:{self.port}")
+        self.brain.logger.info(f"Mobile API µ²µ ·°¿µ½ на {self.host}:{self.port}")
         web.run_app(self.app, host=self.host, port=self.port)
 
     def start_async(self):
