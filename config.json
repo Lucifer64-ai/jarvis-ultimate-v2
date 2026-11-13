@@ -1,0 +1,45 @@
+{
+  "name": "JARVIS",
+  "version": "2.0.0",
+  "language": "ru",
+  "voice": {
+    "rate": 180,
+    "wake_word": "´¶°²¸",
+    "volume": 1.0
+  },
+  "hud": {
+    "enabled": true,
+    "position": "fullscreen"
+  },
+  "startup": {
+    "greeting": true,
+    "sound": true
+  },
+  "learning": {
+    "enabled": true,
+    "confidence_threshold": 0.7,
+    "auto_suggest": true
+  },
+  "local_llm": {
+    "enabled": false,
+    "ollama_url": "http://localhost:11434",
+    "model": "llama3.2"
+  },
+  "optimization": {
+    "enabled": true,
+    "cpu_threshold_percent": 80,
+    "memory_threshold_percent": 85,
+    "max_recommendations": 3,
+    "cache_ttl_seconds": 30,
+    "max_background_tasks": 5,
+    "auto_suggest_automation": true
+  },
+  "windows": {
+    "autostart": false,
+    "wake_word_enabled": false,
+    "context_menu": false,
+    "toast_notifications": true,
+    "clean_desktop_on_start": false,
+    "hud_on_start": false
+  }
+}

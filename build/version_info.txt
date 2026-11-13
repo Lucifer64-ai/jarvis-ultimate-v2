@@ -1,0 +1,37 @@
+# UTF-8
+#
+# For more details:
+# https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION 2,0,0,0
+    PRODUCTVERSION 2,0,0,0
+    FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+    FILEFLAGS VS_FF_DEBUG
+#else
+    FILEFLAGS 0x0L
+#endif
+    FILEOS VOS__WINDOWS32
+    FILETYPE VFT_APP
+    FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "JARVIS Team"
+            VALUE "FileDescription", "JARVIS Ultimate - AI Assistant"
+            VALUE "FileVersion", "2.0.0.0"
+            VALUE "InternalName", "JARVIS.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2026"
+            VALUE "OriginalFilename", "JARVIS.exe"
+            VALUE "ProductName", "JARVIS Ultimate"
+            VALUE "ProductVersion", "2.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
