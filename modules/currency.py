@@ -1,5 +1,5 @@
 """
-Currency Module - ¾»µ½¸µ º¾² ²°»
+Currency Module - ¾»µ½иµ º¾в в°»
 """
 
 import requests
@@ -8,7 +8,7 @@ import logging
 
 
 class CurrencyModule:
-    """¾´» ´» ¿¾»µ½¸ º¾² ²°»."""
+    """¾´» ´» ¿¾»µ½и º¾в в°»."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -20,9 +20,9 @@ class CurrencyModule:
         self.cache_timeout = 3600  # 1 °
 
     def get_rate(self, from_currency: str = "USD", to_currency: str = "RUB") -> Dict:
-        """¾»¸ º ²°»."""
+        """¾»и º в°»."""
         try:
-            # ¾²µº° º°
+            # ¾вµº° º°
             cache_key = f"rate_{from_currency}_{to_currency}"
             if cache_key in self.cache:
                 import time
@@ -36,7 +36,7 @@ class CurrencyModule:
             data = response.json()
             
             if to_currency not in data["rates"]:
-                return {"status": "error", "message": f"°»° {to_currency} ½µ ½°¹´µ½°"}
+                return {"status": "error", "message": f"°»° {to_currency} ни ½°¹´µ½°"}
             
             rate = data["rates"][to_currency]
             
@@ -48,7 +48,7 @@ class CurrencyModule:
                 "date": data["date"]
             }
             
-            # ¡¾°½µ½¸µ ² º
+            # ¡¾°ни½иµ в º
             import time
             self.cache[cache_key] = {
                 "data": result,
@@ -58,19 +58,19 @@ class CurrencyModule:
             return result
             
         except Exception as e:
-            self.logger.error(f"¸±º° ¿¾»µ½¸ º°: {e}")
+            self.logger.error(f"агента ¿¾»µ½и º°: {e}")
             return {"status": "error", "message": str(e)}
 
     def get_usd_rub(self) -> Dict:
-        """¾»¸ º USD º RUB."""
+        """¾»и º USD º RUB."""
         return self.get_rate("USD", "RUB")
 
     def get_eur_rub(self) -> Dict:
-        """¾»¸ º EUR º RUB."""
+        """¾»и º EUR º RUB."""
         return self.get_rate("EUR", "RUB")
 
     def get_btc_usd(self) -> Dict:
-        """¾»¸ º Bitcoin º USD."""
+        """¾»и º Bitcoin º USD."""
         try:
             url = "https://api.coindesk.com/v1/bpi/currentprice/USD.json"
             response = requests.get(url, timeout=10)
@@ -86,18 +86,18 @@ class CurrencyModule:
                 "rate": round(rate, 2)
             }
         except Exception as e:
-            self.logger.error(f"¸±º° ¿¾»µ½¸ º° BTC: {e}")
+            self.logger.error(f"агента ¿¾»µ½и º° BTC: {e}")
             return {"status": "error", "message": str(e)}
 
     def format_rate_message(self, rate: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ º° ² ¾¾±µ½¸µ."""
+        """¤¾¼°и¾в°½иµ º° в ¾¾±µ½иµ."""
         if rate["status"] != "ok":
             return rate["message"]
         
         return f" {rate['from']} º {rate['to']}: {rate['rate']}"
 
     def get_multiple_rates(self) -> Dict:
-        """¾»¸ ½µº¾»º¾ ¾½¾²½ º¾²."""
+        """¾»и ниº¾»º¾ ¾½¾в½ º¾в."""
         usd_rub = self.get_usd_rub()
         eur_rub = self.get_eur_rub()
         btc_usd = self.get_btc_usd()
@@ -110,11 +110,11 @@ class CurrencyModule:
         }
 
     def format_multiple_rates_message(self, rates: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ ½µº¾»º¸ º¾²."""
+        """¤¾¼°и¾в°½иµ ниº¾»ºи º¾в."""
         if rates["status"] != "ok":
-            return "µ ´°»¾ ¿¾»¸ º ²°»"
+            return "µ ´°»¾ ¿¾»и º в°»"
         
-        message = " ²°»:\n"
+        message = " в°»:\n"
         if rates["usd_rub"]:
             message += f"USD/RUB: {rates['usd_rub']}\n"
         if rates["eur_rub"]:
