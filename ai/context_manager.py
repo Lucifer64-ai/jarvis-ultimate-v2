@@ -1,5 +1,5 @@
 """
-µ½µ´¶µ º¾½µº° JARVIS
+µни´¶µ º¾½µº° JARVIS
 """
 
 from typing import Dict, List, Optional
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 class ContextManager:
-    """£¿°²»µ½¸µ º¾½µº¾¼ °·³¾²¾° ¸ ¾¾½¸."""
+    """голосовые º¾½µº¾¼ °·³¾²¾° ¸ ¾¾½¸."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -21,13 +21,13 @@ class ContextManager:
         self.max_history = 50
 
     def _load_context(self) -> Dict:
-        """°³·º° º¾½µº° ¸· °¹»°."""
+        """°³·º° º¾½µº° из °¹»°."""
         if self.context_file.exists():
             try:
                 with open(self.context_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception as e:
-                self.brain.logger.error(f"¸±º° ·°³·º¸ º¾½µº°: {e}")
+                self.brain.logger.error(f"агента ·°³·º¸ º¾½µº°: {e}")
         
         return {
             "user_preferences": {},
@@ -36,12 +36,12 @@ class ContextManager:
         }
 
     def _save_context(self):
-        """¡¾°½µ½¸µ º¾½µº°."""
+        """¡¾°ни½¸µ º¾½µº°."""
         try:
             with open(self.context_file, 'w', encoding='utf-8') as f:
                 json.dump(self.context, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            self.brain.logger.error(f"¸±º° ¾°½µ½¸ º¾½µº°: {e}")
+            self.brain.logger.error(f"агента ¾°ни½¸ º¾½µº°: {e}")
 
     def update(self, key: str, value):
         """±½¾²»µ½¸µ º¾½µº°."""
@@ -50,7 +50,7 @@ class ContextManager:
         self._save_context()
 
     def get(self, key: str, default=None):
-        """¾»µ½¸µ ·½°µ½¸ ¸· º¾½µº°."""
+        """¾»µ½¸µ ·наµ½¸ из º¾½µº°."""
         return self.context.get(key, default)
 
     def add_to_history(self, role: str, content: str):
