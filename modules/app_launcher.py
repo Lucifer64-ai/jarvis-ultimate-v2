@@ -1,5 +1,5 @@
 """
-App Launcher - °¿º ¿¸»¾¶µ½¸¹ µµ· JARVIS
+App Launcher - °¿º голосовые µµ· JARVIS
 """
 
 import subprocess
@@ -11,7 +11,7 @@ import logging
 
 
 class AppLauncher:
-    """£¿°²»µ½¸µ ·°¿º¾¼ ¿¸»¾¶µ½¸¹."""
+    """£¿°в»µ½иµ ·°¿º¾¼ голосовые."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -21,28 +21,28 @@ class AppLauncher:
         self.apps: Dict[str, str] = self._load_apps()
 
     def _load_apps(self) -> Dict[str, str]:
-        """°³·º° ¿¸º° ¿¸»¾¶µ½¸¹."""
+        """°³·º° ¿иº° голосовые."""
         if self.apps_file.exists():
             with open(self.apps_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         
-        # µ¾»½µ ¿¸»¾¶µ½¸
+        # µ¾»½µ голосов
         return {
             "±»¾º½¾": "notepad.exe",
             "º°»º»¾": "calc.exe",
-            "¿¾²¾´½¸º": "explorer.exe",
+            "¿¾в¾´½иº": "explorer.exe",
             "±°·µ": "chrome.exe",
             "¾¼": "chrome.exe",
             "°¹¾º": "firefox.exe",
             "edge": "msedge.exe",
-            "µ¼¸½°»": "cmd.exe",
+            "µ¼и½°»": "cmd.exe",
             "º¾¼°½´½° ¾º°": "cmd.exe",
             "powershell": "powershell.exe",
-            "½°¾¹º¸": "ms-settings:",
-            "´¸¿µµ ·°´°": "taskmgr.exe",
+            "½°¾¹ºи": "ms-settings:",
+            "´и¿µµ ·°´°": "taskmgr.exe",
             "paint": "mspaint.exe",
-            "¾¾³°¸¸": "ms-photos:",
-            "¼°³°·¸½": "ms-windows-store:",
+            "¾¾³°ии": "ms-photos:",
+            "¼°³°·и½": "ms-windows-store:",
             "¿¾°": "outlookmail:",
             "º°»µ½´°": "outlookcal:",
             "youtube": "https://youtube.com",
@@ -51,73 +51,73 @@ class AppLauncher:
             "github": "https://github.com",
             "µ»µ³°¼": "telegram.exe",
             "discord": "discord.exe",
-            "¿¾¸°¹": "spotify.exe",
+            "¿¾и°¹": "spotify.exe",
             "vlc": "vlc.exe",
         }
 
     def _save_apps(self):
-        """¡¾°½µ½¸µ ¿¸º° ¿¸»¾¶µ½¸¹."""
+        """¡¾°ни½иµ ¿иº° голосовые."""
         with open(self.apps_file, 'w', encoding='utf-8') as f:
             json.dump(self.apps, f, ensure_ascii=False, indent=2)
 
     def launch(self, app_name: str) -> Dict:
-        """°¿º ¿¸»¾¶µ½¸."""
+        """°¿º голосов."""
         app_name_lower = app_name.lower().strip()
         
-        # ¾¸º ² ¿¸ºµ
+        # ¾иº в ¿иºµ
         if app_name_lower in self.apps:
             app_path = self.apps[app_name_lower]
             
             try:
-                # »¸ ¾ URL
+                # »и ¾ URL
                 if app_path.startswith("http://") or app_path.startswith("https://"):
                     subprocess.Popen(["start", app_path], shell=True)
-                    return {"status": "ok", "message": f"º²° {app_name}..."}
+                    return {"status": "ok", "message": f"ºв° {app_name}..."}
                 
-                # »¸ ¾ º¾¼°½´° Windows
+                # »и ¾ º¾¼°½´° Windows
                 elif app_path.startswith("ms-"):
                     subprocess.Popen(["start", app_path], shell=True)
-                    return {"status": "ok", "message": f"º²° {app_name}..."}
+                    return {"status": "ok", "message": f"ºв° {app_name}..."}
                 
-                # »¸ ¾ exe °¹»
+                # »и ¾ exe °¹»
                 else:
                     subprocess.Popen(app_path, shell=True)
                     return {"status": "ok", "message": f"°¿º° {app_name}..."}
             
             except Exception as e:
-                self.logger.error(f"¸±º° ·°¿º° {app_name}: {e}")
-                return {"status": "error", "message": f"µ ´°»¾ ·°¿¸ {app_name}: {e}"}
+                self.logger.error(f"агента ·°¿º° {app_name}: {e}")
+                return {"status": "error", "message": f"µ ´°»¾ ·°¿и {app_name}: {e}"}
         
-        return {"status": "error", "message": f"¸»¾¶µ½¸µ '{app_name}' ½µ ½°¹´µ½¾. ¡º°¶¸µ '´¾±°² ¿¸»¾¶µ½¸µ {app_name}'"}
+        return {"status": "error", "message": f"и»¾¶µ½иµ '{app_name}' ни ½°¹´µ½¾. ¡º°¶иµ '´¾±°в голосовµ {app_name}'"}
 
     def add_app(self, name: str, path: str) -> Dict:
-        """¾±°²¸ ½¾²¾µ ¿¸»¾¶µ½¸µ."""
+        """¾±°ви ½¾в¾µ голосовµ."""
         name_lower = name.lower().strip()
         self.apps[name_lower] = path
         self._save_apps()
         
-        self.logger.info(f"¾±°²»µ½¾ ¿¸»¾¶µ½¸µ: {name} ¢ {path}")
-        return {"status": "ok", "message": f"¸»¾¶µ½¸µ '{name}' ´¾±°²»µ½¾"}
+        self.logger.info(f"¾±°в»µ½¾ голосовµ: {name} ¢ {path}")
+        return {"status": "ok", "message": f"и»¾¶µ½иµ '{name}' ´¾±°в»µ½¾"}
 
     def remove_app(self, name: str) -> Dict:
-        """£´°»¸ ¿¸»¾¶µ½¸µ."""
+        """£´°»и голосовµ."""
         name_lower = name.lower().strip()
         
         if name_lower in self.apps:
             del self.apps[name_lower]
             self._save_apps()
-            return {"status": "ok", "message": f"¸»¾¶µ½¸µ '{name}' ´°»µ½¾"}
+            return {"status": "ok", "message": f"и»¾¶µ½иµ '{name}' ´°»µ½¾"}
         
-        return {"status": "error", "message": f"¸»¾¶µ½¸µ '{name}' ½µ ½°¹´µ½¾"}
+        return {"status": "error", "message": f"и»¾¶µ½иµ '{name}' ни ½°¹´µ½¾"}
 
     def list_apps(self) -> Dict:
-        """¡¿¸¾º ²µ ¿¸»¾¶µ½¸¹."""
+        """¡¿и¾º вµ голосовые."""
         apps_list = [f"¢¢ {name}" for name in sorted(self.apps.keys())]
         return {
             "status": "ok",
-            "message": f"¾¿½¾ {len(self.apps)} ¿¸»¾¶µ½¸¹:\n" + "\n".join(apps_list[:20]) + ("\n..." if len(apps_list) > 20 else "")
+            "message": f"¾¿½¾ {len(self.apps)} голосовые:\n" + "\n".join(apps_list[:20]) + ("\n..." if len(apps_list) > 20 else "")
         }
 
     def get_apps_count(self) -> int:
-        """¾»¸µ²¾ ¿¸»¾¶µ½¸¹."""
+        """¾»иµв¾ голосовые."""
         return len(self.apps)
