@@ -1,5 +1,5 @@
 """
- °¿¾·½°²°½¸µ µ¸ JARVIS
+ °¿¾·½°в°½иµ µи JARVIS
 """
 
 import speech_recognition as sr
@@ -7,20 +7,20 @@ from typing import Optional, Dict
 
 
 class VoiceListener:
-    """ °¿¾·½°²°½¸µ ³¾»¾¾² º¾¼°½´."""
+    """ °¿¾·½°в°½иµ ³¾»¾¾в º¾¼°½´."""
 
     def __init__(self, brain):
         self.brain = brain
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
-        self.wake_word = brain.config.get("voice", {}).get("wake_word", "´¶°²¸")
+        self.wake_word = brain.config.get("voice", {}).get("wake_word", "´¶°ви")
         
-        # °¾¹º° °¿¾·½°²°½¸
+        # °¾¹º° °¿¾·½°в°½и
         self.recognizer.dynamic_energy_threshold = True
         self.recognizer.energy_threshold = 300
 
     def listen(self) -> Optional[str]:
-        """¡»° ¸ °¿¾·½° µ."""
+        """¡»° и °¿¾·½° µ."""
         try:
             with self.microphone as source:
                 self.brain.logger.info("¡»°...")
@@ -33,16 +33,16 @@ class VoiceListener:
             return text
 
         except sr.WaitTimeoutError:
-            self.brain.logger.debug("¢°¹¼° ¾¶¸´°½¸ µ¸")
+            self.brain.logger.debug("¢°¹¼° ¾¶и´°½и µи")
             return None
         except sr.UnknownValueError:
             self.brain.logger.debug("µ ´°»¾ °¿¾·½° µ")
             return None
         except sr.RequestError as e:
-            self.brain.logger.error(f"¸±º° µ²¸° °¿¾·½°²°½¸: {e}")
+            self.brain.logger.error(f"и±º° µви° °¿¾·½°в°½и: {e}")
             return None
         except Exception as e:
-            self.brain.logger.error(f"¸±º° °¿¾·½°²°½¸: {e}")
+            self.brain.logger.error(f"и±º° °¿¾·½°в°½и: {e}")
             return None
 
     def listen_for_wake_word(self) -> bool:
@@ -53,7 +53,7 @@ class VoiceListener:
         return False
 
     def continuous_listen(self, callback):
-        """µ¿µ²½¾µ ¿¾»¸²°½¸µ."""
+        """µ¿µв½¾µ ¿¾»ив°½иµ."""
         while True:
             text = self.listen()
             if text:
