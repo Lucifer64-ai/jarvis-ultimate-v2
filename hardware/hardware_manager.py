@@ -1,5 +1,5 @@
 """
-Hardware Manager - »°²½¹ ¼µ½µ´¶µ °¿¿°°½¾³¾ ¾±µ¿µµ½¸ JARVIS
+Hardware Manager - »°²½¹ ¼µни´¶µ °¿¿°°½¾³¾ ¾±µ¿µµ½¸ JARVIS
 """
 
 from typing import Dict, Optional
@@ -7,13 +7,13 @@ import logging
 
 
 class HardwareManager:
-    """¦µ½°»¸·¾²°½½¾µ ¿°²»µ½¸µ ²µ¼ ¶µ»µ·¾¼ JARVIS."""
+    """¦µ½°»из¾²°½½¾µ ¿°²»µ½¸µ ²µ¼ ¶µ»µ·¾¼ JARVIS."""
 
     def __init__(self, brain):
         self.brain = brain
         self.logger = brain.logger
         
-        # ¾¼¿¾½µ½
+        # ¾¼¿¾ни½
         self.display = None
         self.servos = None
         self.leds = None
@@ -22,7 +22,7 @@ class HardwareManager:
         self.initialized = False
 
     def initialize(self) -> Dict:
-        """½¸¸°»¸·°¸ ²µ °¿¿°°½ º¾¼¿¾½µ½¾²."""
+        """½¸¸°»из°¸ ²µ °¿¿°°½ º¾¼¿¾ни½¾²."""
         try:
             # ¾»¾³°¸µº¸¹ ´¸¿»µ¹
             from hardware.holographic_display import HolographicDisplay
@@ -53,22 +53,22 @@ class HardwareManager:
             self.leds.idle()
             self.servos.center()
             
-            return {"status": "ok", "message": "¿¿°°½¾µ ¾±µ¿µµ½¸µ ¸½¸¸°»¸·¸¾²°½¾"}
+            return {"status": "ok", "message": "¿¿°°½¾µ ¾±µ¿µµ½¸µ ¸½¸¸°»из¸¾²°½¾"}
         
         except Exception as e:
-            self.logger.error(f"¸±º° ¸½¸¸°»¸·°¸¸ hardware: {e}")
+            self.logger.error(f"агента ¸½¸¸°»из°¸¸ hardware: {e}")
             return {"status": "error", "message": str(e)}
 
     def activate(self) -> Dict:
         """º¸²°¸ JARVIS (²º»µ½¸µ ´¸¿»µ, ¿¸²µ²¸µ)."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         try:
             # º»µ½¸µ ´¸¿»µ
             self.display.activate()
             
-            # ¸²µ²µ½½° °½¸¼°¸
+            # ¸²µ²µ½на °½¸¼°¸
             self.leds.pulse((0, 200, 255), duration=2.0)
             self.servos.look_at("center")
             
@@ -82,7 +82,7 @@ class HardwareManager:
     def deactivate(self) -> Dict:
         """µ°º¸²°¸ JARVIS."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         try:
             self.display.deactivate()
@@ -94,9 +94,9 @@ class HardwareManager:
             return {"status": "error", "message": str(e)}
 
     def on_listening(self) -> Dict:
-        """JARVIS »°µ º¾¼°½´."""
+        """JARVIS »°µ команд."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         self.leds.listening()
         self.servos.look_at("center")
@@ -106,7 +106,7 @@ class HardwareManager:
     def on_thinking(self) -> Dict:
         """JARVIS ´¼°µ."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         self.leds.thinking()
         
@@ -115,26 +115,26 @@ class HardwareManager:
     def on_speaking(self) -> Dict:
         """JARVIS ³¾²¾¸."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         self.leds.speaking()
         
         return {"status": "ok", "message": "¾²¾..."}
 
     def on_error(self) -> Dict:
-        """¸±º°."""
+        """агента."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         self.leds.error()
         self.servos.shake()
         
-        return {"status": "ok", "message": "¸±º°"}
+        return {"status": "ok", "message": "агента"}
 
     def on_success(self) -> Dict:
         """£¿µ."""
         if not self.initialized:
-            return {"status": "error", "message": "Hardware ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "error", "message": "Hardware ни ¸½¸¸°»из¸¾²°½"}
         
         self.leds.success()
         self.servos.nod()
@@ -144,14 +144,14 @@ class HardwareManager:
     def track_speaker(self, x: int, y: int) -> Dict:
         """¡»µ´¸ ·° ³¾²¾¸¼."""
         if not self.initialized or not self.servos:
-            return {"status": "error", "message": "¡µ²¾¿¸²¾´ ½µ ³¾¾²"}
+            return {"status": "error", "message": "¡µ²¾¿¸²¾´ ни ³¾¾²"}
         
         return self.servos.track_speaker(x, y)
 
     def get_environment(self) -> Dict:
-        """¾»¸ ´°½½µ ¾± ¾º¶°µ¹ µ´µ."""
+        """ошибки ´°½½µ ¾± ¾º¶°µ¹ µ´µ."""
         if not self.initialized or not self.sensors:
-            return {"status": "error", "message": "°¸º¸ ½µ ³¾¾²"}
+            return {"status": "error", "message": "°¸º¸ ни ³¾¾²"}
         
         return self.sensors.get_all_readings()
 
