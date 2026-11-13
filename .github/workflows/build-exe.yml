@@ -49,10 +49,8 @@ jobs:
 
     - name: Prepare installer package
       run: |
-        # ¡¾·´°¼ ¿°¿º ´» °½¾²¸º°
         New-Item -ItemType Directory -Force -Path installer\package | Out-Null
 
-        # ¾¿¸µ¼ EXE
         if (Test-Path "dist\JARVIS.exe") {
           Copy-Item dist\JARVIS.exe installer\package\JARVIS.exe -Force
           Write-Host "EXE copied"
@@ -61,7 +59,6 @@ jobs:
           Write-Host "EXE copied from dist/JARVIS"
         }
 
-        # ¾¿¸µ¼ ²µ ¿°¿º¸ ¿¾µº°
         $folders = @('ai', 'core', 'modules', 'voice', 'ui', 'smart_home', 'automation', 'hardware', 'hud', 'mobile', 'scripts', 'assets')
         foreach ($folder in $folders) {
           if (Test-Path $folder) {
@@ -70,7 +67,6 @@ jobs:
           }
         }
 
-        # ¾¿¸µ¼ º¾½¸³¸ ¸ ´¾º¼µ½°¸
         if (Test-Path "config.json") { Copy-Item config.json installer\package\ }
         if (Test-Path ".env.example") { Copy-Item .env.example installer\package\.env }
         if (Test-Path "requirements.txt") { Copy-Item requirements.txt installer\package\ }
@@ -90,15 +86,12 @@ jobs:
 
     - name: Build Installer with Inno Setup
       run: |
-        # £°½°²»¸²°µ¼ Inno Setup
         choco install innosetup -y --no-progress
         Write-Host "Inno Setup installed"
 
-        # ¡¾±¸°µ¼ °½¾²¸º
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\jarvis_installer.iss
         Write-Host "Installer built"
 
-        # ¾²µµ¼ µ·»°
         if (Test-Path "installer\output\*.exe") {
           Write-Host "Installer created successfully"
           Get-ChildItem installer\output\*.exe | ForEach-Object { Write-Host "  $($_.Name) - $([math]::Round($_.Length / 1MB, 2)) MB" }
