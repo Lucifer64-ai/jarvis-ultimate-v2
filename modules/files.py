@@ -1,5 +1,5 @@
 """
-£¿°²»µ½¸µ °¹»°¼¸ JARVIS
+£¿°в»µ½иµ °¹»°¼и JARVIS
 """
 
 import os
@@ -10,13 +10,13 @@ from send2trash import send2trash
 
 
 class FileModule:
-    """£¿°²»µ½¸µ °¹»¾²¾¹ ¸µ¼¾¹."""
+    """£¿°в»µ½иµ °¹»¾в¾¹ иµ¼¾¹."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def list_directory(self, path: str = ".") -> List[Dict]:
-        """¡¿¸¾º °¹»¾² ² ´¸µº¾¸¸."""
+        """¡¿и¾º °¹»¾в в ´иµº¾ии."""
         try:
             items = []
             for item in Path(path).iterdir():
@@ -39,15 +39,15 @@ class FileModule:
             return {"status": "error", "message": str(e)}
 
     def delete_file(self, path: str) -> Dict:
-        """£´°»¸ °¹» ² º¾·¸½."""
+        """£´°»и °¹» в º¾·и½."""
         try:
             send2trash(path)
-            return {"status": "ok", "message": f"¤°¹» '{path}' ¿µµ¼µ½ ² º¾·¸½"}
+            return {"status": "ok", "message": f"¤°¹» '{path}' ¿µµ¼µ½ в º¾·и½"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def copy_file(self, src: str, dst: str) -> Dict:
-        """¾¿¸¾²° °¹»."""
+        """¾¿и¾в° °¹»."""
         try:
             shutil.copy2(src, dst)
             return {"status": "ok", "src": src, "dst": dst}
@@ -55,7 +55,7 @@ class FileModule:
             return {"status": "error", "message": str(e)}
 
     def move_file(self, src: str, dst: str) -> Dict:
-        """µµ¼µ¸ °¹»."""
+        """µµ¼µи °¹»."""
         try:
             shutil.move(src, dst)
             return {"status": "ok", "src": src, "dst": dst}
@@ -63,7 +63,7 @@ class FileModule:
             return {"status": "error", "message": str(e)}
 
     def create_directory(self, path: str) -> Dict:
-        """¡¾·´° ´¸µº¾¸."""
+        """¡¾·´° ´иµº¾и."""
         try:
             Path(path).mkdir(parents=True, exist_ok=True)
             return {"status": "ok", "path": path}
