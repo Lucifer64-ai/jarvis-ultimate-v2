@@ -1,5 +1,5 @@
 """
-Sensor Manager - £¿°²»µ½¸µ ´°¸º°¼¸ JARVIS
+Sensor Manager - £¿°в»µ½иµ ´°иº°¼и JARVIS
 """
 
 import time
@@ -8,13 +8,13 @@ import logging
 
 
 class SensorManager:
-    """£¿°²»µ½¸µ ´°¸º°¼¸ JARVIS."""
+    """£¿°в»µ½иµ ´°иº°¼и JARVIS."""
 
     def __init__(self, brain):
         self.brain = brain
         self.logger = brain.logger
         
-        # °¸º¸
+        # °иºи
         self.motion_detected = False
         self.distance_cm = 100.0
         self.temperature_c = 20.0
@@ -24,9 +24,9 @@ class SensorManager:
         self.initialized = False
 
     def initialize(self) -> Dict:
-        """½¸¸°»¸·°¸ ´°¸º¾²."""
+        """½ии°»и·°и ´°иº¾в."""
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # import RPi.GPIO as GPIO
             # GPIO.setmode(GPIO.BCM)
             # 
@@ -46,23 +46,23 @@ class SensorManager:
             # self.dht_sensor = adafruit_dht.DHT22(self.dht_pin)
             
             self.initialized = True
-            self.logger.info("°¸º¸ ¸½¸¸°»¸·¸¾²°½")
-            return {"status": "ok", "message": "°¸º¸ ³¾¾² º °±¾µ"}
+            self.logger.info("°иºи и½ии°»и·и¾в°½")
+            return {"status": "ok", "message": "°иºи ³¾¾в º °±¾µ"}
         except Exception as e:
-            self.logger.error(f"¸±º° ¸½¸¸°»¸·°¸¸ ´°¸º¾²: {e}")
+            self.logger.error(f"агента и½ии°»и·°ии ´°иº¾в: {e}")
             return {"status": "error", "message": str(e)}
 
     def read_motion(self) -> bool:
-        """§µ½¸µ ´°¸º° ´²¸¶µ½¸."""
+        """§µ½иµ ´°иº° ´ви¶µ½и."""
         if not self.initialized:
             return False
         
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # self.motion_detected = GPIO.input(self.motion_pin)
             # return self.motion_detected
             
-            # » ´µ¼¾½°¸¸ - »°¹½¾µ ·½°µ½¸µ
+            # » ´µ¼¾½°ии - »°¹½¾µ ·½°µ½иµ
             import random
             self.motion_detected = random.choice([True, False])
             return self.motion_detected
@@ -70,12 +70,12 @@ class SensorManager:
             return False
 
     def read_distance(self) -> float:
-        """§µ½¸µ »°·²º¾²¾³¾ ´°¸º° °¾½¸."""
+        """§µ½иµ »°·вº¾в¾³¾ ´°иº° °¾½и."""
         if not self.initialized:
             return 100.0
         
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # GPIO.output(self.trig_pin, True)
             # time.sleep(0.00001)
             # GPIO.output(self.trig_pin, False)
@@ -88,10 +88,10 @@ class SensorManager:
             #     pulse_end = time.time()
             # 
             # pulse_duration = pulse_end - pulse_start
-            # distance = pulse_duration * 17150  # ¡º¾¾ ·²º°
+            # distance = pulse_duration * 17150  # ¡º¾¾ ·вº°
             # self.distance_cm = round(distance, 2)
             
-            # » ´µ¼¾½°¸¸
+            # » ´µ¼¾½°ии
             import random
             self.distance_cm = random.uniform(10, 200)
             return self.distance_cm
@@ -99,15 +99,15 @@ class SensorManager:
             return 100.0
 
     def read_temperature(self) -> float:
-        """§µ½¸µ µ¼¿µ°."""
+        """§µ½иµ µ¼¿µ°."""
         if not self.initialized:
             return 20.0
         
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # self.temperature_c = self.dht_sensor.temperature
             
-            # » ´µ¼¾½°¸¸
+            # » ´µ¼¾½°ии
             import random
             self.temperature_c = random.uniform(18, 28)
             return round(self.temperature_c, 1)
@@ -115,15 +115,15 @@ class SensorManager:
             return 20.0
 
     def read_humidity(self) -> float:
-        """§µ½¸µ ²»°¶½¾¸."""
+        """§µ½иµ в»°¶½¾и."""
         if not self.initialized:
             return 50.0
         
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # self.humidity_percent = self.dht_sensor.humidity
             
-            # » ´µ¼¾½°¸¸
+            # » ´µ¼¾½°ии
             import random
             self.humidity_percent = random.uniform(30, 70)
             return round(self.humidity_percent, 1)
@@ -131,17 +131,17 @@ class SensorManager:
             return 50.0
 
     def read_light(self) -> int:
-        """§µ½¸µ ´°¸º° ¾²µµ½½¾¸."""
+        """§µ½иµ ´°иº° ¾вµµ½½¾и."""
         if not self.initialized:
             return 500
         
         try:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # import adafruit_mcp3xxx.mcp3008 as MCP
             # from adafruit_mcp3xxx.analog_in import AnalogIn
             # light_value = light.value
             
-            # » ´µ¼¾½°¸¸
+            # » ´µ¼¾½°ии
             import random
             self.light_level = random.randint(0, 1000)
             return self.light_level
@@ -149,7 +149,7 @@ class SensorManager:
             return 500
 
     def get_all_readings(self) -> Dict:
-        """¾»¸ ²µ ¿¾º°·°½¸ ´°¸º¾²."""
+        """¾»и вµ ¿¾º°·°½и ´°иº¾в."""
         return {
             "motion": self.read_motion(),
             "distance_cm": self.read_distance(),
@@ -159,11 +159,11 @@ class SensorManager:
         }
 
     def is_someone_present(self) -> bool:
-        """¾²µ¸ ¿¸²¸µ µ»¾²µº°."""
+        """¾вµи ¿ивиµ µ»¾вµº°."""
         motion = self.read_motion()
         distance = self.read_distance()
         
-        # »¸ µ ´²¸¶µ½¸µ ¸»¸ º¾-¾ ±»¸·º¾
+        # »и µ ´ви¶µ½иµ и»и º¾-¾ ±»и·º¾
         return motion or distance < 100
 
     def get_environment_status(self) -> Dict:
@@ -188,9 +188,9 @@ class SensorManager:
         return status
 
     def cleanup(self):
-        """¸º° µ¾²."""
+        """иº° µ¾в."""
         if self.initialized:
-            #  µ°»½¾¹ µ°»¸·°¸¸:
+            #  µ°»½¾¹ µ°»и·°ии:
             # GPIO.cleanup()
             self.initialized = False
-            self.logger.info("°¸º¸ ¾¸µ½")
+            self.logger.info("°иºи ¾иµ½")
