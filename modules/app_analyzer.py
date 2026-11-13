@@ -1,6 +1,6 @@
 """
-App Analyzer Module - ½°»¸· °½¾²»µ½½ ¿¸»¾¶µ½¸¹ ½° 
-JARVIS º°½¸µ, ¸·°µ ¸ °·±¸°µ ² ¿¸»¾¶µ½¸
+App Analyzer Module - ½°»и· °½¾в»µ½½ голосовые ½° 
+JARVIS º°½иµ, и·°µ и °·±и°µ в голосов
 """
 
 import os
@@ -15,22 +15,22 @@ from datetime import datetime
 
 
 class AppAnalyzer:
-    """¾´» °½°»¸·° ¿¸»¾¶µ½¸¹ ½° ."""
+    """¾´» °½°»и·° голосовые ½° ."""
 
     def __init__(self, brain):
         self.brain = brain
         self.logger = brain.logger
         self.config = brain.config
         
-        # °·° ´°½½ ¿¸»¾¶µ½¸¹
+        # °·° ´°½½ голосовые
         self.apps_db = {}
         self.db_path = Path("data/apps_database.json")
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # °³·º° µ²µ¹ 
+        # °³·º° µвµ¹ 
         self._load_database()
         
-        # ¸ ´» º°½¸¾²°½¸
+        # и ´» º°½и¾в°½и
         self.scan_paths = [
             Path(os.environ.get("PROGRAMFILES", "C:\\Program Files")),
             Path(os.environ.get("PROGRAMFILES(X86)", "C:\\Program Files (x86)")),
@@ -40,10 +40,10 @@ class AppAnalyzer:
             Path(os.environ.get("USERPROFILE", "")),
         ]
         
-        #  °¸µ½¸ ¸¿¾»½µ¼ °¹»¾²
+        #  °иµ½и и¿¾»½µ¼ °¹»¾в
         self.executable_extensions = {".exe", ".msi", ".bat", ".cmd", ".ps1", ".com"}
         
-        #  °¸µ½¸ ´¾º¼µ½¾² ´» °½°»¸·°
+        #  °иµ½и ´¾º¼µ½¾в ´» °½°»и·°
         self.document_extensions = {
             ".txt", ".md", ".json", ".xml", ".yaml", ".yml",
             ".ini", ".cfg", ".conf", ".log",
@@ -51,37 +51,37 @@ class AppAnalyzer:
             ".py", ".js", ".html", ".css", ".java", ".cpp", ".c", ".h"
         }
         
-        self.logger.info("¢ ¾´» °½°»¸·° ¿¸»¾¶µ½¸¹ ¸½¸¸°»¸·¸¾²°½")
+        self.logger.info("¢ ¾´» °½°»и·° голосовые и½ии°»и·и¾в°½")
 
     def _load_database(self):
-        """°³·º° ±°· ´°½½ ¿¸»¾¶µ½¸¹."""
+        """°³·º° ±°· ´°½½ голосовые."""
         try:
             if self.db_path.exists():
                 with open(self.db_path, "r", encoding="utf-8") as f:
                     self.apps_db = json.load(f)
-                self.logger.info(f"°³¶µ½°  ¿¸»¾¶µ½¸¹: {len(self.apps_db)} ·°¿¸µ¹")
+                self.logger.info(f"°³¶µ½°  голосовые: {len(self.apps_db)} ·°¿иµ¹")
             else:
                 self.apps_db = {}
         except Exception as e:
-            self.logger.error(f"¸±º° ·°³·º¸ : {e}")
+            self.logger.error(f"агента ·°³·ºи : {e}")
             self.apps_db = {}
 
     def _save_database(self):
-        """¡¾°½µ½¸µ ±°· ´°½½ ¿¸»¾¶µ½¸¹."""
+        """¡¾°ни½иµ ±°· ´°½½ голосовые."""
         try:
             with open(self.db_path, "w", encoding="utf-8") as f:
                 json.dump(self.apps_db, f, ensure_ascii=False, indent=2, default=str)
         except Exception as e:
-            self.logger.error(f"¸±º° ¾°½µ½¸ : {e}")
+            self.logger.error(f"агента ¾°ни½и : {e}")
 
     # === ¡  ===
 
     def scan_installed_apps(self) -> Dict:
-        """¡º°½¸¾²°½¸µ °½¾²»µ½½ ¿¸»¾¶µ½¸¹ µµ· µµ Windows."""
-        self.logger.info("¡º°½¸¾²°½¸µ °½¾²»µ½½ ¿¸»¾¶µ½¸¹...")
+        """¡º°½и¾в°½иµ °½¾в»µ½½ голосовые µµ· µµ Windows."""
+        self.logger.info("¡º°½и¾в°½иµ °½¾в»µ½½ голосовые...")
         apps = []
         
-        # »¸ µµ° ´» ¿¾¸º°
+        # »и µµ° ´» ¿¾иº°
         registry_keys = [
             (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
             (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"),
@@ -108,9 +108,9 @@ class AppAnalyzer:
                 
                 winreg.CloseKey(key)
             except Exception as e:
-                self.logger.debug(f"¸±º° µ½¸ µµ° {path}: {e}")
+                self.logger.debug(f"агента µ½и µµ° {path}: {e}")
         
-        # ±½¾²»µ½¸µ 
+        # ±½¾в»µ½иµ 
         for app in apps:
             app_id = app.get("name", "").lower().replace(" ", "_")
             self.apps_db[app_id] = {
@@ -121,7 +121,7 @@ class AppAnalyzer:
         
         self._save_database()
         
-        self.logger.info(f"°¹´µ½¾ {len(apps)} °½¾²»µ½½ ¿¸»¾¶µ½¸¹")
+        self.logger.info(f"°¹´µ½¾ {len(apps)} °½¾в»µ½½ голосовые")
         return {
             "status": "ok",
             "count": len(apps),
@@ -129,7 +129,7 @@ class AppAnalyzer:
         }
 
     def _read_registry_app(self, key) -> Optional[Dict]:
-        """§µ½¸µ ¸½¾¼°¸¸ ¾ ¿¸»¾¶µ½¸¸ ¸· µµ°."""
+        """§µ½иµ и½¾¼°ии ¾ голосов¸ и· µµ°."""
         try:
             name = winreg.QueryValueEx(key, "DisplayName")[0]
         except (OSError, FileNotFoundError):
@@ -137,7 +137,7 @@ class AppAnalyzer:
         
         app_info = {"name": name}
         
-        # ¾¿¾»½¸µ»½µ ¿¾»
+        # ¾¿¾»½иµ»½µ ¿¾»
         fields = {
             "DisplayVersion": "version",
             "Publisher": "publisher",
@@ -160,8 +160,8 @@ class AppAnalyzer:
         return app_info
 
     def scan_executables(self, directory: str = None) -> Dict:
-        """¡º°½¸¾²°½¸µ ¸¿¾»½µ¼ °¹»¾² ² ´¸µº¾¸."""
-        self.logger.info("¡º°½¸¾²°½¸µ ¸¿¾»½µ¼ °¹»¾²...")
+        """¡º°½и¾в°½иµ и¿¾»½µ¼ °¹»¾в в ´иµº¾и."""
+        self.logger.info("¡º°½и¾в°½иµ и¿¾»½µ¼ °¹»¾в...")
         executables = []
         
         paths_to_scan = [Path(directory)] if directory else self.scan_paths
@@ -179,16 +179,16 @@ class AppAnalyzer:
             except PermissionError:
                 continue
             except Exception as e:
-                self.logger.debug(f"¸±º° º°½¸¾²°½¸ {scan_path}: {e}")
+                self.logger.debug(f"агента º°½и¾в°½и {scan_path}: {e}")
         
         return {
             "status": "ok",
             "count": len(executables),
-            "executables": executables[:100]  # ³°½¸µ½¸µ
+            "executables": executables[:100]  # ³°½иµ½иµ
         }
 
     def _analyze_executable(self, path: Path) -> Optional[Dict]:
-        """½°»¸· ¸¿¾»½µ¼¾³¾ °¹»°."""
+        """½°»и· и¿¾»½µ¼¾³¾ °¹»°."""
         try:
             stat = path.stat()
             
@@ -202,7 +202,7 @@ class AppAnalyzer:
                 "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
             }
             
-            # µ¸ °¹»° (Windows)
+            # µи °¹»° (Windows)
             try:
                 import win32api
                 version_info = win32api.GetFileVersionInfo(str(path), "\\")
@@ -217,21 +217,21 @@ class AppAnalyzer:
             return info
             
         except Exception as e:
-            self.logger.debug(f"¸±º° °½°»¸·° {path}: {e}")
+            self.logger.debug(f"агента °½°»и·° {path}: {e}")
             return None
 
     # ===   ¯ ===
 
     def analyze_app(self, app_name: str) -> Dict:
-        """»±¾º¸¹ °½°»¸· º¾½ºµ½¾³¾ ¿¸»¾¶µ½¸."""
-        self.logger.info(f"½°»¸· ¿¸»¾¶µ½¸: {app_name}")
+        """»±¾ºи¹ °½°»и· º¾½ºµ½¾³¾ голосов."""
+        self.logger.info(f"½°»и· голосов: {app_name}")
         
         app_id = app_name.lower().replace(" ", "_")
         
-        # ¾¸º ² 
+        # ¾иº в 
         app_data = self.apps_db.get(app_id)
         if not app_data:
-            # ¾¸º ¿¾ °¸½¾¼ ¾²¿°´µ½¸
+            # ¾иº ¿¾ °и½¾¼ ¾в¿°´µ½и
             for key, value in self.apps_db.items():
                 if app_name.lower() in key or app_name.lower() in value.get("name", "").lower():
                     app_data = value
@@ -239,38 +239,38 @@ class AppAnalyzer:
                     break
         
         if not app_data:
-            return {"status": "error", "message": f"¸»¾¶µ½¸µ '{app_name}' ½µ ½°¹´µ½¾"}
+            return {"status": "error", "message": f"и»¾¶µ½иµ '{app_name}' ни ½°¹´µ½¾"}
         
-        # »±¾º¸¹ °½°»¸·
+        # »±¾ºи¹ °½°»и·
         analysis = {
             "name": app_data.get("name", app_name),
-            "version": app_data.get("version", "½µ¸·²µ½¾"),
-            "publisher": app_data.get("publisher", "½µ¸·²µ½¾"),
+            "version": app_data.get("version", "нии·вµ½¾"),
+            "publisher": app_data.get("publisher", "нии·вµ½¾"),
             "install_path": app_data.get("install_path", ""),
             "size_kb": app_data.get("size_kb", 0),
-            "install_date": app_data.get("install_date", "½µ¸·²µ½¾"),
+            "install_date": app_data.get("install_date", "нии·вµ½¾"),
         }
         
-        # ½°»¸· °¹»¾² ¿¸»¾¶µ½¸
+        # ½°»и· °¹»¾в голосов
         if analysis["install_path"] and Path(analysis["install_path"]).exists():
             analysis["files"] = self._analyze_app_files(Path(analysis["install_path"]))
         
-        # ½°»¸· ¿¾µ¾²
+        # ½°»и· ¿¾µ¾в
         analysis["running"] = self._is_app_running(app_name)
         if analysis["running"]:
             analysis["processes"] = self._get_app_processes(app_name)
         
-        # ½°»¸· µ¾²
+        # ½°»и· µ¾в
         if analysis["running"] and analysis.get("processes"):
             analysis["resource_usage"] = self._get_app_resource_usage(analysis["processes"])
         
-        # °µ³¾¸·°¸
+        # °µ³¾и·°и
         analysis["category"] = self._categorize_app(app_name, app_data)
         
-        # ¿¸°½¸µ
+        # ¿и°½иµ
         analysis["description"] = self._generate_app_description(analysis)
         
-        # ±½¾²»µ½¸µ 
+        # ±½¾в»µ½иµ 
         self.apps_db[app_id] = {
             **app_data,
             "analyzed": True,
@@ -282,7 +282,7 @@ class AppAnalyzer:
         return {"status": "ok", "analysis": analysis}
 
     def _analyze_app_files(self, app_path: Path) -> Dict:
-        """½°»¸· °¹»¾² ¿¸»¾¶µ½¸."""
+        """½°»и· °¹»¾в голосов."""
         files_info = {
             "total_files": 0,
             "total_size_mb": 0,
@@ -311,13 +311,13 @@ class AppAnalyzer:
                         files_info["executables"].append(str(item.relative_to(app_path)))
         
         except Exception as e:
-            self.logger.debug(f"¸±º° °½°»¸·° °¹»¾² {app_path}: {e}")
+            self.logger.debug(f"агента °½°»и·° °¹»¾в {app_path}: {e}")
         
         files_info["total_size_mb"] = round(files_info["total_size_mb"], 2)
         return files_info
 
     def _is_app_running(self, app_name: str) -> bool:
-        """¾²µº°, ·°¿µ½¾ »¸ ¿¸»¾¶µ½¸µ."""
+        """¾вµº°, ·°¿µ½¾ »и голосовµ."""
         app_lower = app_name.lower()
         for proc in psutil.process_iter(["name"]):
             try:
@@ -328,7 +328,7 @@ class AppAnalyzer:
         return False
 
     def _get_app_processes(self, app_name: str) -> List[Dict]:
-        """¾»µ½¸µ ¸½¾¼°¸¸ ¾ ¿¾µ° ¿¸»¾¶µ½¸."""
+        """¾»µ½иµ и½¾¼°ии ¾ ¿¾µ° голосов."""
         processes = []
         app_lower = app_name.lower()
         
@@ -349,7 +349,7 @@ class AppAnalyzer:
         return processes
 
     def _get_app_resource_usage(self, processes: List[Dict]) -> Dict:
-        """¾»µ½¸µ ¸¿¾»·¾²°½¸ µ¾² ¿¸»¾¶µ½¸µ¼."""
+        """¾»µ½иµ и¿¾»·¾в°½и µ¾в голосовµ¼."""
         total_cpu = 0.0
         total_memory_mb = 0.0
         
@@ -368,7 +368,7 @@ class AppAnalyzer:
         }
 
     def _categorize_app(self, app_name: str, app_data: Dict) -> str:
-        """°µ³¾¸·°¸ ¿¸»¾¶µ½¸."""
+        """°µ³¾и·°и голосов."""
         name_lower = app_name.lower()
         
         categories = {
@@ -391,29 +391,29 @@ class AppAnalyzer:
         return "other"
 
     def _generate_app_description(self, analysis: Dict) -> str:
-        """µ½µ°¸ ¾¿¸°½¸ ¿¸»¾¶µ½¸."""
-        name = analysis.get("name", "µ¸·²µ½¾µ")
-        version = analysis.get("version", "½µ¸·²µ½¾")
-        publisher = analysis.get("publisher", "½µ¸·²µ½¾")
+        """µни°и ¾¿и°½и голосов."""
+        name = analysis.get("name", "µи·вµ½¾µ")
+        version = analysis.get("version", "нии·вµ½¾")
+        publisher = analysis.get("publisher", "нии·вµ½¾")
         category = analysis.get("category", "other")
         
         category_names = {
-            "browser": "²µ±-±°·µ",
+            "browser": "вµ±-±°·µ",
             "messenger": "¼µµ½´¶µ",
-            "editor": "µº¾²¹ µ´°º¾ / IDE",
-            "media": "¼µ´¸°-¿¸»¾¶µ½¸µ",
-            "game": "¸³¾²° ¿»°¾¼°",
-            "dev": "¸½¼µ½ °·°±¾º¸",
-            "office": "¾¸½¾µ ¿¸»¾¶µ½¸µ",
-            "security": "¸µ¼° ±µ·¾¿°½¾¸",
-            "system": "¸µ¼½° ¸»¸°",
-            "cloud": "¾±»°½¾µ °½¸»¸µ",
-            "other": "¿¸»¾¶µ½¸µ"
+            "editor": "µº¾в¹ µ´°º¾ / IDE",
+            "media": "¼µ´и°-голосовµ",
+            "game": "и³¾в° ¿»°¾¼°",
+            "dev": "и½¼µ½ °·°±¾ºи",
+            "office": "¾и½¾µ голосовµ",
+            "security": "иµ¼° ±µ·¾¿°½¾и",
+            "system": "иµ¼½° и»и°",
+            "cloud": "¾±»°½¾µ °½и»иµ",
+            "other": "голосовµ"
         }
         
-        cat_name = category_names.get(category, "¿¸»¾¶µ½¸µ")
+        cat_name = category_names.get(category, "голосовµ")
         
-        desc = f"{name} (²µ¸ {version}) ¢ ¾ {cat_name} ¾ {publisher}."
+        desc = f"{name} (вµи {version}) ¢ ¾ {cat_name} ¾ {publisher}."
         
         if analysis.get("running"):
             usage = analysis.get("resource_usage", {})
@@ -421,17 +421,17 @@ class AppAnalyzer:
         
         files = analysis.get("files", {})
         if files.get("total_files"):
-            desc += f" ¡¾´µ¶¸ {files['total_files']} °¹»¾² ({files.get('total_size_mb', 0)} )."
+            desc += f" ¡¾´µ¶и {files['total_files']} °¹»¾в ({files.get('total_size_mb', 0)} )."
         
         return desc
 
     # === £   ¯ ===
 
     def launch_app(self, app_name: str) -> Dict:
-        """°¿º ¿¸»¾¶µ½¸."""
-        self.logger.info(f"°¿º ¿¸»¾¶µ½¸: {app_name}")
+        """°¿º голосов."""
+        self.logger.info(f"°¿º голосов: {app_name}")
         
-        # ¾¸º ² 
+        # ¾иº в 
         app_id = app_name.lower().replace(" ", "_")
         app_data = self.apps_db.get(app_id)
         
@@ -442,41 +442,41 @@ class AppAnalyzer:
                     break
         
         if not app_data:
-            return {"status": "error", "message": f"¸»¾¶µ½¸µ '{app_name}' ½µ ½°¹´µ½¾"}
+            return {"status": "error", "message": f"и»¾¶µ½иµ '{app_name}' ни ½°¹´µ½¾"}
         
-        # ¾¸º ¸¿¾»½µ¼¾³¾ °¹»°
+        # ¾иº и¿¾»½µ¼¾³¾ °¹»°
         exe_path = None
         install_path = app_data.get("install_path", "")
         
         if install_path and Path(install_path).exists():
-            # ¾¸º ¾½¾²½¾³¾ exe
+            # ¾иº ¾½¾в½¾³¾ exe
             for exe in Path(install_path).rglob("*.exe"):
                 if app_name.lower().split()[0] in exe.stem.lower():
                     exe_path = str(exe)
                     break
             
             if not exe_path:
-                # µ¼ ¿µ²¹ exe
+                # µ¼ ¿µв¹ exe
                 for exe in Path(install_path).rglob("*.exe"):
                     exe_path = str(exe)
                     break
         
         if not exe_path:
-            return {"status": "error", "message": "¿¾»½µ¼¹ °¹» ½µ ½°¹´µ½"}
+            return {"status": "error", "message": "¿¾»½µ¼¹ °¹» ни ½°¹´µ½"}
         
         try:
             subprocess.Popen([exe_path], shell=True)
             return {
                 "status": "ok",
-                "message": f"¸»¾¶µ½¸µ {app_name} ·°¿µ½¾",
+                "message": f"и»¾¶µ½иµ {app_name} ·°¿µ½¾",
                 "path": exe_path
             }
         except Exception as e:
-            return {"status": "error", "message": f"¸±º° ·°¿º°: {e}"}
+            return {"status": "error", "message": f"агента ·°¿º°: {e}"}
 
     def close_app(self, app_name: str) -> Dict:
-        """°º¸µ ¿¸»¾¶µ½¸."""
-        self.logger.info(f"°º¸µ ¿¸»¾¶µ½¸: {app_name}")
+        """°ºиµ голосов."""
+        self.logger.info(f"°ºиµ голосов: {app_name}")
         
         closed = []
         app_lower = app_name.lower()
@@ -493,16 +493,16 @@ class AppAnalyzer:
         if closed:
             return {
                 "status": "ok",
-                "message": f"°º¾ ¿¾µ¾²: {len(closed)}",
+                "message": f"°º¾ ¿¾µ¾в: {len(closed)}",
                 "processes": closed
             }
         
-        return {"status": "error", "message": f"¸»¾¶µ½¸µ '{app_name}' ½µ ·°¿µ½¾"}
+        return {"status": "error", "message": f"и»¾¶µ½иµ '{app_name}' ни ·°¿µ½¾"}
 
     # === ¢§¢« ===
 
     def get_full_report(self) -> Dict:
-        """¾»½¹ ¾ ¾ ²µ ¿¸»¾¶µ½¸."""
+        """¾»½¹ ¾ ¾ вµ голосов."""
         if not self.apps_db:
             self.scan_installed_apps()
         
@@ -532,7 +532,7 @@ class AppAnalyzer:
         }
 
     def _get_top_apps_by_size(self, limit: int = 10) -> List[Dict]:
-        """¢¾¿ ¿¸»¾¶µ½¸¹ ¿¾ °·¼µ."""
+        """¢¾¿ голосовые ¿¾ °·¼µ."""
         apps_with_size = []
         
         for app_id, app_data in self.apps_db.items():
@@ -548,17 +548,17 @@ class AppAnalyzer:
         return apps_with_size[:limit]
 
     def format_report_message(self, report: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ ¾° ² ¾¾±µ½¸µ."""
+        """¤¾¼°и¾в°½иµ ¾° в ¾¾±µ½иµ."""
         if report["status"] != "ok":
-            return "µ ´°»¾ ¿¾»¸ ¾"
+            return "µ ´°»¾ ¿¾»и ¾"
         
-        msg = f"°  ¿¾ ¿¸»¾¶µ½¸¼:\n\n"
+        msg = f"°  ¿¾ голосов¼:\n\n"
         msg += f"µ³¾: {report['total_apps']}\n"
-        msg += f"¾°½°»¸·¸¾²°½¾: {report['analyzed']}\n"
+        msg += f"¾°½°»и·и¾в°½¾: {report['analyzed']}\n"
         msg += f"°¿µ½¾ µ¹°: {report['running']}\n"
-        msg += f"±¸¹ °·¼µ: {report['total_size_mb']} \n\n"
+        msg += f"±и¹ °·¼µ: {report['total_size_mb']} \n\n"
         
-        msg += "°µ³¾¸¸:\n"
+        msg += "°µ³¾ии:\n"
         for cat, count in sorted(report["categories"].items(), key=lambda x: x[1], reverse=True):
             msg += f"  ¢¢ {cat}: {count}\n"
         
@@ -570,16 +570,16 @@ class AppAnalyzer:
         return msg
 
     def format_analysis_message(self, analysis: Dict) -> str:
-        """¤¾¼°¸¾²°½¸µ °½°»¸·° ¿¸»¾¶µ½¸."""
+        """¤¾¼°и¾в°½иµ °½°»и·° голосов."""
         if analysis.get("status") != "ok":
-            return analysis.get("message", "¸±º° °½°»¸·°")
+            return analysis.get("message", "агента °½°»и·°")
         
         a = analysis["analysis"]
-        msg = f"° ½°»¸·: {a['name']}\n\n"
+        msg = f"° ½°»и·: {a['name']}\n\n"
         msg += f"{a['description']}\n\n"
-        msg += f"µ¸: {a['version']}\n"
+        msg += f"µи: {a['version']}\n"
         msg += f"·´°µ»: {a['publisher']}\n"
-        msg += f"°µ³¾¸: {a['category']}\n"
+        msg += f"°µ³¾и: {a['category']}\n"
         
         if a.get("running"):
             usage = a.get("resource_usage", {})
