@@ -1,6 +1,6 @@
 """
 3D Avatar Module - ¾»¾³°¸µº¸¹ °²°° JARVIS
- µ°³¸µ ½° ³¾»¾ ¸ º¾¼°½´ ¿¾»·¾²°µ»
+ µ°³¸µ на ³¾»¾ ¸ команд ¿¾»·¾²°µ»
 """
 
 import sys
@@ -21,7 +21,7 @@ class HolographicAvatar(QWidget):
         self.brain = brain
         self.logger = brain.logger
         
-        # ¡¾¾½¸µ °²°°°
+        # ¡¾¾½¸µ работ
         self.state = "idle"  # idle, listening, speaking, thinking, processing
         self.voice_level = 0.0
         self.rotation_angle = 0.0
@@ -39,13 +39,13 @@ class HolographicAvatar(QWidget):
         self.animation_timer.timeout.connect(self.update_animation)
         self.animation_timer.start(16)  # ~60 FPS
         
-        # °¾¹º° ¾º½°
+        # °¾¹º° ¾ºна
         self.setup_window()
         
-        self.logger.info("¢ 3D °²°° ¸½¸¸°»¸·¸¾²°½")
+        self.logger.info("¢ 3D °²°° ¸½¸¸°»из¸¾²°½")
 
     def setup_window(self):
-        """°¾¹º° ¿¾·°½¾³¾ ¾º½°."""
+        """°¾¹º° ¿¾·°½¾³¾ ¾ºна."""
         self.setWindowFlags(
             Qt.FramelessWindowHint |
             Qt.WindowStaysOnTopHint |
@@ -60,27 +60,27 @@ class HolographicAvatar(QWidget):
         self.setWindowOpacity(0.85)
 
     def paintEvent(self, event):
-        """¸¾²º° ³¾»¾³°¸µº¾³¾ °²°°°."""
+        """¸¾²º° ³¾»¾³°¸µº¾³¾ работ."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         
-        # ¦µ½ °²°°°
+        # ¦µ½ работ
         center_x = self.width // 2
         center_y = self.height // 2
         
         # === ¡  £¡ (Arc Reactor ¸») ===
         
-        # ½µ½µµ º¾»¾
+        # ниниµ º¾»¾
         outer_radius = 150
         self.draw_ring(painter, center_x, center_y, outer_radius, 20, 
                       QColor(0, 200, 255, 100), self.rotation_angle)
         
-        # ¡µ´½µµ º¾»¾
+        # ¡µ´ниµ º¾»¾
         middle_radius = 120
         self.draw_ring(painter, center_x, center_y, middle_radius, 15,
                       QColor(0, 255, 255, 150), -self.rotation_angle * 1.5)
         
-        # ½µ½½µµ º¾»¾
+        # ½µ½ниµ º¾»¾
         inner_radius = 90
         self.draw_ring(painter, center_x, center_y, inner_radius, 10,
                       QColor(100, 255, 255, 200), self.rotation_angle * 2)
@@ -148,7 +148,7 @@ class HolographicAvatar(QWidget):
 
     def draw_energy_lines(self, painter: QPainter, cx: int, cy: int, 
                           inner_r: int, outer_r: int):
-        """¸¾²º° ½µ³µ¸µº¸ »¸½¸¹."""
+        """¸¾²º° ни³µ¸µº¸ »¸½¸¹."""
         lines = 8
         for i in range(lines):
             angle = i * (360 / lines) + self.rotation_angle * 3
@@ -233,44 +233,44 @@ class HolographicAvatar(QWidget):
     # === £§« ¢« ===
 
     def set_state(self, state: str):
-        """£°½¾²º° ¾¾½¸ °²°°°."""
+        """£°½¾²º° ¾¾½¸ работ."""
         if state in ["idle", "listening", "speaking", "thinking", "processing"]:
             self.state = state
-            self.logger.debug(f"²°°: ¾¾½¸µ -> {state}")
+            self.logger.debug(f"раб: ¾¾½¸µ -> {state}")
 
     def set_voice_level(self, level: float):
         """£°½¾²º° ¾²½ ³¾»¾° (0.0 - 1.0)."""
         self.voice_level = max(0.0, min(1.0, level))
 
     def set_energy_level(self, level: float):
-        """£°½¾²º° ¾²½ ½µ³¸¸ (0.0 - 1.0)."""
+        """£°½¾²º° ¾²½ ни³¸¸ (0.0 - 1.0)."""
         self.energy_level = max(0.0, min(1.0, level))
 
     def show_avatar(self):
         """¾º°·° °²°°."""
         self.show()
-        self.logger.info("²°° ¿¾º°·°½")
+        self.logger.info("раб ¿¾º°·°½")
 
     def hide_avatar(self):
         """¡º °²°°."""
         self.hide()
-        self.logger.info("²°° º")
+        self.logger.info("раб º")
 
     def move_to_position(self, x: int, y: int):
-        """µµ¼µµ½¸µ °²°°°."""
+        """µµ¼µµ½¸µ работ."""
         self.position_x = x
         self.position_y = y
         self.move(x, y)
 
     def resize_avatar(self, width: int, height: int):
-        """·¼µ½µ½¸µ °·¼µ° °²°°°."""
+        """·¼µни½¸µ °·¼µ° работ."""
         self.width = width
         self.height = height
         self.setFixedSize(width, height)
 
 
 class AvatarManager:
-    """µ½µ´¶µ ¿°²»µ½¸ 3D °²°°¾¼."""
+    """µни´¶µ ¿°²»µ½¸ 3D °²°°¾¼."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -281,28 +281,28 @@ class AvatarManager:
         self.running = False
 
     def initialize(self):
-        """½¸¸°»¸·°¸ °²°°° ² ¾´µ»½¾¼ ¿¾¾ºµ."""
+        """½¸¸°»из°¸ работ ² ¾´µ»½¾¼ ¿¾¾ºµ."""
         if self.running:
-            self.logger.warning("²°° ¶µ ·°¿µ½")
+            self.logger.warning("раб ¶µ ·°¿µ½")
             return
         
         self.running = True
         self.thread = threading.Thread(target=self._run_avatar_thread, daemon=True)
         self.thread.start()
         
-        # ¶¸´°½¸µ ¸½¸¸°»¸·°¸¸
+        # ¶¸´°½¸µ ¸½¸¸°»из°¸¸
         time.sleep(0.5)
         
-        self.logger.info("¢ µ½µ´¶µ °²°°° ·°¿µ½")
+        self.logger.info("¢ µни´¶µ работ ·°¿µ½")
 
     def _run_avatar_thread(self):
-        """¾¾º ´» ·°¿º° Qt ¿¸»¾¶µ½¸."""
+        """¾¾º для ·°¿º° Qt ¿¸»¾¶µ½¸."""
         try:
             self.app = QApplication(sys.argv)
             self.avatar = HolographicAvatar(self.brain)
             self.app.exec_()
         except Exception as e:
-            self.logger.error(f"¸±º° ² ¿¾¾ºµ °²°°°: {e}")
+            self.logger.error(f"агента ² ¿¾¾ºµ работ: {e}")
         finally:
             self.running = False
 
@@ -310,18 +310,18 @@ class AvatarManager:
         """¾º°·° °²°°."""
         if self.avatar:
             self.avatar.show_avatar()
-            return {"status": "ok", "message": "²°° ¿¾º°·°½"}
-        return {"status": "error", "message": "²°° ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "ok", "message": "раб ¿¾º°·°½"}
+        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
 
     def hide(self):
         """¡º °²°°."""
         if self.avatar:
             self.avatar.hide_avatar()
-            return {"status": "ok", "message": "²°° º"}
-        return {"status": "error", "message": "²°° ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "ok", "message": "раб º"}
+        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
 
     def set_state(self, state: str):
-        """£°½¾²¸ ¾¾½¸µ °²°°°."""
+        """£°½¾²¸ ¾¾½¸µ работ."""
         if self.avatar:
             self.avatar.set_state(state)
 
@@ -334,18 +334,18 @@ class AvatarManager:
         """µµ¼µ¸ °²°°."""
         if self.avatar:
             self.avatar.move_to_position(x, y)
-            return {"status": "ok", "message": f"²°° ¿µµ¼µ½ ² ({x}, {y})"}
-        return {"status": "error", "message": "²°° ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "ok", "message": f"раб ¿µµ¼µ½ ² ({x}, {y})"}
+        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
 
     def resize(self, width: int, height: int):
-        """·¼µ½¸ °·¼µ °²°°°."""
+        """·¼µ½¸ °·¼µ работ."""
         if self.avatar:
             self.avatar.resize_avatar(width, height)
-            return {"status": "ok", "message": f" °·¼µ ¸·¼µ½½ ½° {width}x{height}"}
-        return {"status": "error", "message": "²°° ½µ ¸½¸¸°»¸·¸¾²°½"}
+            return {"status": "ok", "message": f" °·¼µ из¼µ½½ на {width}x{height}"}
+        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
 
     def get_status(self) -> Dict:
-        """¾»¸ ° °²°°°."""
+        """ошибки ° работ."""
         if self.avatar:
             return {
                 "status": "ok",
@@ -356,11 +356,11 @@ class AvatarManager:
                 "position": (self.avatar.position_x, self.avatar.position_y),
                 "size": (self.avatar.width, self.avatar.height)
             }
-        return {"status": "error", "message": "²°° ½µ ¸½¸¸°»¸·¸¾²°½"}
+        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
 
     def stop(self):
-        """°½¾²º° °²°°°."""
+        """°½¾²º° работ."""
         if self.app:
             self.app.quit()
         self.running = False
-        self.logger.info("²°° ¾°½¾²»µ½")
+        self.logger.info("раб ¾°½¾²»µ½")
