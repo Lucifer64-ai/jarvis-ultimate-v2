@@ -1,5 +1,5 @@
 """
-¡¸µ¼° ¾±¸¹ JARVIS
+¡иµ¼° ¾±и¹ JARVIS
 """
 
 from typing import Dict, List, Callable
@@ -8,7 +8,7 @@ import threading
 
 
 class EventBus:
-    """¨¸½° ¾±¸¹ ´» ²·¸ ¼µ¶´ ¼¾´»¼¸."""
+    """¨и½° ¾±и¹ ´» в·и ¼µ¶´ ¼¾´»¼и."""
 
     def __init__(self):
         self._listeners: Dict[str, List[Callable]] = defaultdict(list)
@@ -29,7 +29,7 @@ class EventBus:
 
 
     def publish(self, event_type: str, data: Dict = None):
-        """»¸° ´» emit() - ¿±»¸º°¸ ¾±¸."""
+        """»¸° для emit() - ¿±»¸º°¸ ¾±¸."""
         self.emit(event_type, data)
 
     def process_events(self):
@@ -42,7 +42,7 @@ class EventBus:
                 try:
                     listener(event["data"])
                 except Exception as e:
-                    print(f"¸±º° ¾±°±¾¸º° ¾±¸: {e}")
+                    print(f"и±º° ¾±°±¾иº° ¾±и: {e}")
 
     def clear(self):
         self._listeners.clear()
