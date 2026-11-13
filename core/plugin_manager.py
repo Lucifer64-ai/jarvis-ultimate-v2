@@ -1,5 +1,5 @@
 """
-µ½µ´¶µ ¿»°³¸½¾² JARVIS
+µ½µ´¶µ ¿»°³и½¾в JARVIS
 """
 
 import importlib
@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 
 
 class PluginManager:
-    """°³·º° ¸ ¿°²»µ½¸µ ¿»°³¸½°¼¸."""
+    """°³·º° и ¿°в»µ½иµ ¿»°³и½°¼и."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -44,17 +44,17 @@ class PluginManager:
             if hasattr(module, "setup"):
                 plugin = module.setup(self.brain)
                 self.loaded[name] = plugin
-                self.brain.logger.info(f"»°³¸½ '{name}' ·°³¶µ½")
+                self.brain.logger.info(f"»°³и½ '{name}' ·°³¶µ½")
                 return {"status": "ok", "name": name}
             else:
-                return {"status": "error", "message": "»°³¸½ ½µ ¸¼µµ ½º¸¸ setup()"}
+                return {"status": "error", "message": "»°³и½ ½µ и¼µµ ½ºии setup()"}
         except Exception as e:
-            self.brain.logger.error(f"¸±º° ·°³·º¸ ¿»°³¸½° {name}: {e}")
+            self.brain.logger.error(f"и±º° ·°³·ºи ¿»°³и½° {name}: {e}")
             return {"status": "error", "message": str(e)}
 
 
     def load_plugins(self) -> List[Dict]:
-        """°³·¸ ²µ ¾±½°¶µ½½µ ¿»°³¸½."""
+        """°³·и вµ ¾±½°¶µ½½µ ¿»°³и½."""
         results = []
         plugins = self.discover_plugins()
         for name in plugins:
@@ -69,7 +69,7 @@ class PluginManager:
                 plugin.shutdown()
             del self.loaded[name]
             return {"status": "ok"}
-        return {"status": "error", "message": "»°³¸½ ½µ ·°³¶µ½"}
+        return {"status": "error", "message": "»°³и½ ½µ ·°³¶µ½"}
 
     def list_plugins(self) -> List[Dict]:
         available = self.discover_plugins()
