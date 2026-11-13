@@ -1,5 +1,5 @@
 """
-WebSocket µ²µ JARVIS ´» real-time ¾±½¾²»µ½¸¹
+WebSocket µ²µ JARVIS для real-time ¾±½¾²»µ½¸¹
 """
 
 import asyncio
@@ -10,7 +10,7 @@ import threading
 
 
 class WebSocketServer:
-    """WebSocket µ²µ ´» real-time ²·¸."""
+    """WebSocket µ²µ для real-time ²·¸."""
 
     def __init__(self, brain):
         self.brain = brain
