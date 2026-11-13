@@ -1,5 +1,5 @@
 """
-¡¸½µ· µ¸ JARVIS
+¡и½µ· µи JARVIS
 """
 
 import pyttsx3
@@ -7,7 +7,7 @@ from typing import Optional
 
 
 class VoiceSpeaker:
-    """¡¸½µ· µ¸."""
+    """¡и½µ· µи."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -26,18 +26,18 @@ class VoiceSpeaker:
                 break
 
     def speak(self, text: str):
-        """¾¸·½µ¸ µº."""
+        """¾и·½µи µº."""
         try:
-            self.brain.logger.info(f"¾²¾: {text}")
+            self.brain.logger.info(f"¾в¾: {text}")
             self.engine.say(text)
             self.engine.runAndWait()
         except Exception as e:
-            self.brain.logger.error(f"¸±º° ¸½µ·° µ¸: {e}")
+            self.brain.logger.error(f"и±º° и½µ·° µи: {e}")
 
     def set_rate(self, rate: int):
-        """£°½¾²¸ º¾¾ µ¸."""
+        """£°½¾ви º¾¾ µи."""
         self.engine.setProperty('rate', rate)
 
     def set_volume(self, volume: float):
-        """£°½¾²¸ ³¾¼º¾."""
+        """£°½¾ви ³¾¼º¾."""
         self.engine.setProperty('volume', volume)
