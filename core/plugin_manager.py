@@ -1,5 +1,5 @@
 """
-µ½µ´¶µ ¿»°³и½¾в JARVIS
+Менеджер плагинов JARVIS
 """
 
 import importlib
@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 
 
 class PluginManager:
-    """°³·º° и ¿°в»µ½иµ ¿»°³и½°¼и."""
+    """Загрузка и управление плагинами."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -44,17 +44,17 @@ class PluginManager:
             if hasattr(module, "setup"):
                 plugin = module.setup(self.brain)
                 self.loaded[name] = plugin
-                self.brain.logger.info(f"»°³и½ '{name}' ·°³¶µ½")
+                self.brain.logger.info(f"Плагин '{name}' загружен")
                 return {"status": "ok", "name": name}
             else:
-                return {"status": "error", "message": "»°³и½ ½µ и¼µµ ½ºии setup()"}
+                return {"status": "error", "message": "Плагин не имеет функции setup()"}
         except Exception as e:
-            self.brain.logger.error(f"и±º° ·°³·ºи ¿»°³и½° {name}: {e}")
+            self.brain.logger.error(f"Ошибка загрузки плагина {name}: {e}")
             return {"status": "error", "message": str(e)}
 
 
     def load_plugins(self) -> List[Dict]:
-        """°³·и вµ ¾±½°¶µ½½µ ¿»°³и½."""
+        """Загружает все обнаруженные плагины."""
         results = []
         plugins = self.discover_plugins()
         for name in plugins:
@@ -69,7 +69,7 @@ class PluginManager:
                 plugin.shutdown()
             del self.loaded[name]
             return {"status": "ok"}
-        return {"status": "error", "message": "»°³и½ ½µ ·°³¶µ½"}
+        return {"status": "error", "message": "Плагин не загружен"}
 
     def list_plugins(self) -> List[Dict]:
         available = self.discover_plugins()
