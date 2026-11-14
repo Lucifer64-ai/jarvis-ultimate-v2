@@ -1,5 +1,5 @@
 """
-Windows Toast ²µ´¾¼»µ½¸
+Windows Toast Уведомления
 """
 
 from typing import Dict, Optional
@@ -7,7 +7,7 @@ import logging
 
 
 class ToastNotifications:
-    """°¸²½µ Windows ²µ´¾¼»µ½¸."""
+    """Всплывающие Windows уведомления."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -15,10 +15,10 @@ class ToastNotifications:
         self.app_name = "JARVIS"
 
     def show_toast(self, title: str, message: str, icon: str = None) -> Dict:
-        """¾º°·° toast ²µ´¾¼»µ½¸µ."""
+        """Показать toast уведомление."""
         try:
             from win10toast import ToastNotifier
-            
+
             toaster = ToastNotifier()
             toaster.show_toast(
                 title,
@@ -27,30 +27,30 @@ class ToastNotifications:
                 duration=5,
                 threaded=True
             )
-            
+
             self.logger.info(f"Toast: {title} - {message}")
-            return {"status": "ok", "message": "£²µ´¾¼»µ½¸µ ¿¾º°·°½¾"}
-        
+            return {"status": "ok", "message": "Уведомление показано"}
+
         except ImportError:
-            self.logger.warning("win10toast ни °½¾²»µ½. £°½¾²¸µ: pip install win10toast")
-            return {"status": "error", "message": "win10toast ни °½¾²»µ½"}
-        
+            self.logger.warning("win10toast не установлен. Установка: pip install win10toast")
+            return {"status": "error", "message": "win10toast не установлен"}
+
         except Exception as e:
-            self.logger.error(f"агента ¿¾º°·° ²µ´¾¼»µ½¸: {e}")
+            self.logger.error(f"Ошибка показа уведомления: {e}")
             return {"status": "error", "message": str(e)}
 
     def show_info(self, message: str) -> Dict:
-        """½¾¼°¸¾½½¾µ ²µ´¾¼»µ½¸µ."""
+        """Информационное уведомление."""
         return self.show_toast("JARVIS", message)
 
     def show_warning(self, message: str) -> Dict:
-        """µ´¿µ¶´µ½¸µ."""
-        return self.show_toast("JARVIS - µ´¿µ¶´µ½¸µ", message)
+        """Предупреждение."""
+        return self.show_toast("JARVIS - Предупреждение", message)
 
     def show_error(self, message: str) -> Dict:
-        """агента."""
-        return self.show_toast("JARVIS - агента", message)
+        """Ошибка."""
+        return self.show_toast("JARVIS - Ошибка", message)
 
     def show_success(self, message: str) -> Dict:
-        """£¿µ."""
-        return self.show_toast("JARVIS - £¿µ½¾", message)
+        """Успех."""
+        return self.show_toast("JARVIS - Успешно", message)
