@@ -1,5 +1,5 @@
 """
-Wake Word µ²¸ - ¾½¾²¾µ ¿¾»¸²°½¸µ "¶°²¸"
+Wake Word Сервис - фоновое распознавание "Джарвис"
 """
 
 import threading
@@ -10,92 +10,92 @@ import logging
 
 
 class WakeWordService:
-    """¡µ²¸ ¾½¾²¾³¾ ¿¾»¸²°½¸ wake word."""
+    """Сервис фонового распознавания wake word."""
 
     def __init__(self, brain):
         self.brain = brain
         self.logger = brain.logger
-        self.wake_word = brain.config.get("voice.wake_word", "´¶°²¸")
+        self.wake_word = brain.config.get("voice.wake_word", "джарвис")
         self.running = False
         self.thread: Optional[threading.Thread] = None
         self.callback: Optional[Callable] = None
 
     def start(self, callback: Callable = None) -> Dict:
-        """°¿º µ²¸°."""
+        """Запуск сервиса."""
         if self.running:
-            return {"status": "error", "message": "¡µ²¸ ¶µ ·°¿µ½"}
-        
+            return {"status": "error", "message": "Сервис уже запущен"}
+
         self.callback = callback
         self.running = True
-        
+
         self.thread = threading.Thread(target=self._listen_loop, daemon=True)
         self.thread.start()
-        
-        self.logger.info(f"Wake word µ²¸ ·°¿µ½. ¡»° '{self.wake_word}'")
-        return {"status": "ok", "message": f"¡»° '{self.wake_word}'"}
+
+        self.logger.info(f"Wake word сервис запущен. Слушаю '{self.wake_word}'")
+        return {"status": "ok", "message": f"Слушаю '{self.wake_word}'"}
 
     def stop(self) -> Dict:
-        """°½¾²º° µ²¸°."""
+        """Остановка сервиса."""
         if not self.running:
-            return {"status": "error", "message": "¡µ²¸ ни ·°¿µ½"}
-        
+            return {"status": "error", "message": "Сервис не запущен"}
+
         self.running = False
-        
+
         if self.thread:
             self.thread.join(timeout=2)
-        
-        self.logger.info("Wake word µ²¸ ¾°½¾²»µ½")
-        return {"status": "ok", "message": "¡µ²¸ ¾°½¾²»µ½"}
+
+        self.logger.info("Wake word сервис остановлен")
+        return {"status": "ok", "message": "Сервис остановлен"}
 
     def _listen_loop(self):
-        """¦¸º» ¿¾»¸²°½¸."""
+        """Цикл распознавания."""
         try:
             import speech_recognition as sr
-            
+
             recognizer = sr.Recognizer()
             microphone = sr.Microphone()
-            
-            self.logger.info("Wake word: ¼¸º¾¾½ ¸½¸¸°»из¸¾²°½")
-            
+
+            self.logger.info("Wake word: микрофон инициализирован")
+
             while self.running:
                 try:
                     with microphone as source:
                         recognizer.adjust_for_ambient_noise(source, duration=0.5)
                         audio = recognizer.listen(source, timeout=1, phrase_time_limit=2)
-                    
-                    #  °¿¾·на²°½¸µ
+
+                    # Распознавание
                     try:
                         text = recognizer.recognize_google(audio, language="ru-RU")
                         text_lower = text.lower().strip()
-                        
-                        # ¾²µº° wake word
+
+                        # Проверка wake word
                         if self.wake_word in text_lower:
-                            self.logger.info(f"Wake word ¾±на¶µ½: {text}")
-                            
+                            self.logger.info(f"Wake word обнаружен: {text}")
+
                             if self.callback:
                                 self.callback(text)
-                    
+
                     except sr.UnknownValueError:
-                        pass  # µ °¿¾·на½¾
+                        pass  # Не распознано
                     except sr.RequestError as e:
-                        self.logger.error(f"агента °¿¾·на²°½¸: {e}")
-                
+                        self.logger.error(f"Ошибка распознавания: {e}")
+
                 except Exception as e:
-                    # ¢°¹¼° ¸»¸ ´³° ¾¸±º° - ¿¾´¾»¶°µ¼
+                    # Таймаут или другая ошибка - продолжаем
                     pass
-                
+
                 time.sleep(0.1)
-        
+
         except Exception as e:
-            self.logger.error(f"агента wake word µ²¸°: {e}")
+            self.logger.error(f"Ошибка wake word сервиса: {e}")
 
     def is_running(self) -> bool:
-        """¾²µ¸, ·°¿µ½ »¸ µ²¸."""
+        """Проверить, запущен ли сервис."""
         return self.running
 
     def set_wake_word(self, wake_word: str) -> Dict:
-        """£°½¾²¸ wake word."""
+        """Установить wake word."""
         self.wake_word = wake_word.lower().strip()
         self.brain.config.set("voice.wake_word", self.wake_word)
-        self.logger.info(f"Wake word °½¾²»µ½: {self.wake_word}")
+        self.logger.info(f"Wake word изменён: {self.wake_word}")
         return {"status": "ok", "message": f"Wake word: {self.wake_word}"}
