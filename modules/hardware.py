@@ -1,5 +1,5 @@
 """
-½¾¼°¸ ¾ ¶µ»µ·µ JARVIS
+Информация о железе JARVIS
 """
 
 import psutil
@@ -8,13 +8,13 @@ from typing import Dict
 
 
 class HardwareModule:
-    """¾½¸¾¸½³ ¾±¾´¾²°½¸."""
+    """Мониторинг оборудования."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def get_cpu_info(self) -> Dict:
-        """½¾¼°¸ ¾ ¿¾µ¾µ."""
+        """Информация о процессоре."""
         cpu = cpuinfo.get_cpu_info()
         return {
             "brand": cpu.get('brand_raw', 'Unknown'),
@@ -24,7 +24,7 @@ class HardwareModule:
         }
 
     def get_memory_info(self) -> Dict:
-        """½¾¼°¸ ¾ ¿°¼¸."""
+        """Информация о памяти."""
         mem = psutil.virtual_memory()
         return {
             "total": round(mem.total / (1024**3), 2),
@@ -34,7 +34,7 @@ class HardwareModule:
         }
 
     def get_disk_info(self) -> Dict:
-        """½¾¼°¸ ¾ ´¸º°."""
+        """Информация о дисках."""
         disks = []
         for partition in psutil.disk_partitions():
             try:
@@ -52,7 +52,7 @@ class HardwareModule:
         return disks
 
     def get_full_report(self) -> Dict:
-        """¾»½¹ ¾ ¾ ¸µ¼µ."""
+        """Полный отчёт о системе."""
         return {
             "cpu": self.get_cpu_info(),
             "memory": self.get_memory_info(),
