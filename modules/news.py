@@ -1,5 +1,5 @@
 """
-News Module - ¾»µ½¸µ ½¾²¾µ¹
+News Module - Получение новостей
 """
 
 import requests
@@ -8,32 +8,32 @@ import logging
 
 
 class NewsModule:
-    """¾´» для ¿¾»µ½¸ ½¾²¾µ¹."""
+    """Модуль для получения новостей."""
 
     def __init__(self, brain):
         self.brain = brain
         self.logger = brain.logger
         self.api_key = brain.config.get_env("NEWS_API_KEY")
         self.base_url = "https://newsapi.org/v2"
-        
-        # 
+
+        # Кэш
         self.cache = {}
-        self.cache_timeout = 900  # 15 ¼¸½
+        self.cache_timeout = 900  # 15 минут
 
     def get_top_headlines(self, country: str = "ru", category: str = "general", page_size: int = 5) -> Dict:
-        """ошибки ³»°²½µ ½¾²¾¸."""
+        """Получить главные новости."""
         if not self.api_key:
-            return {"status": "error", "message": "API º» NewsAPI ни на¾µ½"}
-        
+            return {"status": "error", "message": "API ключ NewsAPI не настроен"}
+
         try:
-            # ¾²µº° º°
+            # Проверка кэша
             cache_key = f"news_{country}_{category}"
             if cache_key in self.cache:
                 import time
                 if time.time() - self.cache[cache_key]["time"] < self.cache_timeout:
                     return self.cache[cache_key]["data"]
-            
-            # °¿¾ º API
+
+            # Запрос к API
             url = f"{self.base_url}/top-headlines"
             params = {
                 "country": country,
@@ -41,11 +41,11 @@ class NewsModule:
                 "pageSize": page_size,
                 "apiKey": self.api_key
             }
-            
+
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-            
+
             articles = []
             for article in data.get("articles", []):
                 articles.append({
@@ -55,61 +55,61 @@ class NewsModule:
                     "url": article.get("url", ""),
                     "published_at": article.get("publishedAt", "")
                 })
-            
+
             result = {
                 "status": "ok",
                 "total": data.get("totalResults", 0),
                 "articles": articles
             }
-            
-            # ¡¾°ни½¸µ ² º
+
+            # Сохранение в кэш
             import time
             self.cache[cache_key] = {
                 "data": result,
                 "time": time.time()
             }
-            
+
             return result
-            
+
         except Exception as e:
-            self.logger.error(f"агента ¿¾»µ½¸ ½¾²¾µ¹: {e}")
+            self.logger.error(f"Ошибка получения новостей: {e}")
             return {"status": "error", "message": str(e)}
 
     def get_tech_news(self, page_size: int = 5) -> Dict:
-        """ошибки ½¾²¾¸ µ½¾»¾³¸¹."""
+        """Получить новости технологий."""
         return self.get_top_headlines(country="ru", category="technology", page_size=page_size)
 
     def get_business_news(self, page_size: int = 5) -> Dict:
-        """ошибки ±изни ½¾²¾¸."""
+        """Получить бизнес новости."""
         return self.get_top_headlines(country="ru", category="business", page_size=page_size)
 
     def get_sports_news(self, page_size: int = 5) -> Dict:
-        """ошибки ¿¾¸²½µ ½¾²¾¸."""
+        """Получить спортивные новости."""
         return self.get_top_headlines(country="ru", category="sports", page_size=page_size)
 
     def format_news_message(self, news: Dict, max_items: int = 3) -> str:
-        """¤¾¼°¸¾²°½¸µ ½¾²¾µ¹ ² ¾¾±µ½¸µ."""
+        """Форматирование новостей в сообщение."""
         if news["status"] != "ok":
             return news["message"]
-        
+
         if not news["articles"]:
-            return "¾²¾¸ ни на¹´µ½"
-        
-        message = f"»°²½µ ½¾²¾¸ ({news['total']} ²µ³¾):\n\n"
-        
+            return "Новости не найдены"
+
+        message = f"Главные новости ({news['total']} всего):\n\n"
+
         for i, article in enumerate(news["articles"][:max_items], 1):
             message += f"{i}. {article['title']}\n"
             if article['description']:
                 message += f"   {article['description'][:100]}...\n"
-            message += f"   ¾½¸º: {article['source']}\n\n"
-        
+            message += f"   Источник: {article['source']}\n\n"
+
         return message
 
     def search_news(self, query: str, page_size: int = 5) -> Dict:
-        """¾¸º ½¾²¾µ¹ ¿¾ ·°¿¾."""
+        """Поиск новостей по запросу."""
         if not self.api_key:
-            return {"status": "error", "message": "API º» NewsAPI ни на¾µ½"}
-        
+            return {"status": "error", "message": "API ключ NewsAPI не настроен"}
+
         try:
             url = f"{self.base_url}/everything"
             params = {
@@ -118,11 +118,11 @@ class NewsModule:
                 "sortBy": "publishedAt",
                 "apiKey": self.api_key
             }
-            
+
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
-            
+
             articles = []
             for article in data.get("articles", []):
                 articles.append({
@@ -131,13 +131,13 @@ class NewsModule:
                     "source": article.get("source", {}).get("name", ""),
                     "url": article.get("url", "")
                 })
-            
+
             return {
                 "status": "ok",
                 "total": data.get("totalResults", 0),
                 "articles": articles
             }
-            
+
         except Exception as e:
-            self.logger.error(f"агента ¿¾¸º° ½¾²¾µ¹: {e}")
+            self.logger.error(f"Ошибка поиска новостей: {e}")
             return {"status": "error", "message": str(e)}
