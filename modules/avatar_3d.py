@@ -1,6 +1,6 @@
 """
-3D Avatar Module - ¾»¾³°¸µº¸¹ °²°° JARVIS
- µ°³¸µ на ³¾»¾ ¸ команд ¿¾»·¾²°µ»
+3D Avatar Module - Голографический аватар JARVIS
+Реагирует на голос и команды пользователя
 """
 
 import sys
@@ -14,38 +14,38 @@ from PyQt5.QtGui import QPainter, QColor, QPen, QBrush, QRadialGradient, QLinear
 
 
 class HolographicAvatar(QWidget):
-    """¾»¾³°¸µº¸¹ 3D °²°° JARVIS."""
+    """Голографический 3D аватар JARVIS."""
 
     def __init__(self, brain):
         super().__init__()
         self.brain = brain
         self.logger = brain.logger
-        
-        # ¡¾¾½¸µ работ
+
+        # Состояния работы
         self.state = "idle"  # idle, listening, speaking, thinking, processing
         self.voice_level = 0.0
         self.rotation_angle = 0.0
         self.pulse_phase = 0.0
         self.energy_level = 0.5
-        
-        # °¾¹º¸ ¾¾±°¶µ½¸
+
+        # Настройки отображения
         self.width = 400
         self.height = 400
         self.position_x = 100
         self.position_y = 100
-        
-        # ½¸¼°¸
+
+        # Анимации
         self.animation_timer = QTimer(self)
         self.animation_timer.timeout.connect(self.update_animation)
         self.animation_timer.start(16)  # ~60 FPS
-        
-        # °¾¹º° ¾ºна
+
+        # Настройка окна
         self.setup_window()
-        
-        self.logger.info("¢ 3D °²°° ¸½¸¸°»из¸¾²°½")
+
+        self.logger.info("⚡ 3D аватар инициализирован")
 
     def setup_window(self):
-        """°¾¹º° ¿¾·°½¾³¾ ¾ºна."""
+        """Настройка прозрачного окна."""
         self.setWindowFlags(
             Qt.FramelessWindowHint |
             Qt.WindowStaysOnTopHint |
@@ -53,224 +53,224 @@ class HolographicAvatar(QWidget):
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
-        
+
         self.setGeometry(self.position_x, self.position_y, self.width, self.height)
-        
-        # ¾·°½¾
+
+        # Прозрачность
         self.setWindowOpacity(0.85)
 
     def paintEvent(self, event):
-        """¸¾²º° ³¾»¾³°¸µº¾³¾ работ."""
+        """Отрисовка голографического аватара."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        
-        # ¦µ½ работ
+
+        # Центр аватара
         center_x = self.width // 2
         center_y = self.height // 2
-        
-        # === ¡  £¡ (Arc Reactor ¸») ===
-        
-        # ниниµ º¾»¾
+
+        # === ВНЕШНИЕ КОЛЬЦА (Arc Reactor стиль) ===
+
+        # Внешнее кольцо
         outer_radius = 150
         self.draw_ring(painter, center_x, center_y, outer_radius, 20, 
                       QColor(0, 200, 255, 100), self.rotation_angle)
-        
-        # ¡µ´ниµ º¾»¾
+
+        # Белое кольцо
         middle_radius = 120
         self.draw_ring(painter, center_x, center_y, middle_radius, 15,
                       QColor(0, 255, 255, 150), -self.rotation_angle * 1.5)
-        
-        # ½µ½ниµ º¾»¾
+
+        # Внутреннее кольцо
         inner_radius = 90
         self.draw_ring(painter, center_x, center_y, inner_radius, 10,
                       QColor(100, 255, 255, 200), self.rotation_angle * 2)
-        
-        # === ¯  (¿»¸¸¹ µ½) ===
-        
-        # »°¸ ´°
+
+        # === ЯДРО (пульсирующий центр) ===
+
+        # Размер пульсации
         pulse_size = 60 + math.sin(self.pulse_phase) * 10
-        
-        # °´¸µ½ ´°
+
+        # Радиальный градиент
         gradient = QRadialGradient(center_x, center_y, pulse_size)
         gradient.setColorAt(0, QColor(255, 255, 255, 255))
         gradient.setColorAt(0.3, QColor(100, 255, 255, 200))
         gradient.setColorAt(0.7, QColor(0, 200, 255, 150))
         gradient.setColorAt(1, QColor(0, 100, 200, 0))
-        
+
         painter.setBrush(QBrush(gradient))
         painter.setPen(Qt.NoPen)
         painter.drawEllipse(center_x - pulse_size, center_y - pulse_size,
                            pulse_size * 2, pulse_size * 2)
-        
-        # === ­ ¢§¡  ===
-        
+
+        # === ЭНЕРГЕТИЧЕСКИЕ ЛИНИИ ===
+
         self.draw_energy_lines(painter, center_x, center_y, inner_radius, outer_radius)
-        
-        # === ¢  ¡ ===
-        
+
+        # === ИНДИКАТОР ГОЛОСА ===
+
         if self.voice_level > 0.1:
             self.draw_voice_indicator(painter, center_x, center_y, outer_radius + 30)
-        
-        # === ¢¡¢ ¡¡¢¯¯ ===
-        
+
+        # === ТЕКСТ СОСТОЯНИЯ ===
+
         self.draw_state_text(painter, center_x, self.height - 50)
-        
+
         painter.end()
 
     def draw_ring(self, painter: QPainter, cx: int, cy: int, radius: int, 
                   thickness: int, color: QColor, rotation: float):
-        """¸¾²º° ²°°µ³¾ º¾»°."""
+        """Отрисовка вращающегося кольца."""
         painter.save()
         painter.translate(cx, cy)
         painter.rotate(rotation)
-        
-        # ¡µ³¼µ½ º¾»°
+
+        # Сегменты кольца
         segments = 12
         for i in range(segments):
             angle = i * (360 / segments)
             painter.save()
             painter.rotate(angle)
-            
-            # °´¸µ½ µ³¼µ½°
+
+            # Радиальный градиент сегмента
             gradient = QLinearGradient(0, -radius, 0, -radius + thickness)
             gradient.setColorAt(0, color)
             gradient.setColorAt(1, QColor(color.red(), color.green(), color.blue(), 0))
-            
+
             painter.setBrush(QBrush(gradient))
             painter.setPen(Qt.NoPen)
-            
-            #  ¸µ¼ µ³¼µ½
+
+            # Рисуем сегмент
             painter.drawRoundedRect(-thickness // 2, -radius, thickness, thickness, 3, 3)
-            
+
             painter.restore()
-        
+
         painter.restore()
 
     def draw_energy_lines(self, painter: QPainter, cx: int, cy: int, 
                           inner_r: int, outer_r: int):
-        """¸¾²º° ни³µ¸µº¸ »¸½¸¹."""
+        """Отрисовка энергетических линий."""
         lines = 8
         for i in range(lines):
             angle = i * (360 / lines) + self.rotation_angle * 3
             rad = math.radians(angle)
-            
+
             x1 = cx + math.cos(rad) * inner_r
             y1 = cy + math.sin(rad) * inner_r
             x2 = cx + math.cos(rad) * outer_r
             y2 = cy + math.sin(rad) * outer_r
-            
-            # °´¸µ½ »¸½¸¸
+
+            # Радиальный градиент линии
             gradient = QLinearGradient(x1, y1, x2, y2)
             gradient.setColorAt(0, QColor(0, 255, 255, 200))
             gradient.setColorAt(1, QColor(0, 255, 255, 0))
-            
+
             pen = QPen(QBrush(gradient), 2)
             painter.setPen(pen)
             painter.drawLine(int(x1), int(y1), int(x2), int(y2))
 
     def draw_voice_indicator(self, painter: QPainter, cx: int, cy: int, radius: int):
-        """¸¾²º° ¸½´¸º°¾° ³¾»¾°."""
-        # ¾»½ ³¾»¾°
+        """Отрисовка индикатора голоса."""
+        # Волны голоса
         waves = 3
         for i in range(waves):
             wave_radius = radius + i * 15
             alpha = int(200 * (1 - i / waves) * self.voice_level)
-            
+
             pen = QPen(QColor(0, 255, 255, alpha))
             pen.setWidth(3)
             painter.setPen(pen)
             painter.setBrush(Qt.NoBrush)
-            
+
             painter.drawEllipse(cx - wave_radius, cy - wave_radius,
                                wave_radius * 2, wave_radius * 2)
 
     def draw_state_text(self, painter: QPainter, x: int, y: int):
-        """¸¾²º° µº° ¾¾½¸."""
+        """Отрисовка текста состояния."""
         state_texts = {
-            "idle": "¢",
-            "listening": "¡£¨®...",
-            "speaking": " ®...",
-            "thinking": "£®...",
-            "processing": " ¢..."
+            "idle": "ОЖИДАНИЕ",
+            "listening": "СЛУШАЮ...",
+            "speaking": "ГОВОРЮ...",
+            "thinking": "ДУМАЮ...",
+            "processing": "ОБРАБОТКА..."
         }
-        
-        text = state_texts.get(self.state, "¢")
-        
+
+        text = state_texts.get(self.state, "ОЖИДАНИЕ")
+
         font = painter.font()
         font.setPointSize(12)
         font.setBold(True)
         painter.setFont(font)
-        
-        # ¢µ½ µº°
+
+        # Тень текста
         painter.setPen(QColor(0, 0, 0, 150))
         painter.drawText(x + 1, y + 1, text)
-        
-        # ½¾²½¾¹ µº
+
+        # Основной текст
         painter.setPen(QColor(0, 255, 255, 255))
         painter.drawText(x, y, text)
 
     def update_animation(self):
-        """±½¾²»µ½¸µ °½¸¼°¸¸."""
-        # °µ½¸µ
+        """Обновление анимации."""
+        # Вращение
         self.rotation_angle += 1.0
         if self.rotation_angle >= 360:
             self.rotation_angle = 0
-        
-        # »°¸
+
+        # Пульсация
         self.pulse_phase += 0.1
         if self.pulse_phase >= 2 * math.pi:
             self.pulse_phase = 0
-        
-        # °°½¸µ ³¾»¾°
+
+        # Затухание голоса
         if self.voice_level > 0:
             self.voice_level -= 0.05
             if self.voice_level < 0:
                 self.voice_level = 0
-        
-        # µµ¸¾²º°
+
+        # Перерисовка
         self.update()
 
-    # === £§« ¢« ===
+    # === УПРАВЛЕНИЕ АВАТАРОМ ===
 
     def set_state(self, state: str):
-        """£°½¾²º° ¾¾½¸ работ."""
+        """Установка состояния аватара."""
         if state in ["idle", "listening", "speaking", "thinking", "processing"]:
             self.state = state
-            self.logger.debug(f"раб: ¾¾½¸µ -> {state}")
+            self.logger.debug(f"Аватар: состояние -> {state}")
 
     def set_voice_level(self, level: float):
-        """£°½¾²º° ¾²½ ³¾»¾° (0.0 - 1.0)."""
+        """Установка уровня голоса (0.0 - 1.0)."""
         self.voice_level = max(0.0, min(1.0, level))
 
     def set_energy_level(self, level: float):
-        """£°½¾²º° ¾²½ ни³¸¸ (0.0 - 1.0)."""
+        """Установка уровня энергии (0.0 - 1.0)."""
         self.energy_level = max(0.0, min(1.0, level))
 
     def show_avatar(self):
-        """¾º°·° °²°°."""
+        """Показать аватар."""
         self.show()
-        self.logger.info("раб ¿¾º°·°½")
+        self.logger.info("Аватар показан")
 
     def hide_avatar(self):
-        """¡º °²°°."""
+        """Скрыть аватар."""
         self.hide()
-        self.logger.info("раб º")
+        self.logger.info("Аватар скрыт")
 
     def move_to_position(self, x: int, y: int):
-        """µµ¼µµ½¸µ работ."""
+        """Перемещение аватара."""
         self.position_x = x
         self.position_y = y
         self.move(x, y)
 
     def resize_avatar(self, width: int, height: int):
-        """·¼µни½¸µ °·¼µ° работ."""
+        """Изменение размера аватара."""
         self.width = width
         self.height = height
         self.setFixedSize(width, height)
 
 
 class AvatarManager:
-    """µни´¶µ ¿°²»µ½¸ 3D °²°°¾¼."""
+    """Менеджер управления 3D аватаром."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -281,86 +281,53 @@ class AvatarManager:
         self.running = False
 
     def initialize(self):
-        """½¸¸°»из°¸ работ ² ¾´µ»½¾¼ ¿¾¾ºµ."""
+        """Инициализация аватара в отдельном потоке."""
         if self.running:
-            self.logger.warning("раб ¶µ ·°¿µ½")
+            self.logger.warning("Аватар уже запущен")
             return
-        
+
         self.running = True
         self.thread = threading.Thread(target=self._run_avatar_thread, daemon=True)
         self.thread.start()
-        
-        # ¶¸´°½¸µ ¸½¸¸°»из°¸¸
+
+        # Ожидание инициализации
         time.sleep(0.5)
-        
-        self.logger.info("¢ µни´¶µ работ ·°¿µ½")
+
+        self.logger.info("⚡ Менеджер аватара запущен")
 
     def _run_avatar_thread(self):
-        """¾¾º для ·°¿º° Qt ¿¸»¾¶µ½¸."""
+        """Поток для запуска Qt приложения."""
         try:
             self.app = QApplication(sys.argv)
             self.avatar = HolographicAvatar(self.brain)
             self.app.exec_()
         except Exception as e:
-            self.logger.error(f"агента ² ¿¾¾ºµ работ: {e}")
-        finally:
+            self.logger.error(f"Ошибка потока аватара: {e}")
             self.running = False
 
-    def show(self):
-        """¾º°·° °²°°."""
-        if self.avatar:
-            self.avatar.show_avatar()
-            return {"status": "ok", "message": "раб ¿¾º°·°½"}
-        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
-
-    def hide(self):
-        """¡º °²°°."""
-        if self.avatar:
-            self.avatar.hide_avatar()
-            return {"status": "ok", "message": "раб º"}
-        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
-
     def set_state(self, state: str):
-        """£°½¾²¸ ¾¾½¸µ работ."""
+        """Установка состояния аватара."""
         if self.avatar:
             self.avatar.set_state(state)
 
     def set_voice_level(self, level: float):
-        """£°½¾²¸ ¾²µ½ ³¾»¾°."""
+        """Установка уровня голоса."""
         if self.avatar:
             self.avatar.set_voice_level(level)
 
-    def move(self, x: int, y: int):
-        """µµ¼µ¸ °²°°."""
+    def show(self):
+        """Показать аватар."""
         if self.avatar:
-            self.avatar.move_to_position(x, y)
-            return {"status": "ok", "message": f"раб ¿µµ¼µ½ ² ({x}, {y})"}
-        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
+            self.avatar.show_avatar()
 
-    def resize(self, width: int, height: int):
-        """·¼µ½¸ °·¼µ работ."""
+    def hide(self):
+        """Скрыть аватар."""
         if self.avatar:
-            self.avatar.resize_avatar(width, height)
-            return {"status": "ok", "message": f" °·¼µ из¼µ½½ на {width}x{height}"}
-        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
+            self.avatar.hide_avatar()
 
-    def get_status(self) -> Dict:
-        """ошибки ° работ."""
-        if self.avatar:
-            return {
-                "status": "ok",
-                "running": self.running,
-                "state": self.avatar.state,
-                "voice_level": self.avatar.voice_level,
-                "energy_level": self.avatar.energy_level,
-                "position": (self.avatar.position_x, self.avatar.position_y),
-                "size": (self.avatar.width, self.avatar.height)
-            }
-        return {"status": "error", "message": "раб ни ¸½¸¸°»из¸¾²°½"}
-
-    def stop(self):
-        """°½¾²º° работ."""
+    def shutdown(self):
+        """Остановка аватара."""
+        self.running = False
         if self.app:
             self.app.quit()
-        self.running = False
-        self.logger.info("раб ¾°½¾²»µ½")
+        self.logger.info("Аватар остановлен")
