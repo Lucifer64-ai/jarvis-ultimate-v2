@@ -1,5 +1,5 @@
 """
-голосовые ¿¾µ°¼¸ JARVIS
+Управление процессами JARVIS
 """
 
 import psutil
@@ -7,13 +7,13 @@ from typing import Dict, List
 
 
 class ProcessModule:
-    """голосовые ¿¾µ°¼¸ ¸µ¼."""
+    """Управление процессами системы."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def list_processes(self, limit: int = 20) -> List[Dict]:
-        """¡¿¸¾º ·°¿µ½½ ¿¾µ¾²."""
+        """Список запущенных процессов."""
         processes = []
         for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
             try:
@@ -30,7 +30,7 @@ class ProcessModule:
         return processes[:limit]
 
     def kill_process(self, name: str) -> Dict:
-        """°²µ¸ ¿¾µ ¿¾ ¸¼µ½¸."""
+        """Завершение процессов по имени."""
         killed = []
         for proc in psutil.process_iter(['name']):
             try:
@@ -42,10 +42,10 @@ class ProcessModule:
 
         if killed:
             return {"status": "ok", "killed": killed}
-        return {"status": "error", "message": f"¾µ '{name}' ни на¹´µ½"}
+        return {"status": "error", "message": f"Процесс '{name}' не найден"}
 
     def get_process_info(self, name: str) -> Dict:
-        """½¾¼°¸ ¾ ¿¾µµ."""
+        """Информация о процессе."""
         for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status']):
             try:
                 if name.lower() in proc.info['name'].lower():
@@ -62,4 +62,4 @@ class ProcessModule:
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
 
-        return {"status": "error", "message": f"¾µ '{name}' ни на¹´µ½"}
+        return {"status": "error", "message": f"Процесс '{name}' не найден"}
