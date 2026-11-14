@@ -1,5 +1,5 @@
 """
-¡ºи¿ °½¾вºи º¾½µº½¾³¾ ¼µ½ ¿¾в¾´½иº° Windows
+Скрипт установки контекстного меню JARVIS в проводнике Windows
 """
 
 import winreg
@@ -9,34 +9,34 @@ from pathlib import Path
 
 
 def install_context_menu():
-    """£°½¾вº° º¾½µº½¾³¾ ¼µ½."""
+    """Установка контекстного меню."""
     try:
-        #  º JARVIS
+        # Путь к JARVIS
         jarvis_path = sys.executable
-        
-        # » °¹»¾в
+
+        # Для файлов
         file_key = r"*\shell\JARVIS"
         with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, file_key) as key:
-            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "JARVIS - º °¹»")
+            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "JARVIS - открыть файл")
             winreg.SetValueEx(key, "Icon", 0, winreg.REG_SZ, jarvis_path)
-        
+
         with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, rf"{file_key}\command") as key:
             winreg.SetValueEx(key, "", 0, winreg.REG_SZ, f'"{jarvis_path}" open "%1"')
-        
-        # » ¿°¿¾º
+
+        # Для папок
         folder_key = r"Directory\shell\JARVIS"
         with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, folder_key) as key:
-            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "JARVIS - º ¿°¿º")
+            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "JARVIS - открыть папку")
             winreg.SetValueEx(key, "Icon", 0, winreg.REG_SZ, jarvis_path)
-        
+
         with winreg.CreateKey(winreg.HKEY_CLASSES_ROOT, rf"{folder_key}\command") as key:
             winreg.SetValueEx(key, "", 0, winreg.REG_SZ, f'"{jarvis_path}" open "%1"')
-        
-        print("¾½µº½¾µ ¼µ½ °½¾в»µ½¾ ¿µ½¾")
+
+        print("Контекстное меню JARVIS успешно установлено в систему")
         return 0
-    
+
     except Exception as e:
-        print(f"и±º° °½¾вºи º¾½µº½¾³¾ ¼µ½: {e}")
+        print(f"Ошибка установки контекстного меню: {e}")
         return 1
 
 
