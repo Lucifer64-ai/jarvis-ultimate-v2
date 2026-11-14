@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      Alert.alert('¸±º°', '°¿¾»½¸µ ²µ ¿¾»');
+      Alert.alert('Ошибка', 'Заполните все поля');
       return;
     }
 
@@ -20,10 +20,10 @@ export default function LoginScreen({ navigation }) {
       if (success) {
         navigation.replace('Home');
       } else {
-        Alert.alert('¸±º°', 'µ²µ½µ µ½µ ´°½½µ');
+        Alert.alert('Ошибка', 'Неверные учетные данные');
       }
     } catch (error) {
-      Alert.alert('¸±º°', 'µ ´°»¾ ¿¾´º»¸ º µ²µ');
+      Alert.alert('Ошибка', 'Не удалось подключиться к серверу');
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.card}>
         <Text style={styles.title}>J.A.R.V.I.S</Text>
         <Text style={styles.subtitle}>Mobile Control</Text>
-        
+
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
           onChangeText={setUsername}
           autoCapitalize="none"
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -52,14 +52,14 @@ export default function LoginScreen({ navigation }) {
           onChangeText={setPassword}
           secureTextEntry
         />
-        
+
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleLogin}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? '¾´º»µ½¸µ...' : '¾¹¸'}
+            {loading ? 'Подключение...' : 'Войти'}
           </Text>
         </TouchableOpacity>
       </View>
