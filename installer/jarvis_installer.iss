@@ -31,7 +31,7 @@ WizardStyle=modern
 ; Visual Settings
 ; WizardImageFile=assets\jarvis_installer.bmp  ; ¤°¹» ¾вµ
 ; WizardSmallImageFile=assets\jarvis_installer_small.bmp  ; ¤°¹» ¾вµ
-SetupIconFile=..\assets\jarvis.ico
+; SetupIconFile=..\assets\jarvis.ico  ; Файл jarvis.ico отсутствует
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 ; Privilege & Architecture
