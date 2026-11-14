@@ -1,5 +1,5 @@
 """
-¡иµ¼° и³³µ¾в JARVIS
+Система триггеров JARVIS
 """
 
 from typing import Dict, List, Callable
@@ -8,7 +8,7 @@ import time
 
 
 class TriggerManager:
-    """£¿°в»µ½иµ и³³µ°¼и."""
+    """Управление триггерами."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -16,48 +16,48 @@ class TriggerManager:
         self.running = False
 
     def add_trigger(self, name: str, condition: Callable, action: Callable):
-        """¾±°ви и³³µ."""
+        """Добавить триггер."""
         self.triggers[name] = {
             "condition": condition,
             "action": action,
             "active": True
         }
-        self.brain.logger.info(f"¢и³³µ '{name}' ´¾±°в»µ½")
+        self.brain.logger.info(f"Триггер '{name}' добавлен")
         return {"status": "ok", "name": name}
 
     def remove_trigger(self, name: str):
-        """£´°»и и³³µ."""
+        """Удалить триггер."""
         if name in self.triggers:
             del self.triggers[name]
             return {"status": "ok"}
-        return {"status": "error", "message": "¢и³³µ ни ½°¹´µ½"}
+        return {"status": "error", "message": "Триггер не найден"}
 
     def list_triggers(self) -> List[str]:
-        """¡¿и¾º и³³µ¾в."""
+        """Список триггеров."""
         return list(self.triggers.keys())
 
     def start(self):
-        """°¿º ¿¾вµºи и³³µ¾в."""
+        """Запуск проверки триггеров."""
         self.running = True
         thread = threading.Thread(target=self._run, daemon=True)
         thread.start()
 
     def _run(self):
-        """½¾в½¾¹ иº» ¿¾вµºи и³³µ¾в."""
+        """Основной цикл проверки триггеров."""
         while self.running:
             for name, trigger in self.triggers.items():
                 if not trigger["active"]:
                     continue
-                
+
                 try:
                     if trigger["condition"]():
-                        self.brain.logger.info(f"¢и³³µ '{name}' °±¾°»")
+                        self.brain.logger.info(f"Триггер '{name}' сработал")
                         trigger["action"]()
                 except Exception as e:
-                    self.brain.logger.error(f"агента и³³µ° '{name}': {e}")
-            
+                    self.brain.logger.error(f"Ошибка триггера '{name}': {e}")
+
             time.sleep(5)
 
     def stop(self):
-        """°½¾вº° ¿¾вµºи и³³µ¾в."""
+        """Остановка проверки триггеров."""
         self.running = False
