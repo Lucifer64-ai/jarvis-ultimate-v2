@@ -227,11 +227,11 @@ class JarvisBrain:
         elif module_name == "app":
             if self.app_launcher:
                 if method_name == "open_notepad":
-                    return self.app_launcher.launch_app("блокнот")
+                    return self.app_launcher.launch("блокнот")
                 elif method_name == "open_calculator":
-                    return self.app_launcher.launch_app("калькулятор")
+                    return self.app_launcher.launch("калькулятор")
                 elif method_name == "open_browser":
-                    return self.app_launcher.launch_app("браузер")
+                    return self.app_launcher.launch("браузер")
             return {"status": "error", "message": "Модуль app недоступен"}
 
         elif module_name == "process":
@@ -410,12 +410,12 @@ class JarvisBrain:
 
         if any(word in text_lower for word in ["запусти", "открой"]):
             if self.app_launcher:
-                return self.app_launcher.launch_app(text_lower)
+                return self.app_launcher.launch(text_lower)
             return {"status": "error", "message": "Модуль запуска приложений недоступен"}
 
         if any(word in text_lower for word in ["убери", "очисти"]):
             if self.clean_desktop:
-                return self.clean_desktop.clean_desktop()
+                return self.clean_desktop.enable_clean_mode()
             return {"status": "error", "message": "Модуль очистки рабочего стола недоступен"}
 
         return {"status": "ok", "message": "Команда не распознана", "text": text}
