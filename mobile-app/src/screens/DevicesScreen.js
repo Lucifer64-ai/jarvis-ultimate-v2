@@ -16,7 +16,7 @@ export default function DevicesScreen() {
       const data = await ApiService.getDevices(token);
       setDevices(data.devices || []);
     } catch (error) {
-      Alert.alert('¸±º°', 'µ ´°»¾ ·°³·¸ ¾¹²°');
+      Alert.alert('Ошибка', 'Не удалось загрузить устройства');
     }
   };
 
@@ -26,7 +26,7 @@ export default function DevicesScreen() {
       await ApiService.controlDevice(token, entityId, action);
       loadDevices();
     } catch (error) {
-      Alert.alert('¸±º°', 'µ ´°»¾ ¿°²» ¾¹²¾¼');
+      Alert.alert('Ошибка', 'Не удалось управлять устройством');
     }
   };
 
@@ -43,7 +43,7 @@ export default function DevicesScreen() {
         onPress={() => toggleDevice(item.entity_id, item.state)}
       >
         <Text style={styles.toggleText}>
-          {item.state === 'on' ? 'ON' : 'OFF'}
+          {item.state === 'on' ? 'ВКЛ' : 'ВЫКЛ'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -56,7 +56,7 @@ export default function DevicesScreen() {
         keyExtractor={(item) => item.entity_id}
         renderItem={renderItem}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>£¾¹²° ½µ ½°¹´µ½</Text>
+          <Text style={styles.emptyText}>Устройства не найдены</Text>
         }
       />
     </View>
