@@ -1,5 +1,5 @@
 """
-±°±¾¸º ³¾»¾¾² команд JARVIS
+Обработчик голосовых команд JARVIS
 """
 
 from typing import Dict, Optional
@@ -7,60 +7,60 @@ import re
 
 
 class CommandHandler:
-    """±°±¾º° ³¾»¾¾² команд."""
+    """Обработчик голосовых команд."""
 
     def __init__(self, brain):
         self.brain = brain
         self.commands = self._register_commands()
 
     def _register_commands(self) -> Dict:
-        """ µ³¸°¸ команд."""
+        """Регистрация команд."""
         return {
-            # ¡¸µ¼½µ команд
-            r"²º»¸ (º¾¼¿µ|¿º)": ("system", "shutdown"),
-            r"¿µµ·°³·¸ (º¾¼¿µ|¿º)": ("system", "restart"),
-            r"¾¼µ½¸ ²º»µ½¸µ": ("system", "cancel_shutdown"),
-            r"·°±»¾º¸¹ (º°½|º¾¼¿µ)": ("system", "lock_screen"),
-            r"¿¸¹ µ¶¸¼": ("system", "sleep"),
+            # Системные команды
+            r"выключи (компьютер|пк)": ("system", "shutdown"),
+            r"перезагрузи (компьютер|пк)": ("system", "restart"),
+            r"отмени выключение": ("system", "cancel_shutdown"),
+            r"заблокируй (экран|компьютер)": ("system", "lock_screen"),
+            r"спящий режим": ("system", "sleep"),
 
-            # ¾»½¹ º¾½¾» работы ола/
-            r"(¿¾º°¶¸|окно) °±¾¸¹ ¾»|²µ½¸ ²µ ¾ºна|²µ½¸ ¾ºна": ("desktop", "show_desktop"),
-            r"´µ»°¹ ³¾¼µ|²µ»¸ ³¾¼º¾|³¾¼µ": ("desktop", "volume_up"),
-            r"´µ»°¹ ¸µ|¼µ½¸ ³¾¼º¾|¸µ": ("desktop", "volume_down"),
-            r"±µ· ·²º°|mute|²º»¸ ·²º": ("desktop", "mute"),
-            r"·°±»¾º¸¹ º°½|±»¾º¸¹ º°½|lock screen": ("desktop", "lock_screen"),
-            r"º¾¿¸¾²°|copy": ("desktop", "shortcut"),
-            r"²°²¸|paste": ("desktop", "shortcut"),
-            r"¾¼µ½¸|undo": ("desktop", "shortcut"),
-            r"²´µ»¸ ²|select all": ("desktop", "shortcut"),
+            # Управление окнами рабочего стола
+            r"(покажи|окно) рабочий стол|сверни все окна|сверни окна": ("desktop", "show_desktop"),
+            r"сделай громче|увеличь громкость|громче": ("desktop", "volume_up"),
+            r"сделай тише|уменьши громкость|тише": ("desktop", "volume_down"),
+            r"без звука|mute|выключи звук": ("desktop", "mute"),
+            r"заблокируй экран|заблокируй экран|lock screen": ("desktop", "lock_screen"),
+            r"копировать|copy": ("desktop", "shortcut"),
+            r"вставить|paste": ("desktop", "shortcut"),
+            r"отменить|undo": ("desktop", "shortcut"),
+            r"выделить всё|select all": ("desktop", "shortcut"),
 
-            # ½¾¼°¸
-            r"º¾¾¹ °|²µ¼|º¾»º¾ ²µ¼µ½¸": ("info", "time"),
-            r"º°º° (´°°|µ³¾´½)": ("info", "date"),
-            r"º°º° ¿¾³¾´°": ("info", "weather"),
-            r"° ¸µ¼": ("info", "system_status"),
-            r"·°³·º° ¿¾µ¾°": ("info", "cpu_usage"),
-            r"¾¾½¸µ ±°°µ¸": ("info", "battery"),
+            # Информация
+            r"который час|время|сколько времени": ("info", "time"),
+            r"какая (дата|сегодня)": ("info", "date"),
+            r"какая погода": ("info", "weather"),
+            r"статус системы": ("info", "system_status"),
+            r"загрузка процессора": ("info", "cpu_usage"),
+            r"состояние батареи": ("info", "battery"),
 
-            # ¸»¾¶µ½¸
-            r"окно (±»¾º½¾|notepad)": ("app", "open_notepad"),
-            r"окно º°»º»¾": ("app", "open_calculator"),
-            r"окно youtube": ("app", "open_youtube"),
-            r"окно github": ("app", "open_github"),
+            # Приложения
+            r"открой (блокнот|notepad)": ("app", "open_notepad"),
+            r"открой калькулятор": ("app", "open_calculator"),
+            r"открой youtube": ("app", "open_youtube"),
+            r"открой github": ("app", "open_github"),
 
-            # голосовые
-            r"³¾¼º¾ (\d+)": ("control", "set_volume"),
-            r"º¾ (\d+)": ("control", "set_brightness"),
-            r"²µ½¸ ²µ ¾ºна": ("control", "minimize_all"),
-            r"¿¾º°¶¸ °±¾¸¹ ¾»": ("control", "show_desktop"),
+            # Управление
+            r"громкость (\d+)": ("control", "set_volume"),
+            r"яркость (\d+)": ("control", "set_brightness"),
+            r"сверни все окна": ("control", "minimize_all"),
+            r"покажи рабочий стол": ("control", "show_desktop"),
 
-            # ¡µ
-            r"µ º¾¾¸|º¾¾ ¸½µни°": ("network", "speed_test"),
-            r"º°º¾¹ (ip|°¹¿¸) °´µ": ("network", "get_ip"),
+            # Сеть
+            r"сеть скорость|скорость интернета": ("network", "speed_test"),
+            r"какой (ip|айпи) адрес": ("network", "get_ip"),
         }
 
     def parse_command(self, text: str) -> Optional[Dict]:
-        """ °·±¾ команд."""
+        """Разбор команд."""
         text_lower = text.lower().strip()
 
         for pattern, (category, action) in self.commands.items():
@@ -76,7 +76,7 @@ class CommandHandler:
                     result["params"] = match.groups()
 
                 if category in {"desktop", "control"} and action == "shortcut":
-                    # для copy/paste/undo/select all, ¿µµ´°¼ ¸¼ команд º°º ¿°°¼µ
+                    # для copy/paste/undo/select all, передаём имя команды как параметр
                     result["shortcut_name"] = text_lower
 
                 return result
@@ -84,11 +84,11 @@ class CommandHandler:
         return None
 
     def execute(self, text: str) -> Dict:
-        """¿¾»ни½¸µ команд."""
+        """Выполнение команд."""
         command = self.parse_command(text)
 
         if not command:
-            return {"status": "error", "message": "¾¼°½´° ни °¿¾·нана"}
+            return {"status": "error", "message": "Команда не распознана"}
 
         category = command["category"]
         action = command["action"]
@@ -105,7 +105,7 @@ class CommandHandler:
                     if action == "shortcut":
                         shortcut_name = self._extract_shortcut_name(text)
                         if not shortcut_name:
-                            return {"status": "error", "message": "¾¼±¸на¸ ни ¿¾´´µ¶¸²°µ"}
+                            return {"status": "error", "message": "Комбинация не поддерживается"}
                         return module.shortcut(shortcut_name)
                     return getattr(module, action)()
                 # fallback to legacy desktop/system actions
@@ -127,7 +127,7 @@ class CommandHandler:
                 if module and hasattr(module, action):
                     return getattr(module, action)()
 
-            return {"status": "error", "message": "µ¹²¸µ ни µ°»из¾²°½¾"}
+            return {"status": "error", "message": "Действие не реализовано"}
 
         except Exception as e:
             return {"status": "error", "message": str(e)}
@@ -135,13 +135,13 @@ class CommandHandler:
     def _extract_shortcut_name(self, text: str) -> str:
         text_lower = text.lower().strip()
         mapping = {
-            "º¾¿¸¾²°": "copy",
+            "копировать": "copy",
             "copy": "copy",
-            "²°²¸": "paste",
+            "вставить": "paste",
             "paste": "paste",
-            "¾¼µ½¸": "undo",
+            "отменить": "undo",
             "undo": "undo",
-            "²´µ»¸ ²": "select_all",
+            "выделить всё": "select_all",
             "select all": "select_all",
         }
         for key, value in mapping.items():
@@ -150,16 +150,16 @@ class CommandHandler:
         return ""
 
     def _handle_info(self, action: str) -> Dict:
-        """±°±¾º° ¸½¾¼°¸¾½½ команд."""
+        """Обработка информационных команд."""
         from datetime import datetime
 
         if action == "time":
             now = datetime.now()
-            return {"status": "ok", "message": f"¡µ¹° {now.strftime('%H:%M')}"}
+            return {"status": "ok", "message": f"Сейчас {now.strftime('%H:%M')}"}
 
         elif action == "date":
             now = datetime.now()
-            return {"status": "ok", "message": f"¡µ³¾´½ {now.strftime('%d %B %Y')}"}
+            return {"status": "ok", "message": f"Сегодня {now.strftime('%d %B %Y')}"}
 
         elif action == "system_status":
             hardware = self.brain.modules.get("hardware")
@@ -171,21 +171,21 @@ class CommandHandler:
             hardware = self.brain.modules.get("hardware")
             if hardware:
                 cpu_info = hardware.get_cpu_info()
-                return {"status": "ok", "message": f"°³·º° ¿¾µ¾° {cpu_info['usage']}%"}
+                return {"status": "ok", "message": f"Загрузка процессора {cpu_info['usage']}%"}
 
         elif action == "battery":
             power = self.brain.modules.get("power")
             if power:
                 battery = power.get_battery_info()
                 if battery.get("available"):
-                    return {"status": "ok", "message": f"°´ ±°°µ¸ {battery['percent']}%"}
+                    return {"status": "ok", "message": f"Заряд батареи {battery['percent']}%"}
                 else:
-                    return {"status": "ok", "message": "°°µ ни ¾±на¶µна"}
+                    return {"status": "ok", "message": "Батарея не обнаружена"}
 
-        return {"status": "error", "message": "½¾¼°¸ ни´¾¿на"}
+        return {"status": "error", "message": "Информация недоступна"}
 
     def _handle_app(self, action: str) -> Dict:
-        """±°±¾º° команд ¾º¸ ¿¸»¾¶µ½¸¹."""
+        """Обработка команд открытия приложений."""
         import subprocess
 
         apps = {
@@ -202,14 +202,14 @@ class CommandHandler:
                     subprocess.Popen(["cmd", "/c", "start", "", target], shell=True)
                 else:
                     subprocess.Popen([target])
-                return {"status": "ok", "message": f"º²° {action.replace('open_', '')}"}
+                return {"status": "ok", "message": f"Открываю {action.replace('open_', '')}"}
             except Exception as e:
                 return {"status": "error", "message": str(e)}
 
-        return {"status": "error", "message": "¸»¾¶µ½¸µ ни на¹´µ½¾"}
+        return {"status": "error", "message": "Приложение не найдено"}
 
     def _handle_control(self, action: str, params: tuple = None) -> Dict:
-        """±°±¾º° команд ¿°²»µ½¸."""
+        """Обработка команд управления."""
         try:
             import pyautogui
             from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
@@ -222,14 +222,14 @@ class CommandHandler:
 
         if action == "set_volume" and params:
             if pyautogui is None or AudioUtilities is None:
-                return {"status": "error", "message": "голосовые ³¾¼º¾ ни´¾¿½¾"}
+                return {"status": "error", "message": "Управление громкостью недоступно"}
             try:
                 volume_level = int(params[0]) / 100
                 devices = AudioUtilities.GetSpeakers()
                 interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
                 volume = interface.QueryInterface(IAudioEndpointVolume)
                 volume.SetMasterVolumeLevelScalar(volume_level, None)
-                return {"status": "ok", "message": f"¾¼º¾ °½¾²»µна на {params[0]}%"}
+                return {"status": "ok", "message": f"Громкость установлена на {params[0]}%"}
             except Exception as e:
                 return {"status": "error", "message": str(e)}
 
@@ -243,5 +243,5 @@ class CommandHandler:
             if desktop:
                 return desktop.show_desktop()
 
-        return {"status": "error", "message": "¾¼°½´° ни µ°»из¾²°на"}
+        return {"status": "error", "message": "Команда не реализована"}
 
