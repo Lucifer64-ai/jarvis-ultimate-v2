@@ -1,5 +1,5 @@
 """
-голосовые ¿¸°½¸µ¼ JARVIS
+Управление питанием JARVIS
 """
 
 import psutil
@@ -7,13 +7,13 @@ from typing import Dict
 
 
 class PowerModule:
-    """¾½¸¾¸½³ ¿¸°½¸."""
+    """Мониторинг питания."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def get_battery_info(self) -> Dict:
-        """½¾¼°¸ ¾ ±°°µµ."""
+        """Информация о батарее."""
         battery = psutil.sensors_battery()
         if battery is None:
             return {"status": "ok", "available": False}
@@ -27,10 +27,10 @@ class PowerModule:
         }
 
     def get_power_status(self) -> Dict:
-        """¡° ¿¸°½¸."""
+        """Статус питания."""
         battery = self.get_battery_info()
         if not battery.get("available"):
-            return {"status": "ok", "source": "AC", "message": "¸°½¸µ ¾ µ¸"}
+            return {"status": "ok", "source": "AC", "message": "Питание от сети"}
 
         if battery.get("plugged"):
             return {"status": "ok", "source": "AC", "percent": battery["percent"]}
