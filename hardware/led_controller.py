@@ -18,7 +18,7 @@ class LEDController:
         # Пины LED (для Raspberry Pi GPIO)
         self.led_pins = brain.config.get("hardware.led_pins", [18, 23, 24])  # RGB
 
-        # Состояние
+        # Состояния
         self.current_color = (0, 0, 0)
         self.brightness = 100
         self.animation_thread: Optional[threading.Thread] = None
@@ -77,7 +77,7 @@ class LEDController:
         self.stop_animation = True
         return self.set_color(0, 0, 0)
 
-    # Специальные цвета
+    # Анимации
     def idle(self) -> Dict:
         """Режим ожидания - синий."""
         return self.set_color(0, 100, 255)
@@ -132,8 +132,8 @@ class LEDController:
         return {"status": "ok", "message": "Пульсация запущена"}
 
     def breathe(self, duration: float = 3.0) -> Dict:
-        """Дыхание - плавная пульсация синим."""
-        return self.pulse((0, 100, 255), duration)
+        """Дыхание - плавная пульсация текущим цветом."""
+        return self.pulse(self.current_color, duration)
 
     def rainbow(self, duration: float = 5.0) -> Dict:
         """Радуга."""
@@ -149,38 +149,47 @@ class LEDController:
                 (0, 255, 0),    # Зелёный
                 (0, 0, 255),    # Синий
                 (75, 0, 130),   # Индиго
-                (148, 0, 211)   # Фиолетовый
+                (148, 0, 211),  # Фиолетовый
             ]
 
-            step_time = duration / len(colors)
-            for color in colors:
+            steps_per_color = 20
+            total_steps = len(colors) * steps_per_color
+            step_duration = duration / total_steps
+
+            for i in range(total_steps):
                 if self.stop_animation:
                     break
-                r, g, b = color
-                factor = self.brightness / 100.0
-                self.set_color(int(r * factor), int(g * factor), int(b * factor))
-                time.sleep(step_time)
+
+                color_idx = i // steps_per_color
+                step_in_color = i % steps_per_color
+
+                current = colors[color_idx]
+                next_color = colors[(color_idx + 1) % len(colors)]
+
+                factor = step_in_color / steps_per_color
+                r = int(current[0] * (1 - factor) + next_color[0] * factor)
+                g = int(current[1] * (1 - factor) + next_color[1] * factor)
+                b = int(current[2] * (1 - factor) + next_color[2] * factor)
+
+                brightness_factor = self.brightness / 100.0
+                self.set_color(int(r * brightness_factor), int(g * brightness_factor), int(b * brightness_factor))
+                time.sleep(step_duration)
 
         self.animation_thread = threading.Thread(target=animate, daemon=True)
         self.animation_thread.start()
 
         return {"status": "ok", "message": "Радуга запущена"}
 
-    def get_status(self) -> Dict:
-        """Статус LED."""
-        return {
-            "initialized": self.initialized,
-            "color": self.current_color,
-            "brightness": self.brightness
-        }
-
     def cleanup(self):
         """Очистка ресурсов."""
         self.stop_animation = True
-        if self.initialized:
-            # В реальной реализации:
-            # for pwm in self.pwm:
-            #     pwm.stop()
-            # GPIO.cleanup()
-            self.initialized = False
-            self.logger.info("LED очищены")
+        if self.animation_thread:
+            self.animation_thread.join(timeout=1.0)
+
+        # В реальной реализации:
+        # for pwm in self.pwm:
+        #     pwm.stop()
+        # GPIO.cleanup()
+
+        self.initialized = False
+        self.logger.info("LED ресурсы освобождены")
