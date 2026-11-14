@@ -1,7 +1,7 @@
 """JARVIS Brain - Главный контроллер и обработка команд"""
 
 import logging
-from typing import Dict
+from typing import Dict, Optional
 
 from core.config import Config
 from core.event_bus import EventBus
@@ -21,6 +21,8 @@ class JarvisBrain:
         self.plugin_manager = PluginManager(self)
         self.agent_manager = AgentManager()
         self.file_saver = get_file_saver()
+
+        # Модули
         self.learning_manager = None
         self.windows_integration = None
         self.toast_notifications = None
@@ -31,6 +33,14 @@ class JarvisBrain:
         self.weather_module = None
         self.currency_module = None
         self.news_module = None
+
+        # Новые модули
+        self.voice_recognizer = None
+        self.command_processor = None
+        self.process_manager = None
+        self.network_manager = None
+        self.ml_engine = None
+
         self.modules = {}
         self.running = False
         self.logger.info("JARVIS Brain инициализирован")
@@ -94,8 +104,36 @@ class JarvisBrain:
             self.logger.error(f"Ошибка загрузки модуля App Launcher: {e}")
             self.app_launcher = None
 
+        # Process Manager
+        try:
+            from modules.process_manager import ProcessManager
+            self.process_manager = ProcessManager(self)
+            self.logger.info("Модуль Process Manager загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Process Manager: {e}")
+            self.process_manager = None
+
+        # Network Manager
+        try:
+            from modules.network_manager import NetworkManager
+            self.network_manager = NetworkManager(self)
+            self.logger.info("Модуль Network Manager загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Network Manager: {e}")
+            self.network_manager = None
+
+        # ML Engine (адаптивное обучение)
+        try:
+            from ai.adaptive_ml import AdaptiveMLEngine
+            self.ml_engine = AdaptiveMLEngine(self)
+            self.logger.info("Модуль ML Engine загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля ML Engine: {e}")
+            self.ml_engine = None
+
     def _init_voice(self):
         """Инициализация голосовых модулей."""
+        # Voice Speaker (синтез речи)
         try:
             from voice.speaker import VoiceSpeaker
             self.voice_speaker = VoiceSpeaker(self)
@@ -103,6 +141,114 @@ class JarvisBrain:
         except Exception as e:
             self.logger.error(f"Ошибка загрузки модуля синтеза речи: {e}")
             self.voice_speaker = None
+
+        # Voice Recognizer (распознавание речи)
+        try:
+            from voice.recognizer import VoiceRecognizer
+            self.voice_recognizer = VoiceRecognizer(self)
+            self.logger.info("Модуль распознавания речи загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля распознавания речи: {e}")
+            self.voice_recognizer = None
+
+        # Command Processor (обработка команд)
+        try:
+            from voice.command_processor import CommandProcessor
+            self.command_processor = CommandProcessor(self)
+            self.logger.info("Модуль обработки команд загружен")
+
+            # Подключаем callbacks
+            if self.voice_recognizer:
+                self.voice_recognizer.on_speech_detected = self._on_speech_detected
+                self.voice_recognizer.on_command_recognized = self._on_command_recognized
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля обработки команд: {e}")
+            self.command_processor = None
+
+    def _on_speech_detected(self, text: str):
+        """Callback при обнаружении речи."""
+        self.logger.info(f"Обнаружена речь: {text}")
+        if self.toast_notifications:
+            self.toast_notifications.show_toast("JARVIS", f"Слышу: {text[:50]}...")
+
+    def _on_command_recognized(self, text: str, result: Dict):
+        """Callback при распознавании команды."""
+        self.logger.info(f"Команда распознана: {text} -> {result}")
+        if self.voice_speaker and result.get("message"):
+            self.voice_speaker.speak(result.get("message"))
+
+    def execute_action(self, action: str) -> Dict:
+        """Выполнение действия по имени (для CommandProcessor)."""
+        self.logger.info(f"Выполнение действия: {action}")
+
+        parts = action.split(".")
+        if len(parts) != 2:
+            return {"status": "error", "message": f"Неверный формат действия: {action}"}
+
+        module_name, method_name = parts
+
+        # Маршрутизация к модулям
+        if module_name == "system":
+            if self.windows_integration:
+                method = getattr(self.windows_integration, method_name, None)
+                if method:
+                    return method()
+            return {"status": "error", "message": "Модуль system недоступен"}
+
+        elif module_name == "desktop":
+            if self.clean_desktop:
+                method = getattr(self.clean_desktop, method_name, None)
+                if method:
+                    return method()
+            return {"status": "error", "message": "Модуль desktop недоступен"}
+
+        elif module_name == "voice":
+            if self.voice_recognizer:
+                method = getattr(self.voice_recognizer, method_name, None)
+                if method:
+                    return method()
+            return {"status": "error", "message": "Модуль voice недоступен"}
+
+        elif module_name == "info":
+            if method_name == "get_time":
+                from datetime import datetime
+                now = datetime.now()
+                return {"status": "ok", "message": f"Сейчас {now.strftime('%H:%M')}"}
+            elif method_name == "get_date":
+                from datetime import datetime
+                now = datetime.now()
+                return {"status": "ok", "message": f"Сегодня {now.strftime('%d.%m.%Y')}"}
+            elif method_name == "get_weather":
+                if self.weather_module:
+                    return self.weather_module.get_weather("Москва")
+                return {"status": "error", "message": "Модуль погоды недоступен"}
+            return {"status": "error", "message": f"Неизвестное действие: {action}"}
+
+        elif module_name == "app":
+            if self.app_launcher:
+                if method_name == "open_notepad":
+                    return self.app_launcher.launch_app("блокнот")
+                elif method_name == "open_calculator":
+                    return self.app_launcher.launch_app("калькулятор")
+                elif method_name == "open_browser":
+                    return self.app_launcher.launch_app("браузер")
+            return {"status": "error", "message": "Модуль app недоступен"}
+
+        elif module_name == "process":
+            if self.process_manager:
+                method = getattr(self.process_manager, method_name, None)
+                if method:
+                    return method()
+            return {"status": "error", "message": "Модуль process недоступен"}
+
+        elif module_name == "network":
+            if self.network_manager:
+                method = getattr(self.network_manager, method_name, None)
+                if method:
+                    return method()
+            return {"status": "error", "message": "Модуль network недоступен"}
+
+        return {"status": "error", "message": f"Неизвестный модуль: {module_name}"}
 
     def _handle_agent_voice_command(self, text: str) -> Dict:
         """Обработка голосовых команд для управления агентами."""
@@ -226,6 +372,12 @@ class JarvisBrain:
             self.hud.set_status("PROCESSING")
             self.hud.set_voice_active(True)
 
+        # Сначала пробуем CommandProcessor (с ML)
+        if self.command_processor:
+            result = self.command_processor.process(text)
+            if result.get("status") != "unknown":
+                return result
+
         # Обработка команд управления агентами
         text_lower = text.lower()
         if any(phrase in text_lower for phrase in ["какие агенты", "список агентов", "история задач", "возможности агента", "статус агента"]):
@@ -306,6 +458,10 @@ class JarvisBrain:
         # Загрузка агентов
         self.agent_manager.initialize_agents()
 
+        # Запуск голосового распознавания
+        if self.voice_recognizer:
+            self.voice_recognizer.start_listening()
+
         self.logger.info("JARVIS запущен и готов к работе")
 
         if self.toast_notifications:
@@ -315,6 +471,10 @@ class JarvisBrain:
         """Остановка системы JARVIS."""
         self.logger.info("Остановка JARVIS...")
         self.running = False
+
+        # Остановка голосового распознавания
+        if self.voice_recognizer:
+            self.voice_recognizer.stop_listening()
 
         if self.toast_notifications:
             self.toast_notifications.show_toast("JARVIS", "Система остановлена")
@@ -327,5 +487,10 @@ class JarvisBrain:
             "running": self.running,
             "modules_loaded": len(self.modules),
             "plugins_loaded": len(self.plugin_manager.loaded),
-            "agents_active": self.agent_manager.get_active_count()
+            "agents_active": self.agent_manager.get_active_count(),
+            "voice_recognizer": self.voice_recognizer is not None,
+            "command_processor": self.command_processor is not None,
+            "process_manager": self.process_manager is not None,
+            "network_manager": self.network_manager is not None,
+            "ml_engine": self.ml_engine is not None
         }
