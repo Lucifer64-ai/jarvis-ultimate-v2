@@ -41,7 +41,7 @@ ArchitecturesInstallIn64BitMode=x64
 
 ; License & Info
 LicenseFile=..\LICENSE
-InfoBeforeFile=installer\install_notes.txt
+InfoBeforeFile=install_notes.txt
 
 ; Language
 LanguageDetectionMethod=uilanguage
