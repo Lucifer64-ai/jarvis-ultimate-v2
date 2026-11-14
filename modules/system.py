@@ -1,5 +1,5 @@
 """
-¡¸µ¼½µ ¾¿µ°¸¸ JARVIS
+Системные операции JARVIS
 """
 
 import os
@@ -9,63 +9,63 @@ from typing import Dict
 
 
 class SystemModule:
-    """голосовые ¸µ¼½¼¸ ¾¿µ°¸¼¸."""
+    """Управление системными операциями."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def shutdown(self) -> Dict:
-        """º»µ½¸µ º¾¼¿µ°."""
+        """Выключение компьютера."""
         try:
             os.system("shutdown /s /t 60")
-            return {"status": "ok", "message": "¾¼¿µ ±´µ ²º»µ½ µµ· 60 µº½´"}
+            return {"status": "ok", "message": "Компьютер будет выключен через 60 секунд"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def restart(self) -> Dict:
-        """µµ·°³·º° º¾¼¿µ°."""
+        """Перезагрузка компьютера."""
         try:
             os.system("shutdown /r /t 60")
-            return {"status": "ok", "message": "¾¼¿µ ±´µ ¿µµ·°³¶µ½ µµ· 60 µº½´"}
+            return {"status": "ok", "message": "Компьютер будет перезагружен через 60 секунд"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def cancel_shutdown(self) -> Dict:
-        """¼µна ²º»µ½¸."""
+        """Отмена выключения."""
         try:
             os.system("shutdown /a")
-            return {"status": "ok", "message": "º»µ½¸µ ¾¼µни½¾"}
+            return {"status": "ok", "message": "Выключение отменено"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def lock_screen(self) -> Dict:
-        """»¾º¸¾²º° º°на."""
+        """Блокировка экрана."""
         try:
             ctypes.windll.user32.LockWorkStation()
-            return {"status": "ok", "message": "­º°½ ·°±»¾º¸¾²°½"}
+            return {"status": "ok", "message": "Экран заблокирован"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def sleep(self) -> Dict:
-        """¡¿¸¹ µ¶¸¼."""
+        """Спящий режим."""
         try:
             os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
-            return {"status": "ok", "message": "µµ¾´ ² ¿¸¹ µ¶¸¼"}
+            return {"status": "ok", "message": "Переход в спящий режим"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def hibernate(self) -> Dict:
-        """¸±µна¸."""
+        """Гибернация."""
         try:
             os.system("shutdown /h")
-            return {"status": "ok", "message": "µµ¾´ ² µ¶¸¼ ³¸±µна¸¸"}
+            return {"status": "ok", "message": "Переход в режим гибернации"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def logoff(self) -> Dict:
-        """¾´ из ¸µ¼."""
+        """Выход из системы."""
         try:
             os.system("shutdown /l")
-            return {"status": "ok", "message": "¾´ из ¸µ¼"}
+            return {"status": "ok", "message": "Выход из системы"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
