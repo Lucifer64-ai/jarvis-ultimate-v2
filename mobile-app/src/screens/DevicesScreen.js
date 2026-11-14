@@ -43,7 +43,7 @@ export default function DevicesScreen() {
         onPress={() => toggleDevice(item.entity_id, item.state)}
       >
         <Text style={styles.toggleText}>
-          {item.state === 'on' ? 'ВКЛ' : 'ВЫКЛ'}
+          {item.state === 'on' ? 'ON' : 'OFF'}
         </Text>
       </TouchableOpacity>
     </View>
