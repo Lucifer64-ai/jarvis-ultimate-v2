@@ -1,5 +1,5 @@
 """
-ML-´²¸¶¾º JARVIS для °¿¾·на²°½¸ команд
+ML-движок JARVIS для распознавания команд
 """
 
 import json
@@ -14,7 +14,7 @@ from sklearn.svm import SVC
 
 
 class MLEngine:
-    """ML для º»°¸¸º°¸¸ ³¾»¾¾² команд."""
+    """ML для классификации голосовых команд."""
 
     def __init__(self, brain):
         self.brain = brain
@@ -30,7 +30,7 @@ class MLEngine:
             self._train_default_model()
 
     def _load_training_data(self) -> Dict[str, List[str]]:
-        """°³·º° stored training data для ´¾¿.¾±µ½¸."""
+        """Загрузка stored training data для доп.обучения."""
         if self.training_data_path.exists():
             try:
                 with open(self.training_data_path, "r", encoding="utf-8") as file:
@@ -38,43 +38,43 @@ class MLEngine:
                 if isinstance(data, dict):
                     return data
             except Exception as error:
-                self.brain.logger.error(f"агента ·°³·º¸ training data: {error}")
+                self.brain.logger.error(f"Ошибка загрузки training data: {error}")
         return self._get_default_training_data()
 
     def _save_training_data(self):
-        """¡¾°ни½¸µ training data ² °¹»."""
+        """Сохранение training data в файл."""
         self.training_data_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.training_data_path, "w", encoding="utf-8") as file:
             json.dump(self.training_data, file, ensure_ascii=False, indent=2)
 
     def _get_default_training_data(self) -> Dict[str, List[str]]:
-        """°·¾²¹ на±¾ команд."""
+        """Базовый набор команд."""
         return {
-            "system_shutdown": ["²º»¸ º¾¼¿µ", "²º»¸ ¿º", "·°²µ¸ °±¾"],
-            "system_restart": ["¿µµ·°³·¸ º¾¼¿µ", "¿µµ·°³·¸ ¿º", "µ°"],
-            "system_lock": ["·°±»¾º¸¹ º°½", "·°±»¾º¸¹ º¾¼¿µ", "»¾º"],
-            "info_time": ["º¾¾¹ °", "º¾»º¾ ²µ¼µ½¸", "²µ¼"],
-            "info_date": ["º°º° ´°°", "º°º¾µ µ³¾´½ ¸»¾", "´°°"],
-            "info_weather": ["º°º° ¿¾³¾´°", "¿¾³¾´° на µ³¾´½", "¿¾³½¾· ¿¾³¾´"],
-            "app_notepad": ["окно ±»¾º½¾", "·°¿¸ notepad", "окно ·°¼µº¸"],
-            "app_calculator": ["окно º°»º»¾", "·°¿¸ º°»º»¾"],
-            "app_youtube": ["окно ±", "окно youtube", "·°¿¸ ±"],
-            "control_volume": ["³¾¼º¾", "´µ»°¹ ³¾¼µ", "´µ»°¹ ¸µ"],
-            "control_mute": ["±µ· ·²º°", "²º»¸ ·²º", "mute"],
-            "control_minimize": ["²µ½¸ ²µ ¾ºна", "¿¾º°¶¸ °±¾¸¹ ¾»", "¼¸½¸¼из¸¾²°"],
-            "network_speed": ["µ º¾¾¸", "º¾¾ ¸½µни°", "¿¾²µ ¸½µни"],
-            "network_ip": ["º°º¾¹ ip °´µ", "¼¾¹ ip", "°¹¿¸ °´µ"],
+            "system_shutdown": ["выключи компьютер", "выключи пк", "завершить работу"],
+            "system_restart": ["перезагрузи компьютер", "перезагрузи пк", "ребут"],
+            "system_lock": ["заблокируй экран", "заблокируй компьютер", "лок"],
+            "info_time": ["который час", "сколько времени", "время"],
+            "info_date": ["какая дата", "какое сегодня число", "дата"],
+            "info_weather": ["какая погода", "погода на сегодня", "прогноз погоды"],
+            "app_notepad": ["открой блокнот", "запусти notepad", "открой заметки"],
+            "app_calculator": ["открой калькулятор", "запусти калькулятор"],
+            "app_youtube": ["открой ютуб", "открой youtube", "запусти ютуб"],
+            "control_volume": ["громкость", "сделай громче", "сделай тише"],
+            "control_mute": ["без звука", "выключи звук", "mute"],
+            "control_minimize": ["сверни все окна", "покажи рабочий стол", "минимизировать"],
+            "network_speed": ["сеть скорость", "скорость интернета", "проверь интернет"],
+            "network_ip": ["какой ip адрес", "мой ip", "айпи адрес"],
         }
 
     def _build_model(self) -> Pipeline:
-        """¡¾·´°½¸µ pipeline модули."""
+        """Создание pipeline модели."""
         return Pipeline([
             ("tfidf", TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5))),
             ("svm", SVC(kernel="linear", probability=True)),
         ])
 
     def _prepare_training_batch(self):
-        """¾´³¾¾²º° X/y ¸ ¸»°¸ ¿/ни²°»¸´½ ´°½½."""
+        """Подготовка X/y из массива пустых/невалидных данных."""
         X = []
         y = []
         for category, examples in self.training_data.items():
@@ -87,12 +87,12 @@ class MLEngine:
         return X, y
 
     def _train_default_model(self):
-        """±µ½¸µ ±°·¾²¾¹ модули на ¿¸¼µ°."""
+        """Обучение базовой модели на примерах."""
         X, y = self._prepare_training_batch()
         if len(set(y)) < 2:
             self.model = None
             self.classes = []
-            self.brain.logger.warning("µ´¾°¾½¾ º°µ³¾¸¹ для ¾±µ½¸ модули команд")
+            self.brain.logger.warning("Недостаточно категорий для обучения модели команд")
             return
 
         model = self._build_model()
@@ -100,10 +100,10 @@ class MLEngine:
         self.model = model
         self.classes = model.classes_.tolist()
         self._save_model()
-        self.brain.logger.info(f"ML ¼¾´µ» ¾±µна на {len(X)} ¿¸¼µ°")
+        self.brain.logger.info(f"ML модель обучена на {len(X)} примерах")
 
     def _save_model(self):
-        """¡¾°ни½¸µ модули."""
+        """Сохранение модели."""
         if self.model is None:
             return
         self.model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -113,22 +113,22 @@ class MLEngine:
         }, self.model_path)
 
     def _load_model(self):
-        """°³·º° модули."""
+        """Загрузка модели."""
         try:
             data = joblib.load(self.model_path)
             self.model = data["model"]
             self.classes = data.get("classes", [])
-            self.brain.logger.info("ML ¼¾´µ» ·°³¶µна")
+            self.brain.logger.info("ML модель загружена")
         except Exception as error:
-            self.brain.logger.error(f"агента ·°³·º¸ ML модули: {error}")
+            self.brain.logger.error(f"Ошибка загрузки ML модели: {error}")
             self._train_default_model()
 
     def predict(self, text: str) -> Dict:
-        """µ´º°·°½¸µ º°µ³¾¸¸ команд."""
+        """Предсказание категории команд."""
         if self.model is None:
-            return {"status": "error", "message": "¾´µ» ни ·°³¶µна"}
+            return {"status": "error", "message": "Модель не загружена"}
         if not isinstance(text, str) or not text.strip():
-            return {"status": "error", "message": "¢µº команд ¿"}
+            return {"status": "error", "message": "Текст команд пуст"}
 
         try:
             cleaned = text.strip()
@@ -145,11 +145,11 @@ class MLEngine:
             return {"status": "error", "message": str(error)}
 
     def add_training_data(self, category: str, examples: List[str]):
-        """¾±°²»µ½¸µ ´°½½ ¸ ¿µµ¾±µ½¸µ модули."""
+        """Добавление данных и переобучение модели."""
         if not isinstance(category, str) or not category.strip():
-            return {"status": "error", "message": "°µ³¾¸ ни ´¾»¶на ± ¿¾¹"}
+            return {"status": "error", "message": "Категории не должны быть пустыми"}
         if not isinstance(examples, list) or not any(isinstance(item, str) and item.strip() for item in examples):
-            return {"status": "error", "message": "¶½¾ ¿µµ´° ¾ ± ¾´¸½ ни¿¾¹ ¿¸¼µ"}
+            return {"status": "error", "message": "Нужно передать хотя бы один непустой пример"}
 
         category = category.strip()
         cleaned_examples = []
@@ -170,7 +170,7 @@ class MLEngine:
         if not X or len(set(y)) < 2:
             self.training_data[category] = [example for example in self.training_data[category] if example not in cleaned_examples]
             self._save_training_data()
-            return {"status": "error", "message": "µ»· ¾±¸ ¼¾´µ»: ни´¾°¾½¾ ´°½½  ¼¸½¸¼¼ ´² º°µ³¾¸¹"}
+            return {"status": "error", "message": "Невозможно обучить модель: недостаточно данных с минимум двумя категориями"}
 
         try:
             new_model = self._build_model()
@@ -178,125 +178,8 @@ class MLEngine:
             self.model = new_model
             self.classes = new_model.classes_.tolist()
             self._save_model()
-            self.brain.logger.info(f"¾±°²»µ½ ¿¸¼µ для º°µ³¾¸¸ '{category}' ¸ ¼¾´µ» ¿µµ¾±µна")
-            return {"status": "ok", "message": f"¾±°²»µ½¾ {len(cleaned_examples)} ¿¸¼µ¾² для '{category}'"}
+            self.brain.logger.info(f"Добавлены примеры для категории '{category}' и модель переобучена")
+            return {"status": "ok", "message": f"Добавлено {len(cleaned_examples)} примеров для '{category}'"}
         except Exception as error:
-            self.brain.logger.error(f"агента ¿µµ¾±µ½¸ модули: {error}")
+            self.brain.logger.error(f"Ошибка переобучения модели: {error}")
             return {"status": "error", "message": str(error)}
-
-
-# End of corrected file.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
