@@ -1,5 +1,5 @@
 """
-µни´¶µ º¾½µº° JARVIS
+Менеджер контекста JARVIS
 """
 
 from typing import Dict, List, Optional
@@ -9,26 +9,26 @@ from pathlib import Path
 
 
 class ContextManager:
-    """голосовые º¾½µº¾¼ °·³¾²¾° ¸ ¾¾½¸."""
+    """Управление контекстом разговоров и состояний."""
 
     def __init__(self, brain):
         self.brain = brain
         self.context_file = Path("data/context.json")
         self.context_file.parent.mkdir(exist_ok=True)
-        
+
         self.context: Dict = self._load_context()
         self.conversation_history: List[Dict] = []
         self.max_history = 50
 
     def _load_context(self) -> Dict:
-        """°³·º° º¾½µº° из °¹»°."""
+        """Загрузка контекста из файла."""
         if self.context_file.exists():
             try:
                 with open(self.context_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception as e:
-                self.brain.logger.error(f"агента ·°³·º¸ º¾½µº°: {e}")
-        
+                self.brain.logger.error(f"Ошибка загрузки контекста: {e}")
+
         return {
             "user_preferences": {},
             "session_start": datetime.now().isoformat(),
@@ -36,62 +36,52 @@ class ContextManager:
         }
 
     def _save_context(self):
-        """¡¾°ни½¸µ º¾½µº°."""
+        """Сохранение контекста."""
         try:
             with open(self.context_file, 'w', encoding='utf-8') as f:
                 json.dump(self.context, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            self.brain.logger.error(f"агента ¾°ни½¸ º¾½µº°: {e}")
+            self.brain.logger.error(f"Ошибка сохранения контекста: {e}")
 
     def update(self, key: str, value):
-        """±½¾²»µ½¸µ º¾½µº°."""
+        """Обновление контекста."""
         self.context[key] = value
         self.context["last_activity"] = datetime.now().isoformat()
         self._save_context()
 
     def get(self, key: str, default=None):
-        """¾»µ½¸µ ·наµ½¸ из º¾½µº°."""
+        """Получение значения из контекста."""
         return self.context.get(key, default)
 
     def add_to_history(self, role: str, content: str):
-        """¾±°²»µ½¸µ ² ¸¾¸ °·³¾²¾°."""
+        """Добавление сообщения в историю разговора."""
         self.conversation_history.append({
             "role": role,
             "content": content,
             "timestamp": datetime.now().isoformat()
         })
-        
-        # ³°½¸µ½¸µ ¸¾¸¸
+
+        # Ограничиваем размер истории
         if len(self.conversation_history) > self.max_history:
             self.conversation_history = self.conversation_history[-self.max_history:]
 
-    def get_history(self, limit: int = 10) -> List[Dict]:
-        """¾»µ½¸µ ¸¾¸¸ °·³¾²¾°."""
-        return self.conversation_history[-limit:]
+    def get_conversation_context(self, last_n: int = 10) -> List[Dict]:
+        """Получение последних N сообщений для контекста."""
+        return self.conversation_history[-last_n:]
 
     def clear_history(self):
-        """¸º° ¸¾¸¸."""
-        self.conversation_history = []
-
-    def get_system_context(self) -> Dict:
-        """¾»µ½¸µ ¸µ¼½¾³¾ º¾½µº°."""
-        import psutil
-        
-        return {
-            "cpu": psutil.cpu_percent(),
-            "ram": psutil.virtual_memory().percent,
-            "time": datetime.now().strftime("%H:%M:%S"),
-            "date": datetime.now().strftime("%Y-%m-%d")
-        }
-
-    def set_user_preference(self, key: str, value):
-        """£°½¾²º° ¿¾»·¾²°µ»º¸ ¿µ´¿¾µ½¸¹."""
-        if "user_preferences" not in self.context:
-            self.context["user_preferences"] = {}
-        
-        self.context["user_preferences"][key] = value
-        self._save_context()
+        """Очистка истории разговора."""
+        self.conversation_history.clear()
+        self.brain.logger.info("История разговора очищена")
 
     def get_user_preference(self, key: str, default=None):
-        """¾»µ½¸µ ¿¾»·¾²°µ»º¸ ¿µ´¿¾µ½¸¹."""
+        """Получение пользовательских настроек."""
         return self.context.get("user_preferences", {}).get(key, default)
+
+    def set_user_preference(self, key: str, value):
+        """Установка пользовательских настроек."""
+        if "user_preferences" not in self.context:
+            self.context["user_preferences"] = {}
+        self.context["user_preferences"][key] = value
+        self._save_context()
+        self.brain.logger.info(f"Сохранена настройка: {key}={value}")
