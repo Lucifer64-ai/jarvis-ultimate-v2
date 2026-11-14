@@ -36,7 +36,7 @@ class ResourceOptimizationAgent:
                 "status": "unavailable",
                 "metrics": metrics,
                 "recommendations": [],
-                "message": "¾½и¾и½³ µ¾в ни´¾¿µ½: psutil ни °½¾в»µ½",
+                "message": "Библиотека для чтения метрик не установлена: psutil не установлен",
             }
 
         try:
@@ -44,25 +44,25 @@ class ResourceOptimizationAgent:
             metrics["memory_percent"] = psutil.virtual_memory().percent
             metrics["active_processes"] = len(psutil.pids())
         except Exception as error:
-            self.brain.logger.debug("µ ´°»¾ ¿¾»и ¼µиºи µ¾в: %s", error)
+            self.brain.logger.debug("Не удалось прочитать системные метрики: %s", error)
             return {
                 "status": "error",
                 "metrics": metrics,
                 "recommendations": [],
-                "message": "µ ´°»¾ ¿¾»и ¼µиºи µ¾в",
+                "message": "Не удалось прочитать системные метрики",
             }
 
         if metrics["cpu_percent"] >= cpu_threshold:
             recommendations.append(
-                "¾º° ½°³·º° ½° CPU: вµ¼µ½½¾ ¾»¾¶иµ ¶»µ ¾½¾вµ ¿¾вµºи и ¿¾в¾иµ ·°´° ¿¾·¶µ."
+                "Высокая загрузка CPU: временно отложите тяжёлые задачи и закройте ненужные процессы."
             )
         if metrics["memory_percent"] >= memory_threshold:
             recommendations.append(
-                "и·ºи¹ ·°¿° ¿°¼и: ¿¾вµµ голосов  в¾ºи¼ ¿¾µ±»µ½иµ¼ RAM и ¼µ½иµ ¾´½¾вµ¼µ½½ ½°³·º."
+                "Высокий расход памяти: закройте приложения с высоким потреблением RAM и уменьшите количество одновременно запущенных программ."
             )
         if metrics["active_processes"] and metrics["active_processes"] > 200:
             recommendations.append(
-                " иµ¼µ ¼½¾³¾ °ºив½ ¿¾µ¾в: ½и·µ º¾»иµв¾ ¾½¾в ·°´° и ¾±½¾в»µ½и¹."
+                "В системе много активных процессов: снизьте количество фоновых задач и обновлений."
             )
 
         return {
@@ -158,7 +158,7 @@ class SchedulingOptimizationAgent:
             "task_count": len(task_payload),
             "tasks": task_payload,
             "recommendations": [
-                "¾вµµ ¿¾в¾иµ ¾½¾вµ ·°´°и и ¾±µ´и½иµ и, µ»и ¾½и ´±»и ´³ ´³°."
+                "Распределите задачи по расписанию, чтобы избежать перегрузки системы."
             ] if task_payload else [],
         }
 
@@ -202,4 +202,3 @@ class OptimizationManager:
 
     def get_or_compute(self, key: str, callback: Callable[[], Any], ttl_seconds: float | None = None):
         return self.cache_agent.get_or_compute(key, callback, ttl_seconds)
-
