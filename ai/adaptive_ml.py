@@ -39,7 +39,7 @@ class AdaptiveMLEngine:
         ])
 
     def _prepare_training_batch(self):
-        """Подготовка X/y из обучающих данных, исключая некорректные записи."""
+        """Подготовка X/y из обучающих данных, отбрасывая некорректные записи."""
         X = []
         y = []
 
@@ -48,134 +48,157 @@ class AdaptiveMLEngine:
                 continue
             for example in examples:
                 if isinstance(example, str) and example.strip():
-                    X.append(example)
+                    X.append(example.strip())
                     y.append(category)
 
         return X, y
 
-    def _train_initial_model(self):
-        """Обучение начальной модели на встроенных данных."""
-        self.brain.logger.info("Обучение начальной ML модели...")
-
-        # Встроенные обучающие данные
-        self.training_data = {
-            "greeting": ["привет", "здравствуй", "добрый день", "хай", "hello"],
-            "farewell": ["пока", "до свидания", "прощай", "bye"],
-            "thanks": ["спасибо", "благодарю", "thanks"],
-            "weather": ["погода", "температура", "прогноз погоды"],
-            "time": ["время", "который час", "сколько времени"],
-            "joke": ["шутка", "анекдот", "рассмеши меня"],
-            "help": ["помощь", "что ты умеешь", "help"],
-        }
-
-        self._save_training_data()
-        self._retrain_model()
-
     def _load_training_data(self) -> Dict:
-        """Загрузка обучающих данных из файла."""
+        """Загрузка обучающих данных."""
         if self.training_data_path.exists():
-            try:
-                with open(self.training_data_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except Exception as e:
-                self.brain.logger.error(f"Ошибка загрузки обучающих данных: {e}")
-
-        return {}
+            with open(self.training_data_path, "r", encoding="utf-8") as file:
+                data = json.load(file)
+            if isinstance(data, dict):
+                return data
+        return self._get_default_training_data()
 
     def _save_training_data(self):
         """Сохранение обучающих данных."""
-        try:
-            with open(self.training_data_path, 'w', encoding='utf-8') as f:
-                json.dump(self.training_data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            self.brain.logger.error(f"Ошибка сохранения обучающих данных: {e}")
+        self.training_data_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.training_data_path, "w", encoding="utf-8") as file:
+            json.dump(self.training_data, file, ensure_ascii=False, indent=2)
+
+    def _get_default_training_data(self) -> Dict:
+        """Начальные обучающие данные."""
+        return {
+            "system_shutdown": ["выключи компьютер", "выключи пк", "заверши работу"],
+            "system_restart": ["перезагрузи компьютер", "перезагрузи пк", "рестарт"],
+            "system_lock": ["заблокируй экран", "заблокируй компьютер", "лок"],
+            "info_time": ["который час", "сколько времени", "время"],
+            "info_date": ["какая дата", "какое сегодня число", "дата"],
+            "info_weather": ["какая погода", "погода на сегодня", "прогноз погоды"],
+            "app_notepad": ["открой блокнот", "запусти notepad", "открой заметки"],
+            "app_calculator": ["открой калькулятор", "запусти калькулятор"],
+            "app_youtube": ["открой ютуб", "открой youtube", "запусти ютуб"],
+            "control_volume": ["громкость", "сделай громче", "сделай тише"],
+            "control_mute": ["без звука", "выключи звук", "mute"],
+            "control_minimize": ["сверни все окна", "покажи рабочий стол", "минимизировать"],
+            "network_speed": ["тест скорости", "скорость интернета", "проверь интернет"],
+            "network_ip": ["какой ip адрес", "мой ip", "айпи адрес"],
+        }
+
+    def _train_initial_model(self):
+        """Обучение начальной модели."""
+        X, y = self._prepare_training_batch()
+        if not X:
+            self.model = None
+            return
+
+        self.model = self._build_model()
+        self.model.fit(X, y)
+        self.classes = self.model.classes_.tolist()
+        self._save_model()
+
+    def _save_model(self):
+        """Сохранение модели."""
+        self.model_path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump({
+            "model": self.model,
+            "classes": self.classes,
+        }, self.model_path)
 
     def _load_model(self):
-        """Загрузка обученной модели."""
+        """Загрузка модели."""
         try:
-            self.model = joblib.load(self.model_path)
-            self.classes = list(self.model.classes_)
-            self.brain.logger.info(f"ML модель загружена. Классы: {self.classes}")
+            data = joblib.load(self.model_path)
+            self.model = data["model"]
+            self.classes = data["classes"]
         except Exception as e:
             self.brain.logger.error(f"Ошибка загрузки модели: {e}")
             self._train_initial_model()
 
-    def _retrain_model(self):
-        """Переобучение модели на текущих данных."""
-        X, y = self._prepare_training_batch()
-
-        if len(X) < 5:
-            self.brain.logger.warning("Недостаточно данных для обучения")
-            return False
-
-        try:
-            self.model = self._build_model()
-            self.model.fit(X, y)
-            self.classes = list(self.model.classes_)
-
-            # Сохраняем модель
-            self.model_path.parent.mkdir(exist_ok=True)
-            joblib.dump(self.model, self.model_path)
-
-            self.brain.logger.info(f"Модель переобучена на {len(X)} примерах. Классы: {self.classes}")
-            return True
-        except Exception as e:
-            self.brain.logger.error(f"Ошибка переобучения модели: {e}")
-            return False
-
     def predict(self, text: str) -> Dict:
-        """Предсказание категории для текста."""
+        """Предсказание категории команды."""
         if not self.model:
-            return {"category": "unknown", "confidence": 0.0}
+            return {"status": "error", "message": "Модель не загружена"}
 
         try:
             probabilities = self.model.predict_proba([text])[0]
-            max_idx = np.argmax(probabilities)
-            category = self.classes[max_idx]
-            confidence = probabilities[max_idx]
+            if probabilities.size == 0:
+                return {"status": "error", "message": "Пустые вероятности"}
 
-            return {
-                "category": category,
-                "confidence": float(confidence),
-                "all_probabilities": {
-                    cls: float(prob) 
-                    for cls, prob in zip(self.classes, probabilities)
-                }
+            best_index = int(np.argmax(probabilities))
+            prediction = self.model.classes_[best_index]
+            confidence = float(probabilities[best_index])
+
+            result = {
+                "status": "ok",
+                "category": prediction,
+                "confidence": round(confidence, 3),
+                "text": text,
+                "needs_learning": confidence < self.confidence_threshold
             }
-        except Exception as e:
-            self.brain.logger.error(f"Ошибка предсказания: {e}")
-            return {"category": "unknown", "confidence": 0.0}
 
-    def add_training_example(self, category: str, example: str) -> Dict:
-        """Добавление примера для дообучения."""
+            if confidence < self.confidence_threshold:
+                result["suggestion"] = f"Я не уверен, что это \'{prediction}\'. Хотите научить меня?"
+
+            return result
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def add_training_example(self, text: str, category: str) -> Dict:
+        """Добавление нового примера и переобучение."""
         if category not in self.training_data:
             self.training_data[category] = []
 
-        if example not in self.training_data[category]:
-            self.training_data[category].append(example)
+        if text not in self.training_data[category]:
+            self.training_data[category].append(text)
             self._save_training_data()
-
-            # Переобучаем модель
-            success = self._retrain_model()
+            self._retrain_model()
 
             return {
-                "status": "ok" if success else "warning",
-                "message": f"Добавлен пример в категорию '{category}'",
-                "retrained": success
+                "status": "ok",
+                "message": f"Обучен новой команде: \'{text}\' → {category}",
+                "total_examples": len(self.training_data[category])
             }
+
+        return {"status": "ok", "message": "Этот пример уже есть"}
+
+    def _retrain_model(self):
+        """Переобучение модели на всех данных."""
+        X, y = self._prepare_training_batch()
+        if len(X) == 0:
+            return
+
+        self.model = self._build_model()
+        self.model.fit(X, y)
+        self.classes = self.model.classes_.tolist()
+        self._save_model()
+
+    def create_new_category(self, category_name: str, examples: List[str]) -> Dict:
+        """Создание новой категории команд."""
+        if category_name in self.training_data:
+            return {"status": "error", "message": "Категория уже существует"}
+
+        self.training_data[category_name] = examples
+        self._save_training_data()
+        self._retrain_model()
 
         return {
             "status": "ok",
-            "message": "Пример уже существует",
-            "retrained": False
+            "message": f"Создана новая категория \'{category_name}\' с {len(examples)} примерами"
         }
 
     def get_training_stats(self) -> Dict:
-        """Статистика обучающих данных."""
+        """Статистика обучения."""
         total_examples = sum(len(examples) for examples in self.training_data.values())
         return {
             "categories": len(self.training_data),
             "total_examples": total_examples,
-            "classes": self.classes,
-            "model_trained": self.model is not None
+            "categories_list": list(self.training_data.keys()),
+            "confidence_threshold": self.confidence_threshold
         }
+
+    def set_confidence_threshold(self, threshold: float):
+        """Установка порога уверенности."""
+        self.confidence_threshold = max(0.1, min(1.0, threshold))
