@@ -439,15 +439,10 @@ class JarvisBrain:
             return {"status": "error", "message": "Модуль очистки рабочего стола недоступен"}
 
 
-        # Обработка команд ChatGPT
-        if any(word in text_lower for word in ["спроси chatgpt", "поговори с chatgpt", "чат"]):
-            if self.chatgpt:
-                # Извлекаем вопрос после ключевых слов
-                question = text_lower
-                for word in ["спроси chatgpt", "поговори с chatgpt", "чат"]:
-                    question = question.replace(word, "").strip()
-                return self.chatgpt.chat(question)
-            return {"status": "error", "message": "ChatGPT не настроен"}
+        # Автоматическая передача нераспознанных команд в ChatGPT
+        if self.chatgpt:
+            self.logger.info("Команда не распознана локально, передаю в ChatGPT...")
+            return self.chatgpt.chat(text)
 
         return {"status": "ok", "message": "Команда не распознана", "text": text}
 
