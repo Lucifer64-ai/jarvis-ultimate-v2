@@ -1,5 +1,5 @@
 """
-½µ³°¸ JARVIS  Home Assistant
+Интеграция JARVIS с Home Assistant
 """
 
 import aiohttp
@@ -10,27 +10,27 @@ import logging
 
 
 class HomeAssistantIntegration:
-    """голосовые ¼½¼ ´¾¼¾¼ µµ· Home Assistant."""
+    """Управление умным домом через Home Assistant."""
 
     def __init__(self, brain):
         self.brain = brain
-        
-        # §µ½¸µ из ¿µµ¼µ½½ ¾º¶µ½¸
+
+        # Чтение из переменных окружения
         self.url = brain.config.home_assistant_url
         self.token = brain.config.home_assistant_token
-        
+
         if self.url and self.token:
-            self.brain.logger.info(f"Home Assistant ¿¾´º»µ½: {self.url}")
+            self.brain.logger.info(f"Home Assistant подключен: {self.url}")
         else:
-            self.brain.logger.warning("Home Assistant ни на¾µ½. ¾±°²µ HOME_ASSISTANT_URL ¸ HOME_ASSISTANT_TOKEN ² .env")
-        
+            self.brain.logger.warning("Home Assistant не настроен. Добавьте HOME_ASSISTANT_URL и HOME_ASSISTANT_TOKEN в .env")
+
         self.session: Optional[aiohttp.ClientSession] = None
 
     async def _ensure_session(self):
-        """¡¾·´°½¸µ HTTP µ¸¸."""
+        """Создание HTTP сессии."""
         if not self.url or not self.token:
-            raise Exception("Home Assistant ни на¾µ½")
-        
+            raise Exception("Home Assistant не настроен")
+
         if self.session is None or self.session.closed:
             self.session = aiohttp.ClientSession(
                 headers={
@@ -40,12 +40,12 @@ class HomeAssistantIntegration:
             )
 
     async def close(self):
-        """°º¸µ µ¸¸."""
+        """Закрытие сессии."""
         if self.session and not self.session.closed:
             await self.session.close()
 
     async def get_states(self) -> Dict:
-        """ошибки ²µ ¾¾½¸ ¾¹²."""
+        """Получить все состояния устройств."""
         await self._ensure_session()
         try:
             async with self.session.get(f"{self.url}/api/states") as resp:
@@ -56,7 +56,7 @@ class HomeAssistantIntegration:
             return {"error": str(e)}
 
     async def get_entity(self, entity_id: str) -> Dict:
-        """ошибки ¾¾½¸µ º¾½ºµ½¾³¾ ¾¹²°."""
+        """Получить состояние конкретного устройства."""
         await self._ensure_session()
         try:
             async with self.session.get(f"{self.url}/api/states/{entity_id}") as resp:
@@ -67,13 +67,13 @@ class HomeAssistantIntegration:
             return {"error": str(e)}
 
     async def call_service(self, domain: str, service: str, entity_id: str = None, **kwargs) -> Dict:
-        """·¾² µ²¸° Home Assistant."""
+        """Вызов сервиса Home Assistant."""
         await self._ensure_session()
-        
+
         data = kwargs.copy()
         if entity_id:
             data["entity_id"] = entity_id
-        
+
         try:
             async with self.session.post(
                 f"{self.url}/api/services/{domain}/{service}",
@@ -85,138 +85,138 @@ class HomeAssistantIntegration:
         except Exception as e:
             return {"error": str(e)}
 
-    # === голосовые ¾²µµ½¸µ¼ ===
+    # === Управление освещением ===
 
     async def turn_on_light(self, entity_id: str, brightness: int = None, color: tuple = None):
-        """º»¸ ²µ."""
+        """Включить свет."""
         kwargs = {}
         if brightness:
             kwargs["brightness"] = int(brightness * 2.55)
         if color:
             kwargs["rgb_color"] = color
-        
+
         return await self.call_service("light", "turn_on", entity_id, **kwargs)
 
     async def turn_off_light(self, entity_id: str):
-        """º»¸ ²µ."""
+        """Выключить свет."""
         return await self.call_service("light", "turn_off", entity_id)
 
     async def set_brightness(self, entity_id: str, brightness: int):
-        """£°½¾²¸ º¾."""
+        """Установить яркость."""
         return await self.turn_on_light(entity_id, brightness=brightness)
 
     async def set_color(self, entity_id: str, r: int, g: int, b: int):
-        """£°½¾²¸ ²µ."""
+        """Установить цвет."""
         return await self.turn_on_light(entity_id, color=(r, g, b))
 
-    # === голосовые º»¸¼°¾¼ ===
+    # === Управление климатом ===
 
     async def set_temperature(self, entity_id: str, temperature: float):
-        """£°½¾²¸ µ¼¿µ°."""
+        """Установить температуру."""
         return await self.call_service(
             "climate", "set_temperature",
             entity_id, temperature=temperature
         )
 
     async def set_hvac_mode(self, entity_id: str, mode: str):
-        """£°½¾²¸ µ¶¸¼ HVAC."""
+        """Установить режим HVAC."""
         return await self.call_service(
             "climate", "set_hvac_mode",
             entity_id, hvac_mode=mode
         )
 
-    # === голосовые ¼µ´¸° ===
+    # === Управление медиа ===
 
     async def media_play(self, entity_id: str):
-        """¾¿¾из²µ¸ ¼µ´¸°."""
+        """Воспроизвести медиа."""
         return await self.call_service("media_player", "media_play", entity_id)
 
     async def media_pause(self, entity_id: str):
-        """°·° ¼µ´¸°."""
+        """Пауза медиа."""
         return await self.call_service("media_player", "media_pause", entity_id)
 
     async def media_stop(self, entity_id: str):
-        """°½¾²¸ ¼µ´¸°."""
+        """Остановить медиа."""
         return await self.call_service("media_player", "media_stop", entity_id)
 
     async def set_volume(self, entity_id: str, volume: float):
-        """£°½¾²¸ ³¾¼º¾."""
+        """Установить громкость."""
         return await self.call_service(
             "media_player", "volume_set",
             entity_id, volume_level=volume
         )
 
-    # === голосовые ·°¼º°¼¸ ===
+    # === Управление замками ===
 
     async def lock(self, entity_id: str):
-        """°±»¾º¸¾²° ·°¼¾º."""
+        """Заблокировать замок."""
         return await self.call_service("lock", "lock", entity_id)
 
     async def unlock(self, entity_id: str):
-        """ °·±»¾º¸¾²° ·°¼¾º."""
+        """Разблокировать замок."""
         return await self.call_service("lock", "unlock", entity_id)
 
-    # === ¡µ½ ¸ º¸¿ ===
+    # === Сцены и скрипты ===
 
     async def activate_scene(self, entity_id: str):
-        """º¸²¸¾²° µ½."""
+        """Активировать сцену."""
         return await self.call_service("scene", "turn_on", entity_id)
 
     async def run_script(self, entity_id: str):
-        """°¿¸ º¸¿."""
+        """Запустить скрипт."""
         return await self.call_service("script", "turn_on", entity_id)
 
-    # === ¾»µ½¸µ ¸½¾¼°¸¸ ===
+    # === Получение информации ===
 
     async def get_lights(self) -> List[Dict]:
-        """ошибки ¿¸¾º ²µ ²µ¸»½¸º¾²."""
+        """Получить список всех осветителей."""
         states = await self.get_states()
         if "error" in states:
             return []
         return [s for s in states if s["entity_id"].startswith("light.")]
 
     async def get_switches(self) -> List[Dict]:
-        """ошибки ¿¸¾º ²µ ²º»°µ»µ¹."""
+        """Получить список всех выключателей."""
         states = await self.get_states()
         if "error" in states:
             return []
         return [s for s in states if s["entity_id"].startswith("switch.")]
 
     async def get_sensors(self) -> List[Dict]:
-        """ошибки ¿¸¾º ²µ ´°¸º¾²."""
+        """Получить список всех датчиков."""
         states = await self.get_states()
         if "error" in states:
             return []
         return [s for s in states if s["entity_id"].startswith("sensor.")]
 
     async def get_cameras(self) -> List[Dict]:
-        """ошибки ¿¸¾º º°¼µ."""
+        """Получить список камер."""
         states = await self.get_states()
         if "error" in states:
             return []
         return [s for s in states if s["entity_id"].startswith("camera.")]
 
-    # === ±°±¾º° ³¾»¾¾² команд ===
+    # === Обработка голосовых команд ===
 
     async def handle_command(self, command: str) -> Dict:
-        """±°±¾º° ³¾»¾¾²¾¹ команд для ¼½¾³¾ ´¾¼°."""
+        """Обработка голосовых команд для умного дома."""
         cmd = command.lower()
-        
-        # ¡²µ
-        if "²º»¸ ²µ" in cmd or "·°¶³¸ ²µ" in cmd:
+
+        # Свет
+        if "включи свет" in cmd or "зажги свет" in cmd:
             lights = await self.get_lights()
             for light in lights:
                 await self.turn_on_light(light["entity_id"])
-            return {"response": f"º»° {len(lights)} ²µ¸»½¸º¾²."}
-        
-        elif "²º»¸ ²µ" in cmd or "¿¾¸ ²µ" in cmd:
+            return {"response": f"Включаю {len(lights)} осветителей."}
+
+        elif "выключи свет" in cmd or "погаси свет" in cmd:
             lights = await self.get_lights()
             for light in lights:
                 await self.turn_off_light(light["entity_id"])
-            return {"response": "º»° ²µ ²µ."}
-        
-        # ¢µ¼¿µ°°
-        elif "µ¼¿µ°" in cmd and any(c in cmd for c in ["20", "21", "22", "23", "24", "25"]):
+            return {"response": "Выключаю весь свет."}
+
+        # Температура
+        elif "температуру" in cmd and any(c in cmd for c in ["20", "21", "22", "23", "24", "25"]):
             import re
             match = re.search(r'(\d+)', cmd)
             if match:
@@ -225,14 +225,14 @@ class HomeAssistantIntegration:
                 climates = [s for s in states if s["entity_id"].startswith("climate.")]
                 for climate in climates:
                     await self.set_temperature(climate["entity_id"], temp)
-                return {"response": f"£°на²»¸²° µ¼¿µ° {temp} ³°´¾²."}
-        
-        # ¡µ½
-        elif "µ½" in cmd:
+                return {"response": f"Устанавливаю температуру {temp} градусов."}
+
+        # Сцены
+        elif "сцену" in cmd:
             states = await self.get_states()
             scenes = [s for s in states if s["entity_id"].startswith("scene.")]
             if scenes:
                 await self.activate_scene(scenes[0]["entity_id"])
-                return {"response": f"º¸²¸ µ½ {scenes[0]['attributes'].get('friendly_name', '')}."}
-        
-        return {"response": "µ ¿¾½¸¼° команд для ¼½¾³¾ ´¾¼°."}
+                return {"response": f"Активирую сцену {scenes[0]['attributes'].get('friendly_name', '')}."}
+
+        return {"response": "Не понимаю команду для умного дома."}
