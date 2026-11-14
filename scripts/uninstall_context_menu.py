@@ -1,5 +1,5 @@
 """
-¡ºи¿ ´°»µ½и º¾½µº½¾³¾ ¼µ½ ¿¾в¾´½иº° Windows
+Скрипт удаления контекстного меню JARVIS из проводника Windows
 """
 
 import winreg
@@ -7,27 +7,27 @@ import sys
 
 
 def uninstall_context_menu():
-    """£´°»µ½иµ º¾½µº½¾³¾ ¼µ½."""
+    """Удаление контекстного меню."""
     try:
-        # £´°»µ½иµ ´» °¹»¾в
+        # Удаление для файлов
         try:
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, r"*\shell\JARVIS\command")
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, r"*\shell\JARVIS")
         except:
             pass
-        
-        # £´°»µ½иµ ´» ¿°¿¾º
+
+        # Удаление для папок
         try:
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, r"Directory\shell\JARVIS\command")
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, r"Directory\shell\JARVIS")
         except:
             pass
-        
-        print("¾½µº½¾µ ¼µ½ ´°»µ½¾ ¿µ½¾")
+
+        print("Контекстное меню JARVIS удалено из системы")
         return 0
-    
+
     except Exception as e:
-        print(f"и±º° ´°»µ½и º¾½µº½¾³¾ ¼µ½: {e}")
+        print(f"Ошибка удаления контекстного меню: {e}")
         return 1
 
 
