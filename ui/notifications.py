@@ -1,5 +1,5 @@
 """
-¡иµ¼° вµ´¾¼»µ½и¹ JARVIS
+Система уведомлений JARVIS
 """
 
 from plyer import notification
@@ -8,13 +8,13 @@ import threading
 
 
 class NotificationManager:
-    """£¿°в»µ½иµ вµ´¾¼»µ½и¼и."""
+    """Управление всплывающими уведомлениями."""
 
     def __init__(self, brain):
         self.brain = brain
 
     def show(self, title: str, message: str, timeout: int = 10):
-        """¾º°·° вµ´¾¼»µ½иµ."""
+        """Показать уведомление."""
         try:
             notification.notify(
                 title=title,
@@ -23,10 +23,10 @@ class NotificationManager:
                 timeout=timeout
             )
         except Exception as e:
-            self.brain.logger.error(f"и±º° ¿¾º°·° вµ´¾¼»µ½и: {e}")
+            self.brain.logger.error(f"Ошибка показа уведомления: {e}")
 
     def show_async(self, title: str, message: str, timeout: int = 10):
-        """¾º°·° вµ´¾¼»µ½иµ °и½¾½½¾."""
+        """Показать уведомление асинхронно."""
         thread = threading.Thread(
             target=self.show,
             args=(title, message, timeout),
@@ -35,12 +35,12 @@ class NotificationManager:
         thread.start()
 
     def alert(self, message: str, level: str = "info"):
-        """¾º°·° ¿µ´¿µ¶´µ½иµ."""
+        """Показать предупреждение."""
         icons = {
-            "info": "¢¹¯и",
-            "warning": "¢ ¯и",
-            "error": "¢",
-            "success": "¢"
+            "info": "ℹ️",
+            "warning": "⚠️",
+            "error": "❌",
+            "success": "✅"
         }
-        icon = icons.get(level, "¢¹¯и")
+        icon = icons.get(level, "ℹ️")
         self.show(f"{icon} JARVIS", message)
