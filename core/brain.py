@@ -40,6 +40,8 @@ class JarvisBrain:
         self.process_manager = None
         self.network_manager = None
         self.ml_engine = None
+        self.chatgpt = None
+        self.hud = None
 
         self.modules = {}
         self.running = False
@@ -131,6 +133,24 @@ class JarvisBrain:
             self.logger.error(f"Ошибка загрузки модуля ML Engine: {e}")
             self.ml_engine = None
 
+
+        # Инициализация ChatGPT интеграции
+        try:
+            from ai.chatgpt_integration import ChatGPTIntegration
+            self.chatgpt = ChatGPTIntegration(self)
+            self.logger.info("Модуль ChatGPT интеграции загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки ChatGPT: {e}")
+            self.chatgpt = None
+
+        # Инициализация HUD
+        try:
+            from hud.jarvis_hud import JarvisHUD
+            self.hud = JarvisHUD(self)
+            self.logger.info("Модуль HUD загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки HUD: {e}")
+            self.hud = None
     def _init_voice(self):
         """Инициализация голосовых модулей."""
         # Voice Speaker (синтез речи)
@@ -417,6 +437,17 @@ class JarvisBrain:
             if self.clean_desktop:
                 return self.clean_desktop.enable_clean_mode()
             return {"status": "error", "message": "Модуль очистки рабочего стола недоступен"}
+
+
+        # Обработка команд ChatGPT
+        if any(word in text_lower for word in ["спроси chatgpt", "поговори с chatgpt", "чат"]):
+            if self.chatgpt:
+                # Извлекаем вопрос после ключевых слов
+                question = text_lower
+                for word in ["спроси chatgpt", "поговори с chatgpt", "чат"]:
+                    question = question.replace(word, "").strip()
+                return self.chatgpt.chat(question)
+            return {"status": "error", "message": "ChatGPT не настроен"}
 
         return {"status": "ok", "message": "Команда не распознана", "text": text}
 
