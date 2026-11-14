@@ -40,7 +40,7 @@ class JarvisBrain:
         self.process_manager = None
         self.network_manager = None
         self.ml_engine = None
-        self.chatgpt = None
+        self.llm_router = None
         self.hud = None
 
         self.modules = {}
@@ -134,14 +134,14 @@ class JarvisBrain:
             self.ml_engine = None
 
 
-        # Инициализация ChatGPT интеграции
+        # Инициализация LLM Router (OpenAI + Ollama)
         try:
-            from ai.chatgpt_integration import ChatGPTIntegration
-            self.chatgpt = ChatGPTIntegration(self)
-            self.logger.info("Модуль ChatGPT интеграции загружен")
+            from ai.llm_router import LLMRouter
+            self.llm_router = LLMRouter(self)
+            self.logger.info("Модуль LLM Router загружен")
         except Exception as e:
-            self.logger.error(f"Ошибка загрузки ChatGPT: {e}")
-            self.chatgpt = None
+            self.logger.error(f"Ошибка загрузки LLM Router: {e}")
+            self.llm_router = None
 
         # Инициализация HUD
         try:
@@ -440,9 +440,9 @@ class JarvisBrain:
 
 
         # Автоматическая передача нераспознанных команд в ChatGPT
-        if self.chatgpt:
+        if self.llm_router:
             self.logger.info("Команда не распознана локально, передаю в ChatGPT...")
-            return self.chatgpt.chat(text)
+            return self.llm_router.chat(text)
 
         return {"status": "ok", "message": "Команда не распознана", "text": text}
 
