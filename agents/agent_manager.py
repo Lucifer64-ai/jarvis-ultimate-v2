@@ -58,6 +58,10 @@ class AgentManager:
 
         return result
 
+    def get_active_count(self) -> int:
+        """Получить количество активных агентов."""
+        return sum(1 for agent in self.agents.values() if getattr(agent, "is_active", False))
+
     def list_agents(self) -> List[Dict[str, Any]]:
         """Get list of all agents."""
         return [agent.get_status() for agent in self.agents.values()]

@@ -3,12 +3,16 @@ Windows интеграция JARVIS
 Автозапуск, горячие клавиши, контекстное меню проводника
 """
 
-import winreg
 import sys
 import os
 from pathlib import Path
 from typing import Dict, Optional
 import logging
+
+try:
+    import winreg
+except ImportError:
+    winreg = None
 
 
 class WindowsIntegration:
@@ -20,8 +24,14 @@ class WindowsIntegration:
         self.app_name = "JARVIS"
         self.exe_path = sys.executable
 
+    def _winreg_available(self) -> bool:
+        """Проверить доступен ли winreg (только в Windows)."""
+        return winreg is not None
+
     def enable_autostart(self) -> Dict:
         """Включить автозапуск при старте Windows."""
+        if not self._winreg_available():
+            return {"status": "error", "message": "winreg недоступен (только для Windows)"}
         try:
             key = winreg.HKEY_CURRENT_USER
             sub_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -38,6 +48,8 @@ class WindowsIntegration:
 
     def disable_autostart(self) -> Dict:
         """Отключить автозапуск."""
+        if not self._winreg_available():
+            return {"status": "error", "message": "winreg недоступен (только для Windows)"}
         try:
             key = winreg.HKEY_CURRENT_USER
             sub_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -54,6 +66,8 @@ class WindowsIntegration:
 
     def is_autostart_enabled(self) -> bool:
         """Проверить, включён ли автозапуск."""
+        if not self._winreg_available():
+            return False
         try:
             key = winreg.HKEY_CURRENT_USER
             sub_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -61,13 +75,13 @@ class WindowsIntegration:
             with winreg.OpenKey(key, sub_key, 0, winreg.KEY_READ) as reg_key:
                 winreg.QueryValueEx(reg_key, self.app_name)
                 return True
-        except:
+        except Exception:
             return False
 
     def register_hotkey(self, hotkey: str = "Ctrl+Shift+J") -> Dict:
         """Регистрация глобальной горячей клавиши."""
         # Примечание: для полной реализации нужен ctypes и Win32 API
-        # Здесь заглушка для демонстрации
+        # Here is a stub for demonstration
         self.logger.info(f"Горячая клавиша '{hotkey}' зарегистрирована")
         return {
             "status": "ok",

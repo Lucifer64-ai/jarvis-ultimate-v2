@@ -41,10 +41,10 @@ class JarvisBrain:
         self.network_manager = None
         self.ml_engine = None
         self.llm_router = None
-        self.hud = None
 
         self.modules = {}
         self.running = False
+        self.gui_enabled = self.config.get("ui.hud_enabled", True)
         self.logger.info("JARVIS Brain инициализирован")
         self._init_modules()
         self._init_voice()
@@ -132,6 +132,31 @@ class JarvisBrain:
         except Exception as e:
             self.logger.error(f"Ошибка загрузки модуля ML Engine: {e}")
             self.ml_engine = None
+
+        # Weather / Currency / News модули
+        try:
+            from modules.weather import WeatherModule
+            self.weather_module = WeatherModule(self)
+            self.logger.info("Модуль погоды загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля погоды: {e}")
+            self.weather_module = None
+
+        try:
+            from modules.currency import CurrencyModule
+            self.currency_module = CurrencyModule(self)
+            self.logger.info("Модуль валют загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля валют: {e}")
+            self.currency_module = None
+
+        try:
+            from modules.news import NewsModule
+            self.news_module = NewsModule(self)
+            self.logger.info("Модуль новостей загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля новостей: {e}")
+            self.news_module = None
 
 
         # Инициализация LLM Router (OpenAI + Ollama)

@@ -2,8 +2,12 @@
 Синтез речи JARVIS
 """
 
-import pyttsx3
 from typing import Optional
+
+try:
+    import pyttsx3
+except ImportError:
+    pyttsx3 = None
 
 
 class VoiceSpeaker:
@@ -11,6 +15,9 @@ class VoiceSpeaker:
 
     def __init__(self, brain):
         self.brain = brain
+        if pyttsx3 is None:
+            raise ImportError("pyttsx3 не установлен. Установите: pip install pyttsx3")
+
         self.engine = pyttsx3.init()
 
         # Настройка голоса

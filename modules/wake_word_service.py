@@ -96,6 +96,8 @@ class WakeWordService:
     def set_wake_word(self, wake_word: str) -> Dict:
         """Установить wake word."""
         self.wake_word = wake_word.lower().strip()
-        self.brain.config.set("voice.wake_word", self.wake_word)
+        # Config.update() сохраняет значение в config.json
+        if hasattr(self.brain.config, "update"):
+            self.brain.config.update("voice.wake_word", self.wake_word)
         self.logger.info(f"Wake word изменён: {self.wake_word}")
         return {"status": "ok", "message": f"Wake word: {self.wake_word}"}

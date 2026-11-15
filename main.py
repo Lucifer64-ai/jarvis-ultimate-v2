@@ -8,7 +8,6 @@ import threading
 import asyncio
 
 # Настройка пути для импорта модулей PyInstaller
-import dotenv
 from dotenv import load_dotenv
 
 from core.brain import JarvisBrain

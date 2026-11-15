@@ -3,10 +3,15 @@ Clean Desktop Mode - Скрытие иконок рабочего стола
 """
 
 import ctypes
-import win32gui
-import win32con
 from typing import Dict, Optional
 import logging
+
+try:
+    import win32gui
+    import win32con
+except ImportError:
+    win32gui = None
+    win32con = None
 
 
 class CleanDesktop:
@@ -17,13 +22,25 @@ class CleanDesktop:
         self.logger = brain.logger
         self.icons_hidden = False
 
+    def _win32_available(self) -> bool:
+        """Проверить доступны ли win32-модули (только в Windows)."""
+        return win32gui is not None and win32con is not None
+
+    def _get_desktop_window(self):
+        """Получить окно рабочего стола (SysListView32)."""
+        if not self._win32_available():
+            return None
+        progman = win32gui.FindWindow("Progman", None)
+        defview = win32gui.FindWindowEx(progman, 0, "SHELLDLL_DefView", None)
+        sys_listview = win32gui.FindWindowEx(defview, 0, "SysListView32", None)
+        return sys_listview
+
     def hide_icons(self) -> Dict:
         """Скрыть все иконки рабочего стола."""
+        if not self._win32_available():
+            return {"status": "error", "message": "win32gui недоступен (только для Windows)"}
         try:
-            # Находим окно рабочего стола
-            progman = win32gui.FindWindow("Progman", None)
-            defview = win32gui.FindWindowEx(progman, 0, "SHELLDLL_DefView", None)
-            sys_listview = win32gui.FindWindowEx(defview, 0, "SysListView32", None)
+            sys_listview = self._get_desktop_window()
 
             if sys_listview:
                 # Скрываем окно с иконками
@@ -40,10 +57,10 @@ class CleanDesktop:
 
     def show_icons(self) -> Dict:
         """Показать иконки рабочего стола."""
+        if not self._win32_available():
+            return {"status": "error", "message": "win32gui недоступен (только для Windows)"}
         try:
-            progman = win32gui.FindWindow("Progman", None)
-            defview = win32gui.FindWindowEx(progman, 0, "SHELLDLL_DefView", None)
-            sys_listview = win32gui.FindWindowEx(defview, 0, "SysListView32", None)
+            sys_listview = self._get_desktop_window()
 
             if sys_listview:
                 win32gui.ShowWindow(sys_listview, win32con.SW_SHOW)
@@ -70,6 +87,8 @@ class CleanDesktop:
 
     def hide_taskbar(self) -> Dict:
         """Скрыть панель задач."""
+        if not self._win32_available():
+            return {"status": "error", "message": "win32gui недоступен (только для Windows)"}
         try:
             taskbar = win32gui.FindWindow("Shell_traywnd", None)
             if taskbar:
@@ -83,6 +102,8 @@ class CleanDesktop:
 
     def show_taskbar(self) -> Dict:
         """Показать панель задач."""
+        if not self._win32_available():
+            return {"status": "error", "message": "win32gui недоступен (только для Windows)"}
         try:
             taskbar = win32gui.FindWindow("Shell_traywnd", None)
             if taskbar:
