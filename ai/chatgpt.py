@@ -192,8 +192,7 @@ class ChatGPTIntegration:
 
         if response["status"] == "ok":
             import re
-            code_match = re.search(r'```.*?
-(.*?)```', response["answer"], re.DOTALL)
+            code_match = re.search(r'```.*?\n(.*?)```', response["answer"], re.DOTALL)
             if code_match:
                 return {"status": "ok", "code": code_match.group(1)}
             return {"status": "ok", "code": response["answer"]}
