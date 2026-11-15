@@ -6,7 +6,11 @@ import os
 import shutil
 from pathlib import Path
 from typing import Dict, List
-from send2trash import send2trash
+
+try:
+    from send2trash import send2trash
+except ImportError:
+    send2trash = None
 
 
 class FileModule:
@@ -40,6 +44,13 @@ class FileModule:
 
     def delete_file(self, path: str) -> Dict:
         """Удалить файл в корзину."""
+        if send2trash is None:
+            # Fallback: use os.unlink (permanent delete)
+            try:
+                os.unlink(path)
+                return {"status": "ok", "message": f"Файл '{path}' удалён"}
+            except Exception as e:
+                return {"status": "error", "message": f"send2trash недоступен: {e}"}
         try:
             send2trash(path)
             return {"status": "ok", "message": f"Файл '{path}' перемещён в корзину"}

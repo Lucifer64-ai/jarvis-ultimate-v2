@@ -2,9 +2,16 @@
 Управление окнами JARVIS
 """
 
-import win32gui
-import win32con
 from typing import Dict, List
+
+try:
+    import win32gui
+    import win32con
+    WIN32_AVAILABLE = True
+except ImportError:
+    win32gui = None
+    win32con = None
+    WIN32_AVAILABLE = False
 
 
 class WindowModule:
@@ -12,9 +19,19 @@ class WindowModule:
 
     def __init__(self, brain):
         self.brain = brain
+        self.logger = brain.logger
+
+    def _check_win32(self) -> bool:
+        """Проверить доступны ли win32-модули."""
+        if not WIN32_AVAILABLE:
+            self.logger.warning("win32gui/win32con недоступны (только для Windows)")
+            return False
+        return True
 
     def list_windows(self) -> List[Dict]:
         """Список активных окон."""
+        if not self._check_win32():
+            return []
         windows = []
 
         def callback(hwnd, results):
@@ -44,6 +61,8 @@ class WindowModule:
 
     def close_window(self, title: str) -> Dict:
         """Закрыть окно по заголовку."""
+        if not self._check_win32():
+            return {"status": "error", "message": "win32gui недоступен (только для Windows)"}
         def callback(hwnd, target):
             if win32gui.IsWindowVisible(hwnd):
                 window_title = win32gui.GetWindowText(hwnd)

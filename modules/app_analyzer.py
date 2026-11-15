@@ -6,12 +6,16 @@ JARVIS сканирует, анализирует и разбирает прил
 import os
 import json
 import subprocess
-import winreg
 import psutil
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
+
+try:
+    import winreg
+except ImportError:
+    winreg = None
 
 
 class AppAnalyzer:
@@ -78,6 +82,9 @@ class AppAnalyzer:
 
     def scan_installed_apps(self) -> Dict:
         """Сканирование установленных приложений через реестр Windows."""
+        if winreg is None:
+            return {"status": "error", "message": "winreg недоступен (только для Windows)"}
+
         self.logger.info("Сканирование установленных приложений...")
         apps = []
 

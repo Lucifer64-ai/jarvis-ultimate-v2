@@ -8,7 +8,11 @@ import uuid
 from typing import Dict
 
 import requests
-import speedtest
+
+try:
+    import speedtest
+except ImportError:
+    speedtest = None
 
 
 class NetworkModule:

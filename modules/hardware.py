@@ -3,8 +3,12 @@
 """
 
 import psutil
-import cpuinfo
 from typing import Dict
+
+try:
+    import cpuinfo
+except ImportError:
+    cpuinfo = None
 
 
 class HardwareModule:
@@ -15,13 +19,17 @@ class HardwareModule:
 
     def get_cpu_info(self) -> Dict:
         """Информация о процессоре."""
-        cpu = cpuinfo.get_cpu_info()
-        return {
-            "brand": cpu.get('brand_raw', 'Unknown'),
-            "cores": psutil.cpu_count(logical=False),
-            "threads": psutil.cpu_count(logical=True),
-            "usage": psutil.cpu_percent(interval=1)
-        }
+        try:
+            cpu = cpuinfo.get_cpu_info() if cpuinfo is not None else {}
+            return {
+                "status": "ok",
+                "brand": cpu.get('brand_raw', 'Unknown'),
+                "cores": psutil.cpu_count(logical=False),
+                "threads": psutil.cpu_count(logical=True),
+                "usage": psutil.cpu_percent(interval=1)
+            }
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
     def get_memory_info(self) -> Dict:
         """Информация о памяти."""
