@@ -30,22 +30,23 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.3'
+
     - name: Setup Android SDK (manual)
       run: |
         export ANDROID_HOME=$HOME/android-sdk
         mkdir -p $ANDROID_HOME/cmdline-tools
         cd $ANDROID_HOME/cmdline-tools
 
-        # Скачиваем command-line tools
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
         unzip -q cmdline-tools.zip
         mv cmdline-tools latest
         rm cmdline-tools.zip
 
-        # Принимаем лицензии
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-
-        # Устанавливаем необходимые компоненты
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
         echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
@@ -58,9 +59,7 @@ jobs:
 
     - name: Build Android APK
       working-directory: ./mobile-app/android
-      run: |
-        chmod +x gradlew
-        ./gradlew assembleRelease --no-daemon
+      run: gradle assembleRelease --no-daemon
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
