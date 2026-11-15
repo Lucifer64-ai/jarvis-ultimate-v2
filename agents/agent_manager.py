@@ -62,6 +62,16 @@ class AgentManager:
         """Получить количество активных агентов."""
         return sum(1 for agent in self.agents.values() if getattr(agent, "is_active", False))
 
+    def initialize_agents(self) -> Dict:
+        """Инициализация всех агентов (установка флага активности)."""
+        for agent in self.agents.values():
+            agent.is_active = True
+        return {
+            "status": "ok",
+            "message": f"Инициализировано {len(self.agents)} агентов",
+            "agents": list(self.agents.keys())
+        }
+
     def list_agents(self) -> List[Dict[str, Any]]:
         """Get list of all agents."""
         return [agent.get_status() for agent in self.agents.values()]
