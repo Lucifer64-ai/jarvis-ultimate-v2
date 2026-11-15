@@ -35,3 +35,35 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+// Workaround for AGP 8+ namespace requirement
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    switch (project.name) {
+                        case 'react-native-screens':
+                            namespace = 'com.swmansion.rnscreens'
+                            break
+                        case 'react-native-gesture-handler':
+                            namespace = 'com.swmansion.gesturehandler'
+                            break
+                        case 'react-native-safe-area-context':
+                            namespace = 'com.th3rdwave.safeareacontext'
+                            break
+                        case '@react-native-async-storage_async-storage':
+                            namespace = 'com.reactnativecommunity.asyncstorage'
+                            break
+                        case '@react-native-voice_voice':
+                            namespace = 'com.wenkesj.voice'
+                            break
+                        case 'react-native-vector-icons':
+                            namespace = 'com.oblador.vectoricons'
+                            break
+                    }
+                }
+            }
+        }
+    }
+}
