@@ -4,33 +4,37 @@ import WebSocketService from '../services/websocket';
 
 export default function LogScreen() {
   const [logs, setLogs] = useState([]);
+  const wsRef = React.useRef(null);
 
   useEffect(() => {
     const ws = new WebSocketService('ws://192.168.1.100:8765');
-    ws.connect();
+    wsRef.current = ws;
 
+    // Единый обработчик входящих сообщений
     ws.onMessage = (data) => {
       if (data.type === 'log') {
         setLogs(prev => [data.entry, ...prev]);
-      }
-    };
-
-    // Загружаем историю логов
-    ws.send({ type: 'get_logs' });
-    ws.onMessage = (data) => {
-      if (data.type === 'logs_history') {
+      } else if (data.type === 'logs_history') {
         setLogs(data.logs);
       }
     };
 
-    return () => ws.disconnect();
+    ws.connect().then(() => {
+      // Загружаем историю логов после успешного подключения
+      ws.send({ type: 'get_logs' });
+    });
+
+    return () => {
+      ws.disconnect();
+      wsRef.current = null;
+    };
   }, []);
 
   const clearLogs = () => {
     setLogs([]);
-    const ws = new WebSocketService('ws://192.168.1.100:8765');
-    ws.connect();
-    ws.send({ type: 'clear_logs' });
+    if (wsRef.current) {
+      wsRef.current.send({ type: 'clear_logs' });
+    }
   };
 
   const renderLogItem = ({ item }) => (
