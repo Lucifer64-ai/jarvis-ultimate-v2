@@ -3,9 +3,17 @@ JARVIS Browser Automation Module
 Автоматизация браузера через Playwright
 """
 
-from playwright.sync_api import sync_playwright, Page, Browser
 import time
 from typing import Optional, List, Dict
+
+try:
+    from playwright.sync_api import sync_playwright, Page, Browser
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    sync_playwright = None
+    Page = None
+    Browser = None
+    PLAYWRIGHT_AVAILABLE = False
 
 class BrowserAutomation:
     """Модуль автоматизации браузера"""
@@ -16,8 +24,13 @@ class BrowserAutomation:
         self.browser: Optional[Browser] = None
         self.page: Optional[Page] = None
 
+        if not PLAYWRIGHT_AVAILABLE:
+            print("⚠️ playwright не установлен. Установите: pip install playwright && playwright install")
+
     def start(self):
         """Запуск браузера"""
+        if not PLAYWRIGHT_AVAILABLE:
+            raise ImportError("playwright недоступен")
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch(headless=self.headless)
         self.page = self.browser.new_page()

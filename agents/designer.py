@@ -30,7 +30,9 @@ class DesignerAgent(BaseAgent):
     def can_handle(self, task: str) -> bool:
         keywords = [
             "design", "layout", "ui", "ux", "interface", "style", "colors",
-            "svg", "graphics", "icon", "logo", "appearance", "mockup"
+            "svg", "graphics", "icon", "logo", "appearance", "mockup",
+            "дизайн", "интерфейс", "ui", "ux", "макет", "стиль", "цвета",
+            "графика", "иконка", "логотип", "внешний вид", "оформление",
         ]
         task_lower = task.lower()
         return any(keyword in task_lower for keyword in keywords)

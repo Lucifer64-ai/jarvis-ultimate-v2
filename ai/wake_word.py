@@ -4,10 +4,14 @@ JARVIS Wake Word Module
 """
 
 import numpy as np
-import sounddevice as sd
 import threading
 import queue
 import time
+
+try:
+    import sounddevice as sd
+except (ImportError, OSError):
+    sd = None
 
 class WakeWordDetector:
     """Детектор голосовой команды активации"""
@@ -20,6 +24,11 @@ class WakeWordDetector:
         self.audio_queue = queue.Queue()
         self.is_listening = False
         self.callback = None
+
+        if sd is None:
+            print("⚠️ sounddevice недоступен (требуется PortAudio). Wake word детектор отключён.")
+            self.use_openwakeword = False
+            return
 
         try:
             from openwakeword.model import Model

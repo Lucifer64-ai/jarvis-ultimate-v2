@@ -31,7 +31,10 @@ class DevOpsAgent(BaseAgent):
         keywords = [
             "docker", "ci/cd", "deployment", "deploy",
             "automation", "bash", "script", "server", "nginx",
-            "github actions", "gitlab ci", "infrastructure"
+            "github actions", "gitlab ci", "infrastructure",
+            "деплой", "деплоймент", "развертывание", "сервер", "nginx",
+            "ci", "cd", "докер", "docker", "автоматизация",
+            "конфигурация", "хостинг", "запуск",
         ]
         task_lower = task.lower()
         return any(keyword in task_lower for keyword in keywords)

@@ -3,8 +3,6 @@ JARVIS Live Dashboard Module
 Веб-панель мониторинга в реальном времени
 """
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
 import asyncio
 import json
 import psutil
@@ -12,12 +10,31 @@ import time
 from typing import Dict, List
 from collections import deque
 
+try:
+    from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+    from fastapi.responses import HTMLResponse
+    FASTAPI_AVAILABLE = True
+except ImportError:
+    FastAPI = None
+    WebSocket = None
+    WebSocketDisconnect = None
+    HTMLResponse = None
+    FASTAPI_AVAILABLE = False
+
 class LiveDashboard:
     """Веб-панель мониторинга JARVIS"""
 
     def __init__(self, host: str = "0.0.0.0", port: int = 8000):
         self.host = host
         self.port = port
+        if not FASTAPI_AVAILABLE:
+            print("⚠️ fastapi не установлен. Dashboard отключён.")
+            self.app = None
+            self.active_connections = []
+            self.metrics_history = deque(maxlen=100)
+            self.jarvis_status = {"status": "inactive"}
+            return
+
         self.app = FastAPI()
         self.active_connections: List[WebSocket] = []
         self.metrics_history = deque(maxlen=100)
@@ -208,6 +225,9 @@ class LiveDashboard:
 
     def start(self):
         """Запуск сервера"""
+        if not FASTAPI_AVAILABLE or self.app is None:
+            print("⚠️ Dashboard не может быть запущен: fastapi недоступен")
+            return
         import uvicorn
         print(f"🌐 Dashboard запущен: http://{self.host}:{self.port}")
         uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")

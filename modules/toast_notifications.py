@@ -14,7 +14,7 @@ class ToastNotifications:
         self.logger = brain.logger
         self.app_name = "JARVIS"
 
-    def show_toast(self, title: str, message: str, icon: str = None) -> Dict:
+    def show_toast(self, title: str, message: str, icon: str = None, duration: int = 5) -> Dict:
         """Показать toast уведомление."""
         try:
             from win10toast import ToastNotifier
@@ -24,7 +24,7 @@ class ToastNotifications:
                 title,
                 message,
                 icon_path=icon,
-                duration=5,
+                duration=duration,
                 threaded=True
             )
 

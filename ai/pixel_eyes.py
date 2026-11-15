@@ -5,7 +5,6 @@ GUI автоматизация для приложений без API
 
 import numpy as np
 from PIL import Image, ImageGrab
-import pyautogui
 import pytesseract
 from typing import List, Dict, Tuple, Optional
 
@@ -14,12 +13,22 @@ try:
 except ImportError:
     cv2 = None
 
+try:
+    import pyautogui
+except ImportError:
+    pyautogui = None
+
 class PixelEyes:
     """Модуль для работы с GUI через компьютерное зрение"""
 
     def __init__(self):
         self.confidence_threshold = 0.8
         pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+    def _check_pyautogui(self):
+        """Проверить доступность pyautogui."""
+        if pyautogui is None:
+            raise ImportError("pyautogui недоступен. Установите: pip install pyautogui")
 
     def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
         """Захват экрана в формате OpenCV"""
@@ -60,6 +69,7 @@ class PixelEyes:
 
     def click_on_text(self, target_text: str, region: Optional[Tuple[int, int, int, int]] = None) -> bool:
         """Клик по найденному тексту"""
+        self._check_pyautogui()
         elements = self.find_text_on_screen(target_text, region)
         if elements:
             best = max(elements, key=lambda x: x['confidence'])
@@ -98,6 +108,7 @@ class PixelEyes:
 
     def click_by_number(self, element_number: int, numbered_elements: Dict[int, Dict]) -> bool:
         """Клик по элементу с указанным номером"""
+        self._check_pyautogui()
         if element_number in numbered_elements:
             elem = numbered_elements[element_number]
             pyautogui.click(elem['x'], elem['y'])

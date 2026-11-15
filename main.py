@@ -14,18 +14,6 @@ from core.brain import JarvisBrain
 from core.websocket_server import create_websocket_server
 from core.qr_connection import create_qr_connection_manager
 
-# Новые модули
-from ai.vision import VisionModule
-from ai.pixel_eyes import PixelEyes
-from ai.wake_word import WakeWordDetector
-from ai.browser_automation import BrowserAutomation
-from ai.hybrid_intent import HybridIntentSystem
-from ai.confirmation_shell import ConfirmationShell
-from ai.subagent_orchestration import SubAgentOrchestrator
-from ai.streaming_tts import StreamingTTS
-from ai.live_dashboard import LiveDashboard
-from ai.plugin_ecosystem import PluginEcosystem
-
 
 def main():
     """Главная функция запуска JARVIS."""
@@ -40,7 +28,7 @@ def main():
 
     try:
         # Инициализация всех модулей и подсистем
-        brain.initialize()
+        brain._init_modules()
 
         # Инициализация QR-подключения
         brain.qr_connection = create_qr_connection_manager(brain)
@@ -58,11 +46,12 @@ def main():
         print("✅ WebSocket сервер запущен (порт 8765)")
         print("📱 Мобильное приложение может подключиться через QR-код")
 
-        # Инициализация новых модулей
+        # Инициализация новых модулей (ленивые импорты —Some модули требуют Windows-специфичных библиотек)
         print("\n🚀 Инициализация новых модулей...")
 
         # Vision Module
         try:
+            from ai.vision import VisionModule
             brain.vision = VisionModule(api_key=brain.config.get('OPENAI_API_KEY', ''))
             print("✅ Vision Module инициализирован")
         except Exception as e:
@@ -70,6 +59,7 @@ def main():
 
         # Pixel Eyes
         try:
+            from ai.pixel_eyes import PixelEyes
             brain.pixel_eyes = PixelEyes()
             print("✅ Pixel Eyes инициализирован")
         except Exception as e:
@@ -77,6 +67,7 @@ def main():
 
         # Wake Word Detector
         try:
+            from ai.wake_word import WakeWordDetector
             brain.wake_word_detector = WakeWordDetector()
             print("✅ Wake Word Detector инициализирован")
         except Exception as e:
@@ -84,6 +75,7 @@ def main():
 
         # Browser Automation
         try:
+            from ai.browser_automation import BrowserAutomation
             brain.browser = BrowserAutomation()
             print("✅ Browser Automation инициализирован")
         except Exception as e:
@@ -91,6 +83,7 @@ def main():
 
         # Hybrid Intent System
         try:
+            from ai.hybrid_intent import HybridIntentSystem
             brain.hybrid_intent = HybridIntentSystem(ai_fallback=brain.process_command)
             print("✅ Hybrid Intent System инициализирован")
         except Exception as e:
@@ -98,6 +91,7 @@ def main():
 
         # Confirmation Shell
         try:
+            from ai.confirmation_shell import ConfirmationShell
             brain.confirmation_shell = ConfirmationShell()
             print("✅ Confirmation Shell инициализирован")
         except Exception as e:
@@ -105,6 +99,7 @@ def main():
 
         # Sub-Agent Orchestration
         try:
+            from ai.subagent_orchestration import SubAgentOrchestrator
             brain.orchestrator = SubAgentOrchestrator()
             print("✅ Sub-Agent Orchestration инициализирован")
         except Exception as e:
@@ -112,6 +107,7 @@ def main():
 
         # Streaming TTS
         try:
+            from ai.streaming_tts import StreamingTTS
             brain.streaming_tts = StreamingTTS(api_key=brain.config.get('OPENAI_API_KEY', ''))
             print("✅ Streaming TTS инициализирован")
         except Exception as e:
@@ -119,6 +115,7 @@ def main():
 
         # Live Dashboard
         try:
+            from ai.live_dashboard import LiveDashboard
             brain.dashboard = LiveDashboard()
             # Запуск Dashboard в отдельном потоке
             dashboard_thread = threading.Thread(target=brain.dashboard.start, daemon=True)
@@ -129,6 +126,7 @@ def main():
 
         # Plugin Ecosystem
         try:
+            from ai.plugin_ecosystem import PluginEcosystem
             brain.plugins = PluginEcosystem()
             print("✅ Plugin Ecosystem инициализирован")
         except Exception as e:

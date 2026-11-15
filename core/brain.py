@@ -545,3 +545,7 @@ class JarvisBrain:
             "network_manager": self.network_manager is not None,
             "ml_engine": self.ml_engine is not None
         }
+
+    def initialize(self):
+        """Публичная обёртка для инициализации модулей (совместимость с main.py)."""
+        self._init_modules()
