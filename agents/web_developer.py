@@ -31,7 +31,9 @@ class WebDeveloperAgent(BaseAgent):
     def can_handle(self, task: str) -> bool:
         keywords = [
             "site", "landing", "web", "html", "css", "javascript",
-            "react", "page", "frontend", "layout", "responsive"
+            "react", "page", "frontend", "layout", "responsive",
+            "сайт", "лендинг", "веб", "страница", "интерфейс", "макет",
+            "создай сайт", "создай лендинг", "сделай сайт", "сайт для",
         ]
         task_lower = task.lower()
         return any(keyword in task_lower for keyword in keywords)

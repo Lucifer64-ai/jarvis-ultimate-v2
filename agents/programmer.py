@@ -33,7 +33,9 @@ class ProgrammerAgent(BaseAgent):
         keywords = [
             "code", "program", "script", "python", "javascript", "c++", "java",
             "function", "class", "algorithm", "write code", "development",
-            "programming", "sql", "database"
+            "programming", "sql", "database",
+            "код", "программа", "скрипт", "напиши", "разработай", "функция",
+            "класс", "алгоритм", "программирование", "бд", "база данных",
         ]
         task_lower = task.lower()
         return any(keyword in task_lower for keyword in keywords)

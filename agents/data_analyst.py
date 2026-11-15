@@ -32,7 +32,9 @@ class DataAnalystAgent(BaseAgent):
         keywords = [
             "data", "analysis", "statistics", "chart", "visualization",
             "csv", "excel", "pandas", "numpy", "database", "sql",
-            "data processing", "report"
+            "data processing", "report",
+            "данные", "анализ", "статистика", "график", "визуализация",
+            "отчет", "csv", "бд", "sql",
         ]
         task_lower = task.lower()
         return any(keyword in task_lower for keyword in keywords)
