@@ -41,6 +41,32 @@ python-dotenv==1.0.0
 # Build
 pyinstaller==6.3.0
 
+# Vision & Computer Vision
+opencv-python==4.9.0.80
+pytesseract==0.3.10
+
+# Wake Word Detection
+sounddevice==0.4.6
+scipy==1.12.0
+openwakeword==0.6.0
+
+# Browser Automation
+playwright==1.41.2
+
+# Streaming TTS
+pygame==2.5.2
+
+# Live Dashboard
+fastapi==0.109.2
+uvicorn==0.27.1
+
+# Plugin Ecosystem
+google-api-python-client==2.118.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
+slack-sdk==3.27.1
+notion-client==2.2.1
+
 # Windows-specific (optional - install manually if needed)
 # pywin32==306
 # pycaw==20230407
