@@ -35,28 +35,6 @@ jobs:
       with:
         gradle-version: '8.3'
 
-    - name: Setup Android SDK (manual)
-      env:
-        ANDROID_SDK_ROOT: ""
-      run: |
-        export ANDROID_HOME=$HOME/android-sdk
-        unset ANDROID_SDK_ROOT
-        mkdir -p $ANDROID_HOME/cmdline-tools
-        cd $ANDROID_HOME/cmdline-tools
-
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
-        unzip -q cmdline-tools.zip
-        mv cmdline-tools latest
-        rm cmdline-tools.zip
-
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-        echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
-
     - name: Install dependencies
       working-directory: ./mobile-app
       run: |
@@ -65,8 +43,6 @@ jobs:
 
     - name: Build Android APK
       working-directory: ./mobile-app/android
-      env:
-        ANDROID_SDK_ROOT: ""
       run: gradle assembleRelease --no-daemon
 
     - name: Upload APK artifact
