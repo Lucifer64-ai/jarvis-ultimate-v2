@@ -96,6 +96,10 @@ class CurrencyModule:
 
         return f"Курс {rate['from']} к {rate['to']}: {rate['rate']}"
 
+    def get_rates(self) -> Dict:
+        """Получить курсы основных валют (алиас для get_multiple_rates)."""
+        return self.get_multiple_rates()
+
     def get_multiple_rates(self) -> Dict:
         """Получить несколько основных курсов валют."""
         usd_rub = self.get_usd_rub()

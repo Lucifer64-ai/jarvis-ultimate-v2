@@ -105,6 +105,10 @@ class NewsModule:
 
         return message
 
+    def get_news(self, country: str = "ru", category: str = "general", page_size: int = 5) -> Dict:
+        """Получить новости (алиас для get_top_headlines)."""
+        return self.get_top_headlines(country, category, page_size)
+
     def search_news(self, query: str, page_size: int = 5) -> Dict:
         """Поиск новостей по запросу."""
         if not self.api_key:
