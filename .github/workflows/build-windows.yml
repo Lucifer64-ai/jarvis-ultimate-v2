@@ -1,0 +1,38 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'mobile-app/**'
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build EXE with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --name "JARVIS-Ultimate" main.py
+
+    - name: Upload EXE artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: JARVIS-Windows-EXE
+        path: dist/JARVIS-Ultimate.exe
+        retention-days: 30
