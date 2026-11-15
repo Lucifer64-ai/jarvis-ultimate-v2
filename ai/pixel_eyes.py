@@ -3,12 +3,16 @@ JARVIS Pixel Eyes Module
 GUI автоматизация для приложений без API
 """
 
-import cv2
 import numpy as np
 from PIL import Image, ImageGrab
 import pyautogui
 import pytesseract
 from typing import List, Dict, Tuple, Optional
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 class PixelEyes:
     """Модуль для работы с GUI через компьютерное зрение"""
@@ -19,6 +23,9 @@ class PixelEyes:
 
     def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
         """Захват экрана в формате OpenCV"""
+        if cv2 is None:
+            raise ImportError("OpenCV (cv2) недоступен. Установите: pip install opencv-python")
+
         if region:
             screenshot = ImageGrab.grab(bbox=region)
         else:

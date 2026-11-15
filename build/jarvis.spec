@@ -2,22 +2,35 @@
 
 block_cipher = None
 
+# Assets (иконки и ресурсы) — опциональны
+import os
+SPEC_DIR = os.path.dirname(os.path.abspath(SPECPATH))
+ROOT_DIR = os.path.abspath(os.path.join(SPEC_DIR, '..'))
+assets_dir = os.path.join(ROOT_DIR, 'assets')
+datas = [
+    ('../config.json', '.'),
+    ('../core', 'core'),
+    ('../modules', 'modules'),
+    ('../voice', 'voice'),
+    ('../ui', 'ui'),
+    ('../automation', 'automation'),
+    ('../ai', 'ai'),
+    ('../smart_home', 'smart_home'),
+    ('../mobile', 'mobile'),
+]
+if os.path.isdir(assets_dir):
+    datas.append(('../assets', 'assets'))
+
+# Иконка — только если файл существует
+icon_path = os.path.join(assets_dir, 'jarvis.ico') if os.path.isdir(assets_dir) else None
+if icon_path and not os.path.isfile(icon_path):
+    icon_path = None
+
 a = Analysis(
     ['../main.py'],
-    pathex=['..'],
+    pathex=[ROOT_DIR],
     binaries=[],
-    datas=[
-        ('../config.json', '.'),
-        ('../assets', 'assets'),
-        ('../core', 'core'),
-        ('../modules', 'modules'),
-        ('../voice', 'voice'),
-        ('../ui', 'ui'),
-        ('../automation', 'automation'),
-        ('../ai', 'ai'),
-        ('../smart_home', 'smart_home'),
-        ('../mobile', 'mobile'),
-    ],
+    datas=datas,
     hiddenimports=[
         'pyttsx3',
         'speech_recognition',
@@ -32,6 +45,23 @@ a = Analysis(
         'sklearn',
         'aiohttp',
         'websockets',
+        'dotenv',
+        'qrcode',
+        'numpy',
+        'scipy',
+        'joblib',
+        'cv2',
+        'pytesseract',
+        'sounddevice',
+        'pygame',
+        'requests',
+        'urllib3',
+        'certifi',
+        'charset_normalizer',
+        'idna',
+        'tkinter',
+        'tkinter.ttk',
+        'tkinter.messagebox',
     ],
     hookspath=[],
     hooksconfig={},
@@ -65,6 +95,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='../assets/jarvis.ico',
+    icon=icon_path,
     version='version_info.txt',
 )

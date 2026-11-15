@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from core.brain import JarvisBrain
 from core.websocket_server import create_websocket_server
 from core.qr_connection import create_qr_connection_manager
-from ui.settings_window import show_settings_window
 
 # Новые модули
 from ai.vision import VisionModule
@@ -140,9 +139,14 @@ def main():
 
         # Запуск GUI в отдельном потоке
         if brain.gui_enabled:
-            from ui.main_window import MainWindow
-            window = MainWindow(brain)
-            window.show()
+            try:
+                from ui.main_window import MainWindow
+                window = MainWindow(brain)
+                window.show()
+            except ImportError:
+                print("⚠️ MainWindow недоступен, используется HUD")
+            except Exception as e:
+                print(f"⚠️ Ошибка запуска GUI: {e}")
 
         # Основной цикл обработки команд
         print("\nJARVIS запущен. Готов к работе.")

@@ -5,43 +5,48 @@ echo   JARVIS Ultimate - Build Script
 echo ==========================================
 echo.
 
-REM ¾вµº° Python
-echo [1/5] ¾вµº° Python...
+REM [1/5] Проверка Python
+echo [1/5] Проверка Python...
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo агента: Python ни °½¾в»µ½!
+    echo Ошибка: Python не найден!
     pause
     exit /b 1
 )
 echo OK
 
-REM ¡¾·´°½иµ ви°»½¾³¾ ¾º¶µ½и
-echo [2/5] ¡¾·´°½иµ ви°»½¾³¾ ¾º¶µ½и...
+REM [2/5] Настройка виртуального окружения
+echo [2/5] Настройка виртуального окружения...
 if not exist "venv" (
     python -m venv venv
 )
 call venv\Scripts\activate.bat
 echo OK
 
-REM £°½¾вº° ·°вии¼¾µ¹
-echo [3/5] £°½¾вº° ·°вии¼¾µ¹...
+REM [3/5] Установка зависимостей
+echo [3/5] Установка зависимостей...
 pip install -r requirements.txt
+if errorlevel 1 (
+    echo Ошибка установки зависимостей!
+    pause
+    exit /b 1
+)
 echo OK
 
-REM ¡±¾º° exe
-echo [4/5] ¡±¾º° JARVIS.exe...
+REM [4/5] Генерация exe
+echo [4/5] Генерация JARVIS.exe...
 cd build
 pyinstaller jarvis.spec --clean --noconfirm
 if errorlevel 1 (
-    echo агента ±¾ºи!
+    echo Ошибка генерации!
     pause
     exit /b 1
 )
 cd ..
 echo OK
 
-REM ¾¿и¾в°½иµ º¾½и³°ии
-echo [5/5] ¾¿и¾в°½иµ °¹»¾в...
+REM [5/5] Упаковка дистрибутива
+echo [5/5] Упаковка дистрибутива...
 if not exist "dist\JARVIS" mkdir dist\JARVIS
 copy config.json dist\JARVIS\
 copy .env.example dist\JARVIS\.env
@@ -52,7 +57,7 @@ echo OK
 
 echo.
 echo ==========================================
-echo   ¡±¾º° ·°вµµ½° ¿µ½¾!
-echo   ¤°¹»: dist\JARVIS\JARVIS.exe
+echo   Сборка завершена успешно!
+echo   Итог: dist\JARVIS\JARVIS.exe
 echo ==========================================
 pause

@@ -3,10 +3,18 @@ JARVIS - Окно настроек API подключений
 Графический интерфейс для ввода и сохранения API ключей
 """
 
-import tkinter as tk
-from tkinter import ttk, messagebox
 import os
 from pathlib import Path
+
+try:
+    import tkinter as tk
+    from tkinter import ttk, messagebox
+    TKINTER_AVAILABLE = True
+except ImportError:
+    tk = None
+    ttk = None
+    messagebox = None
+    TKINTER_AVAILABLE = False
 
 
 class SettingsWindow:
@@ -216,6 +224,10 @@ class SettingsWindow:
 
 def show_settings_window(config_manager=None):
     """Функция для показа окна настроек."""
+    if not TKINTER_AVAILABLE:
+        print("⚠️ tkinter недоступен. Используйте редактирование .env вручную.")
+        return None
+
     if config_manager is None:
         # Создаём простой конфиг-менеджер если не передан
         class SimpleConfig:
@@ -226,6 +238,7 @@ def show_settings_window(config_manager=None):
 
     window = SettingsWindow(config_manager)
     window.show()
+    return window
 
 
 if __name__ == "__main__":
