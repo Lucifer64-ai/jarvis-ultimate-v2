@@ -41,9 +41,13 @@ jobs:
         rm -rf node_modules package-lock.json
         npm install
 
+    - name: Generate Gradle wrapper
+      working-directory: ./mobile-app/android
+      run: gradle wrapper --gradle-version 8.3
+
     - name: Build Android APK
       working-directory: ./mobile-app/android
-      run: gradle assembleRelease --no-daemon
+      run: ./gradlew assembleRelease --no-daemon
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
