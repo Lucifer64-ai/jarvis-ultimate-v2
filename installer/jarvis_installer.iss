@@ -53,14 +53,8 @@ Name: "autostart"; Description: "Launch JARVIS automatically on Windows startup"
 Name: "cleanmode"; Description: "Enable Clean Desktop mode by default"; GroupDescription: "Preferences"; Flags: unchecked
 
 [Files]
-; Main Application - all files from dist/JARVIS package
-Source: "dist\JARVIS\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-
-; Configuration files (root level)
-Source: "config.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".env.example"; DestDir: "{app}"; Flags: ignoreversion
-Source: "requirements.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
+; Main Application - all files from installer/package (copied from build/dist)
+Source: "installer\package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
