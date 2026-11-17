@@ -5,7 +5,12 @@
   "ai": {
     "provider": "openai",
     "model": "gpt-4",
-    "api_key": ""
+    "api_key": "",
+    "ollama": {
+      "base_url": "http://localhost:11434",
+      "default_model": "llama3.2",
+      "auto_download": true
+    }
   },
   "voice": {
     "enabled": true,
