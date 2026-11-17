@@ -35,6 +35,7 @@ jobs:
 
     - name: Install Android SDK components
       run: |
+        echo "ANDROID_HOME=$ANDROID_HOME"
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;25.1.8937393"
 
     - name: Generate debug keystore
