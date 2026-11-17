@@ -158,6 +158,67 @@ def main():
         except Exception as e:
             print(f"⚠️ Plugin Ecosystem не инициализирован: {e}")
 
+        # === Новые модули JARVIS ===
+        # Proactive Assistant (утренний доклад, напоминания, системные алерты)
+        try:
+            if brain.proactive_assistant:
+                brain.proactive_assistant.start()
+                print("✅ Proactive Assistant запущен")
+        except Exception as e:
+            print(f"⚠️ Proactive Assistant не запущен: {e}")
+
+        # System Monitor (CPU, RAM, диск, температура, сеть)
+        try:
+            if brain.system_monitor:
+                brain.system_monitor.start()
+                print("✅ System Monitor запущен")
+        except Exception as e:
+            print(f"⚠️ System Monitor не запущен: {e}")
+
+        # Holographic HUD (полноэкранный overlay)
+        try:
+            if brain.holographic_hud:
+                brain.holographic_hud.start()
+                print("✅ Holographic HUD запущен")
+        except Exception as e:
+            print(f"⚠️ Holographic HUD не запущен: {e}")
+
+        # Face Recognition (пробуждение по лицу)
+        try:
+            if brain.face_recognition and brain.face_recognition.enabled:
+                brain.face_recognition.start()
+                print("✅ Face Recognition запущен")
+        except Exception as e:
+            print(f"⚠️ Face Recognition не запущен: {e}")
+
+        # File Organizer (наблюдение за папкой загрузок)
+        try:
+            if brain.file_organizer and brain.file_organizer.auto_organize:
+                brain.file_organizer.start_watching()
+                print("✅ File Organizer запущен (авто-организация)")
+        except Exception as e:
+            print(f"⚠️ File Organizer не запущен: {e}")
+
+        # Smart Home (Home Assistant / MQTT)
+        try:
+            if brain.smart_home and brain.smart_home.enabled:
+                print("✅ Smart Home инициализирован")
+        except Exception as e:
+            print(f"⚠️ Smart Home не инициализирован: {e}")
+
+        # Macro Automation, User Memory — не требуют фонового запуска
+        try:
+            if brain.macro_automation:
+                print("✅ Macro Automation инициализирован")
+        except Exception as e:
+            print(f"⚠️ Macro Automation не инициализирован: {e}")
+
+        try:
+            if brain.user_memory:
+                print("✅ User Memory инициализирован")
+        except Exception as e:
+            print(f"⚠️ User Memory не инициализирован: {e}")
+
         # Запуск основного цикла
         brain.start()
 

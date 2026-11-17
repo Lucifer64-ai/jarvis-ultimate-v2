@@ -1,0 +1,97 @@
+{
+  "app_name": "JARVIS Ultimate",
+  "version": "1.0.0",
+  "debug": false,
+  "ai": {
+    "provider": "openai",
+    "model": "gpt-4",
+    "api_key": "",
+    "ollama": {
+      "base_url": "http://localhost:11434",
+      "default_model": "llama3.2",
+      "auto_download": true
+    }
+  },
+  "voice": {
+    "enabled": true,
+    "language": "ru-RU",
+    "rate": 175
+  },
+  "ui": {
+    "theme": "dark",
+    "hud_enabled": true,
+    "transparency": 0.9
+  },
+  "smart_home": {
+    "enabled": false,
+    "provider": "home_assistant",
+    "url": "",
+    "token": ""
+  },
+  "voice_personality": {
+    "enabled": true,
+    "sir_name": "Сэр",
+    "accent": "british",
+    "gender": "male",
+    "sarcasm": false,
+    "mood": "professional"
+  },
+  "proactive_assistant": {
+    "enabled": true,
+    "morning_report": true,
+    "morning_hour": 8,
+    "system_alerts": true,
+    "reminders": true,
+    "cpu_threshold": 90,
+    "ram_threshold": 90,
+    "disk_threshold": 90,
+    "battery_low": 20
+  },
+  "system_monitor": {
+    "enabled": true,
+    "interval": 5,
+    "history_size": 60
+  },
+  "macro_automation": {
+    "enabled": true
+  },
+  "file_organizer": {
+    "enabled": true,
+    "watch_downloads": true,
+    "auto_organize": false,
+    "target_folder": "",
+    "subfolder_structure": true
+  },
+  "face_recognition": {
+    "enabled": false,
+    "wake_on_face": false,
+    "tolerance": 0.6,
+    "camera_id": 0,
+    "recognition_interval": 3
+  },
+  "user_memory": {
+    "enabled": true,
+    "language": "ru",
+    "memory_file": "data/user_memory.json",
+    "max_history": 100
+  },
+  "holographic_hud": {
+    "enabled": true,
+    "fullscreen": true,
+    "opacity": 0.85,
+    "refresh_rate": 1000,
+    "width": 1280,
+    "height": 720,
+    "position_x": 0,
+    "position_y": 0
+  },
+  "automation": {
+    "enabled": true,
+    "schedule_check_interval": 60
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "jarvis.log",
+    "max_size_mb": 10
+  }
+}

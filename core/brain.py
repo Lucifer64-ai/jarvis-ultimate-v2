@@ -573,6 +573,121 @@ class JarvisBrain:
         if any(word in text_lower for word in ["новости", "что нового"]):
             return self._handle_news_command(text_lower)
 
+        # === Новые модули JARVIS (проверяем до общих команд) ===
+
+        # Proactive Assistant — напоминания и утренний доклад
+        if any(word in text_lower for word in ["напоминание", "напоминаний", "напомни", "утренний доклад", "доклад"]):
+            if not self.proactive_assistant:
+                return {"status": "error", "message": "Проактивный ассистент недоступен"}
+            if "утренний доклад" in text_lower or "доклад" in text_lower:
+                self.proactive_assistant._deliver_morning_report()
+                return {"status": "ok", "message": "Утренний доклад подготовлен, Сэр."}
+            if any(w in text_lower for w in ["список", "все"]):
+                return self.proactive_assistant.list_reminders()
+            if any(w in text_lower for w in ["очисть", "очистить", "удалить сработавшие"]):
+                return self.proactive_assistant.clear_triggered()
+            return {
+                "status": "ok",
+                "message": "Доступные команды: напомни <текст> в <время>, список напоминаний, утренний доклад"
+            }
+
+        # System Monitor — метрики системы
+        if any(word in text_lower for word in ["статус системы", "метрики системы", "загрузка процессора", "оперативная память", "температура процессора", "бататарея", "батарея", "процессы системы"]):
+            if not self.system_monitor:
+                return {"status": "error", "message": "Мониторинг системы недоступен"}
+            if "процессы" in text_lower:
+                return self.system_monitor.get_processes()
+            if "батарея" in text_lower:
+                return self.system_monitor.get_battery_info()
+            if "диск" in text_lower:
+                return self.system_monitor.get_disk_info()
+            return self.system_monitor.get_current_metrics()
+
+        # Macro Automation — сценарии
+        if any(word in text_lower for word in ["макрос", "запусти макрос", "рабочее окружение", "игровой режим", "утренняя рутина", "режим концентрации"]):
+            if not self.macro_automation:
+                return {"status": "error", "message": "Макро-автоматизация недоступна"}
+            if any(w in text_lower for w in ["список", "какие"]):
+                return self.macro_automation.list_macros()
+            macro_map = {
+                "рабочее окружение": "work_environment",
+                "игровой режим": "gaming_mode",
+                "утренняя рутина": "morning_routine",
+                "режим концентрации": "focus_mode",
+                "завершение": "shutdown",
+            }
+            macro_id = None
+            for key, mid in macro_map.items():
+                if key in text_lower:
+                    macro_id = mid
+                    break
+            if macro_id:
+                return self.macro_automation.run_macro(macro_id)
+            return {"status": "ok", "message": "Укажите макрос: рабочее окружение, игровой режим, утренняя рутина, режим концентрации"}
+
+        # File Organizer — организация файлов
+        if any(word in text_lower for word in ["организуй файлы", "сортируй загрузки", "организация файлов"]):
+            if not self.file_organizer:
+                return {"status": "error", "message": "Организатор файлов недоступен"}
+            return self.file_organizer.organize_folder()
+
+        # Smart Home — управление умным домом (более специфичные команды сначала)
+        if any(word in text_lower for word in ["умный дом", "умного дома", "статус дома", "включи свет", "выключи свет", "включи лампу", "выключи лампу"]):
+            if not self.smart_home:
+                return {"status": "error", "message": "Умный дом недоступен"}
+            if "статус" in text_lower:
+                return self.smart_home.get_status()
+            if any(w in text_lower for w in ["включи свет", "включи лампу"]):
+                entity = "light.living_room"
+                for word in text_lower.replace("включи ", "").replace("свет", "").replace("лампу", "").split():
+                    if word.strip():
+                        entity = f"light.{word.strip()}"
+                        break
+                return self.smart_home.turn_on(entity)
+            if any(w in text_lower for w in ["выключи свет", "выключи лампу"]):
+                entity = "light.living_room"
+                for word in text_lower.replace("выключи ", "").replace("свет", "").replace("лампу", "").split():
+                    if word.strip():
+                        entity = f"light.{word.strip()}"
+                        break
+                return self.smart_home.turn_off(entity)
+            return self.smart_home.get_devices()
+
+        # Face Recognition — распознавание лиц
+        if any(word in text_lower for word in ["лицо", "зарегистрируй лицо", "распознавание лица", "список лиц"]):
+            if not self.face_recognition:
+                return {"status": "error", "message": "Распознавание лиц недоступно"}
+            if "список" in text_lower:
+                return self.face_recognition.list_faces()
+            return {
+                "status": "ok",
+                "message": "Команды лица: зарегистрируй лицо <имя>, список лиц, статус распознавания"
+            }
+
+        # User Memory — язык и предпочтения
+        if any(word in text_lower for word in ["язык", "предпочтение", "запомни", "как меня зовут"]):
+            if not self.user_memory:
+                return {"status": "error", "message": "Память пользователя недоступна"}
+            if "язык" in text_lower:
+                if "английск" in text_lower or "en" in text_lower:
+                    return self.user_memory.set_language("en")
+                if "русск" in text_lower or "ru" in text_lower:
+                    return self.user_memory.set_language("ru")
+                return {
+                    "status": "ok",
+                    "message": f"Текущий язык: {self.user_memory.get_language()}. Доступны: ru, en"
+                }
+            return self.user_memory.list_preferences()
+
+        # Holographic HUD
+        if any(word in text_lower for word in ["худа", "открой худа", "скрой худа", "голографический худа"]):
+            if not self.holographic_hud:
+                return {"status": "error", "message": "Holographic HUD недоступен"}
+            if "скрой" in text_lower:
+                self.holographic_hud.stop()
+                return {"status": "ok", "message": "HUD скрыт"}
+            return {"status": "ok", "message": "HUD запущен в фоновом режиме"}
+
         if any(word in text_lower for word in ["запусти", "открой"]):
             if self.app_launcher:
                 return self.app_launcher.launch(text_lower)
@@ -582,7 +697,6 @@ class JarvisBrain:
             if self.clean_desktop:
                 return self.clean_desktop.enable_clean_mode()
             return {"status": "error", "message": "Модуль очистки рабочего стола недоступен"}
-
 
         # Автоматическая передача нераспознанных команд в ChatGPT
         if self.llm_router:
