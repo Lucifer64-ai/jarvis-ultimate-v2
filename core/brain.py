@@ -124,6 +124,24 @@ class JarvisBrain:
             self.logger.error(f"Ошибка загрузки модуля Network Manager: {e}")
             self.network_manager = None
 
+        # Mouse Control (управление мышкой)
+        try:
+            from modules.mouse_control import MouseControl
+            self.mouse_control = MouseControl(self)
+            self.logger.info("Модуль Mouse Control загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Mouse Control: {e}")
+            self.mouse_control = None
+
+        # Screen Analyzer (анализ экрана)
+        try:
+            from modules.screen_analyzer import ScreenAnalyzer
+            self.screen_analyzer = ScreenAnalyzer(self)
+            self.logger.info("Модуль Screen Analyzer загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Screen Analyzer: {e}")
+            self.screen_analyzer = None
+
         # ML Engine (адаптивное обучение)
         try:
             from ai.adaptive_ml import AdaptiveMLEngine
@@ -428,6 +446,14 @@ class JarvisBrain:
         if any(phrase in text_lower for phrase in ["какие агенты", "список агентов", "история задач", "возможности агента", "статус агента"]):
             return self._handle_agent_voice_command(text_lower)
 
+        # === Mouse Control (проверяем до agent keywords, т.к. "размер экрана" может пересекаться) ===
+        if any(word in text_lower for word in ["курсор", "мышь", "клик", "прокрут", "scroll", "кликни", "кликай", "размер экрана", "разрешение"]):
+            return self._handle_mouse_command(text_lower)
+
+        # === Screen Analyzer (проверяем до agent keywords, т.к. "анализ экрана" пересекается с "анализ") ===
+        if any(word in text_lower for word in ["скриншот", "снимок экрана", "анализ экрана", "распознай текст", "найди текст", "прочти текст", "что на экране", "цвет пикселя"]):
+            return self._handle_screen_command(text_lower)
+
         # Проверка ключевых слов для делегирования агентам
         agent_keywords = [
             "создай", "напиши", "разработай", "программ", "код",
@@ -470,6 +496,91 @@ class JarvisBrain:
             return self.llm_router.chat(text)
 
         return {"status": "ok", "message": "Команда не распознана", "text": text}
+
+    def _handle_mouse_command(self, text: str) -> Dict:
+        """Обработка команд управления мышкой."""
+        if not self.mouse_control:
+            return {"status": "error", "message": "Модуль управления мышкой недоступен"}
+
+        # Перемещение в центр
+        if any(w in text for w in ["центр", "center"]):
+            return self.mouse_control.center_cursor()
+
+        # Получение позиции
+        if any(w in text for w in ["где курсор", "позиция курсора", "координаты"]):
+            return self.mouse_control.get_position()
+
+        # Размер экрана
+        if any(w in text for w in ["размер экрана", "разрешение"]):
+            return self.mouse_control.get_screen_size()
+
+        # Прокрутка вверх
+        if any(w in text for w in ["прокрути вверх", "scroll up", "колесо вверх"]):
+            return self.mouse_control.scroll_up()
+
+        # Прокрутка вниз
+        if any(w in text for w in ["прокрути вниз", "scroll down", "колесо вниз"]):
+            return self.mouse_control.scroll_down()
+
+        # Клик (по умолчанию левый клик в текущей позиции)
+        if any(w in text for w in ["клик", "click"]):
+            if "прав" in text:
+                return self.mouse_control.right_click()
+            if "двойн" in text:
+                return self.mouse_control.double_click()
+            return self.mouse_control.click()
+
+        # Помощь по мыши
+        if any(w in text for w in ["помощь мышь", "что можешь мышь"]):
+            return {
+                "status": "ok",
+                "message": "Управление мышкой: клик, правый клик, двойной клик, прокрутка вверх/вниз, перемести курсор в центр, где курсор, размер экрана"
+            }
+
+        return {"status": "error", "message": "Команда мыши не распознана. Попробуйте: клик, прокрути вверх, где курсор"}
+
+    def _handle_screen_command(self, text: str) -> Dict:
+        """Обработка команд анализа экрана."""
+        if not self.screen_analyzer:
+            return {"status": "error", "message": "Модуль анализа экрана недоступен"}
+
+        # Полный анализ экрана
+        if any(w in text for w in ["анализ экрана", "что на экране", "проанализируй экран"]):
+            return self.screen_analyzer.analyze_screen()
+
+        # Скриншот
+        if any(w in text for w in ["скриншот", "снимок экрана", "сделай скриншот"]):
+            return self.screen_analyzer.capture_full_screen()
+
+        # Распознать текст
+        if any(w in text for w in ["распознай текст", "прочти текст", "текст на экране"]):
+            return self.screen_analyzer.read_screen_text()
+
+        # Найти текст
+        if "найди текст" in text or "найти текст" in text:
+            target = text.replace("найди текст", "").replace("найти текст", "").strip() or "вход"
+            return self.screen_analyzer.find_text_on_screen(target)
+
+        # Клик по тексту
+        if "кликни по тексту" in text or "клик по тексту" in text:
+            target = text.replace("кликни по тексту", "").replace("клик по тексту", "").strip() or "вход"
+            return self.screen_analyzer.click_on_text(target)
+
+        # Цвет пикселя (требует координат, просто вернём инструкцию)
+        if "цвет пикселя" in text:
+            return {
+                "status": "ok",
+                "message": "Укажите координаты: цвет пикселя X Y (например: цвет пикселя 100 200)"
+            }
+
+        # Помощь по экрану
+        if any(w in text for w in ["помощь экран", "что можешь экран"]):
+            return {
+                "status": "ok",
+                "message": "Анализ экрана: скриншот, анализ экрана, распознай текст, найди текст <слово>, кликни по тексту <слово>, цвет пикселя X Y"
+            }
+
+        return {"status": "error", "message": "Команда экрана не распознана. Попробуйте: скриншот, анализ экрана, распознай текст"}
 
     def _handle_weather_command(self, text: str) -> Dict:
         """Обработка команды погоды."""
