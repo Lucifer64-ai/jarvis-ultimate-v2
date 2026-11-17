@@ -2,8 +2,14 @@
 Распознавание речи JARVIS
 """
 
-import speech_recognition as sr
 from typing import Optional, Dict
+
+try:
+    import speech_recognition as sr
+    SPEECH_RECOGNITION_AVAILABLE = True
+except ImportError:
+    sr = None
+    SPEECH_RECOGNITION_AVAILABLE = False
 
 
 class VoiceListener:
@@ -11,16 +17,32 @@ class VoiceListener:
 
     def __init__(self, brain):
         self.brain = brain
+        self.wake_word = brain.config.get("voice", {}).get("wake_word", "джарвис")
+
+        if not SPEECH_RECOGNITION_AVAILABLE:
+            self.brain.logger.warning("speech_recognition не установлен. Установите: pip install SpeechRecognition")
+            self.recognizer = None
+            self.microphone = None
+            return
+
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
-        self.wake_word = brain.config.get("voice", {}).get("wake_word", "джарвис")
 
         # Настройка распознавания
         self.recognizer.dynamic_energy_threshold = True
         self.recognizer.energy_threshold = 300
 
+    def _check_available(self) -> bool:
+        """Проверить доступность speech_recognition."""
+        if not SPEECH_RECOGNITION_AVAILABLE or self.recognizer is None:
+            self.brain.logger.warning("speech_recognition недоступен")
+            return False
+        return True
+
     def listen(self) -> Optional[str]:
         """Слушать и распознать речь."""
+        if not self._check_available():
+            return None
         try:
             with self.microphone as source:
                 self.brain.logger.info("Слушаю...")
