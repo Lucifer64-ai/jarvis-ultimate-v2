@@ -35,7 +35,7 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 
 ; License & Info
-LicenseFile=..\LICENSE
+; LicenseFile=..\LICENSE  ; LICENSE file not present in repo
 InfoBeforeFile=install_notes.txt
 
 ; Language
@@ -54,7 +54,7 @@ Name: "cleanmode"; Description: "Enable Clean Desktop mode by default"; GroupDes
 
 [Files]
 ; Main Application - all files from installer/package (copied from build/dist)
-Source: "installer\package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
