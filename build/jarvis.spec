@@ -10,6 +10,7 @@ assets_dir = os.path.join(ROOT_DIR, 'assets')
 datas = [
     ('../config.json', '.'),
     ('../core', 'core'),
+    ('../hud', 'hud'),
     ('../modules', 'modules'),
     ('../voice', 'voice'),
     ('../ui', 'ui'),
@@ -62,6 +63,8 @@ a = Analysis(
         'tkinter',
         'tkinter.ttk',
         'tkinter.messagebox',
+        'send2trash',
+        'win10toast',
     ],
     hookspath=[],
     hooksconfig={},
