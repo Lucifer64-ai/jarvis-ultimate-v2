@@ -6,6 +6,7 @@ import sys
 import time
 import threading
 import asyncio
+import os
 
 # Настройка пути для импорта модулей PyInstaller
 from dotenv import load_dotenv
@@ -15,6 +16,28 @@ from core.websocket_server import create_websocket_server
 from core.qr_connection import create_qr_connection_manager
 
 
+def enable_windows_autostart():
+    """Включить автозапуск JARVIS при включении ПК (Windows)."""
+    if os.name != "nt":
+        return
+    try:
+        import winreg
+        key = winreg.HKEY_CURRENT_USER
+        sub_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
+        exe_path = os.path.abspath(sys.argv[0])
+        # Если это скрипт, добавляем python и путь к main.py
+        if exe_path.endswith(".py"):
+            exe_path = f'"{sys.executable}" "{exe_path}"'
+        else:
+            exe_path = f'"{exe_path}"'
+
+        with winreg.OpenKey(key, sub_key, 0, winreg.KEY_SET_VALUE) as reg_key:
+            winreg.SetValueEx(reg_key, "JARVIS", 0, winreg.REG_SZ, exe_path)
+        print("✅ Автозапуск JARVIS при включении ПК включён")
+    except Exception as e:
+        print(f"⚠️ Не удалось включить автозапуск: {e}")
+
+
 def main():
     """Главная функция запуска JARVIS."""
     print("=" * 50)
@@ -22,6 +45,9 @@ def main():
     print("  AI Assistant with Learning Capabilities")
     print("=" * 50)
     print()
+
+    # Включаем автозапуск при включении ПК (Windows)
+    enable_windows_autostart()
 
     # Инициализация JARVIS
     brain = JarvisBrain()
@@ -135,23 +161,43 @@ def main():
         # Запуск основного цикла
         brain.start()
 
-        # Запуск GUI в отдельном потоке
+        # Запуск графического интерфейса JARVIS (живое окно с анимациями)
         if brain.gui_enabled:
             try:
-                from ui.main_window import MainWindow
-                window = MainWindow(brain)
-                window.show()
-            except ImportError:
-                print("⚠️ MainWindow недоступен, используется HUD")
+                from ui.main_window import run_interface
+                # GUI запускается в основном потоке (Qt требует это)
+                # Но мы уже в основном потоке, поэтому запускаем окно
+                # и comando цикл в отдельном потоке
+                print("\n🖥️ Запуск графического интерфейса JARVIS...")
+
+                # Запускаем командный цикл в фоновом потоке
+                def command_loop():
+                    while brain.running:
+                        time.sleep(0.1)
+
+                cmd_thread = threading.Thread(target=command_loop, daemon=True)
+                cmd_thread.start()
+
+                # Запускаем GUI ( bloqueет основной поток, как и должно быть для Qt )
+                run_interface(brain)
+
+            except ImportError as e:
+                print(f"⚠️ MainWindow недоступен: {e}")
+                print("   Проверьте установку PyQt5: pip install PyQt5")
+                # Fallback: консольный цикл
+                print("\nJARVIS запущен в консольном режиме. Готов к работе.")
+                print("Нажмите Ctrl+C для завершения.\n")
+                while brain.running:
+                    time.sleep(0.1)
             except Exception as e:
                 print(f"⚠️ Ошибка запуска GUI: {e}")
-
-        # Основной цикл обработки команд
-        print("\nJARVIS запущен. Готов к работе.")
-        print("Нажмите Ctrl+C для завершения.\n")
-
-        while brain.running:
-            time.sleep(0.1)
+                import traceback
+                traceback.print_exc()
+        else:
+            print("\nJARVIS запущен. Готов к работе.")
+            print("Нажмите Ctrl+C для завершения.\n")
+            while brain.running:
+                time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("\n\nПолучен сигнал завершения...")
