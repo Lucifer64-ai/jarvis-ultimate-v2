@@ -2,6 +2,7 @@
 
 import logging
 from typing import Dict, Optional
+from pathlib import Path
 
 from core.config import Config
 from core.event_bus import EventBus
@@ -697,6 +698,38 @@ class JarvisBrain:
             if self.clean_desktop:
                 return self.clean_desktop.enable_clean_mode()
             return {"status": "error", "message": "Модуль очистки рабочего стола недоступен"}
+
+        # === Редактор переменных окружения (.env.example) ===
+        if any(word in text_lower for word in ["env", "environment", "переменные окружения", "открой env", "редактор env"]):
+            env_file = Path(".env.example")
+            if not env_file.exists():
+                return {"status": "error", "message": f"Файл {env_file} не найден"}
+
+            # Проверяем доступность tkinter
+            try:
+                import tkinter as tk
+                tkinter_available = True
+            except ImportError:
+                tkinter_available = False
+
+            if not tkinter_available:
+                return {"status": "error", "message": "tkinter недоступен. Откройте .env.example вручную."}
+
+            # Запускаем редактор в отдельном потоке, чтобы не блокировать основной цикл
+            import threading
+
+            def _open_editor():
+                from ui.env_editor import open_env_editor
+                open_env_editor(str(env_file))
+
+            editor_thread = threading.Thread(target=_open_editor, daemon=True)
+            editor_thread.start()
+
+            return {
+                "status": "ok",
+                "message": f"Открыт редактор {env_file.name}. Внесите изменения и нажмите Сохранить.",
+                "env_file": str(env_file.resolve())
+            }
 
         # Автоматическая передача нераспознанных команд в ChatGPT
         if self.llm_router:
