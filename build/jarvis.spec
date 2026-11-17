@@ -7,8 +7,13 @@ import os
 SPEC_DIR = os.path.dirname(os.path.abspath(SPECPATH))
 ROOT_DIR = os.path.abspath(os.path.join(SPEC_DIR, '..'))
 assets_dir = os.path.join(ROOT_DIR, 'assets')
+
+# Все data-файлы для включения в сборку
 datas = [
     ('../config.json', '.'),
+    ('../.env.example', '.'),
+    ('../requirements.txt', '.'),
+    ('../README.md', '.'),
     ('../core', 'core'),
     ('../hud', 'hud'),
     ('../modules', 'modules'),
@@ -18,6 +23,11 @@ datas = [
     ('../ai', 'ai'),
     ('../smart_home', 'smart_home'),
     ('../mobile', 'mobile'),
+    ('../agents', 'agents'),
+    ('../scripts', 'scripts'),
+    ('../plugins', 'plugins'),
+    ('../hardware', 'hardware'),
+    ('../data', 'data'),
 ]
 if os.path.isdir(assets_dir):
     datas.append(('../assets', 'assets'))
@@ -33,38 +43,69 @@ a = Analysis(
     binaries=[],
     datas=datas,
     hiddenimports=[
+        # Core audio / TTS
         'pyttsx3',
         'speech_recognition',
+        # System monitoring
         'psutil',
+        'cpuinfo',
+        # Windows-specific
         'win32gui',
         'win32con',
+        'win32api',
+        'win32security',
+        'pywintypes',
         'pycaw',
         'comtypes',
+        'send2trash',
+        'win10toast',
+        # UI
         'pystray',
         'PIL',
+        'PIL.Image',
+        'PIL.ImageDraw',
+        'PIL.ImageGrab',
+        'plyer',
+        'tkinter',
+        'tkinter.ttk',
+        'tkinter.messagebox',
+        'tkinter.canvas',
+        # AI & ML
         'openai',
         'sklearn',
-        'aiohttp',
-        'websockets',
-        'dotenv',
-        'qrcode',
+        'sklearn.svm',
+        'sklearn.pipeline',
+        'sklearn.feature_extraction',
+        'joblib',
         'numpy',
         'scipy',
-        'joblib',
+        # Network & Smart Home
+        'aiohttp',
+        'websockets',
+        'requests',
+        'paho.mqtt.client',
+        # Environment
+        'dotenv',
+        # QR-code
+        'qrcode',
+        'qrcode.image.pil',
+        # Computer Vision
         'cv2',
         'pytesseract',
+        # Audio
         'sounddevice',
         'pygame',
-        'requests',
+        # File Organizer
+        'watchdog',
+        'watchdog.observers',
+        'watchdog.events',
+        # Face Recognition
+        'face_recognition',
+        # HTTP / SSL
         'urllib3',
         'certifi',
         'charset_normalizer',
         'idna',
-        'tkinter',
-        'tkinter.ttk',
-        'tkinter.messagebox',
-        'send2trash',
-        'win10toast',
     ],
     hookspath=[],
     hooksconfig={},

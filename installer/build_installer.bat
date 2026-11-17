@@ -39,11 +39,11 @@ echo Found Inno Setup: %ISCC_PATH%
 echo.
 
 REM Check if dist folder exists
-if not exist "dist\jarvis" (
-    echo ERROR: dist\jarvis folder not found!
+if not exist "dist\JARVIS" (
+    echo ERROR: dist\JARVIS folder not found!
     echo.
     echo Please build the application first:
-    echo   pyinstaller --name=jarvis --windowed --onefile main.py
+    echo   python build/build.py
     echo.
     pause
     exit /b 1

@@ -1,0 +1,75 @@
+# JARVIS Ultimate - Requirements for Windows
+# Все зависимости, необходимые для работы JARVIS на Windows
+
+# ===== CORE =====
+pyttsx3==2.90
+SpeechRecognition==3.10.0
+python-dotenv==1.0.0
+
+# ===== SYSTEM MONITORING =====
+psutil==5.9.7
+py-cpuinfo==9.0.0
+
+# ===== NETWORK =====
+requests==2.31.0
+speedtest-cli
+aiohttp==3.9.1
+websockets==12.0
+
+# ===== UI =====
+PyQt5==5.15.10
+Pillow==10.2.0
+pystray==0.19.5
+plyer==2.1.0
+tkinter
+
+# ===== AUTOMATION =====
+schedule==1.2.1
+pyautogui==0.9.54
+
+# ===== AI & ML =====
+openai==1.12.0
+scikit-learn==1.4.0
+joblib==1.3.2
+numpy==1.26.3
+
+# ===== SMART HOME =====
+paho-mqtt==1.6.1
+
+# ===== BUILD =====
+pyinstaller==6.3.0
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# ===== VISION & COMPUTER VISION =====
+opencv-python==4.9.0.80
+pytesseract==0.3.10
+
+# ===== AUDIO / VOICE =====
+sounddevice==0.4.6
+scipy==1.12.0
+pygame==2.5.2
+
+# ===== LIVE DASHBOARD =====
+fastapi==0.109.2
+uvicorn==0.27.1
+
+# ===== QR-CODE =====
+qrcode[pil]>=7.4.2
+
+# ===== WINDOWS-SPECIFIC =====
+pywin32==306
+pycaw==20230407
+comtypes==1.2.1
+send2trash==1.8.2
+win10toast==0.9
+
+# ===== FILE ORGANIZER (watchdog) =====
+watchdog==3.0.0
+
+# ===== PLUGIN ECOSYSTEM =====
+google-api-python-client==2.118.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
+slack-sdk==3.27.1
+notion-client==2.2.1

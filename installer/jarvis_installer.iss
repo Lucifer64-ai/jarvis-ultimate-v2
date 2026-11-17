@@ -1,15 +1,16 @@
 ; JARVIS Ultimate Installer Script
 ; Inno Setup Configuration
+; Encoding: UTF-8
 
 #define MyAppName "JARVIS Ultimate"
 #define MyAppVersion "2.0.0"
 #define MyAppPublisher "Lucifer64-ai"
 #define MyAppURL "https://github.com/Lucifer64-ai/jarvis-ultimate"
-#define MyAppExeName "jarvis.exe"
+#define MyAppExeName "JARVIS"
 
 [Setup]
 ; App Identity
-AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
+AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -27,12 +28,6 @@ OutputBaseFilename=JARVIS_Ultimate_Setup_{#MyAppVersion}
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
-
-; Visual Settings
-; WizardImageFile=assets\jarvis_installer.bmp  ; ¤°¹» ¾вµ
-; WizardSmallImageFile=assets\jarvis_installer_small.bmp  ; ¤°¹» ¾вµ
-; SetupIconFile=..\assets\jarvis.ico  ; Файл jarvis.ico отсутствует
-UninstallDisplayIcon={app}\{#MyAppExeName}
 
 ; Privilege & Architecture
 PrivilegesRequired=admin
@@ -52,14 +47,20 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
-Name: "autostart"; Description: "°¿º° JARVIS ¿и °µ Windows"; GroupDescription: "¾¿¾»½иµ»½µ ½°¾¹ºи:"; Flags: unchecked
-Name: "cleanmode"; Description: "º»и µ¶и¼ и¾³¾ °±¾µ³¾ ¾»°"; GroupDescription: "¾¿¾»½иµ»½µ ½°¾¹ºи:"; Flags: unchecked
+Name: "desktopicon"; Description: "Create desktop icon"; GroupDescription: "Additional icons"; Flags: unchecked
+Name: "quicklaunchicon"; Description: "Create quick launch icon"; GroupDescription: "Additional icons"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
+Name: "autostart"; Description: "Launch JARVIS automatically on Windows startup"; GroupDescription: "Startup"; Flags: unchecked
+Name: "cleanmode"; Description: "Enable Clean Desktop mode by default"; GroupDescription: "Preferences"; Flags: unchecked
 
 [Files]
-; Main Application - all files from package
-Source: "package\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Main Application - all files from dist/JARVIS package
+Source: "dist\JARVIS\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; Configuration files (root level)
+Source: "config.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".env.example"; DestDir: "{app}"; Flags: ignoreversion
+Source: "requirements.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -68,8 +69,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "°¿и JARVIS Ultimate"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\docs\README.md"; Description: "º ´¾º¼µ½°и"; Flags: shellexec skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch JARVIS Ultimate"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\README.md"; Description: "Read JARVIS Ultimate documentation"; Flags: shellexec skipifsilent
 
 [UninstallRun]
 ; Cleanup on uninstall
@@ -96,8 +97,8 @@ Name: "{app}\backups"
 [Code]
 function InitializeUninstall(): Boolean;
 begin
-  Result := MsgBox(' ´µ¹виµ»½¾ ¾иµ ´°»и JARVIS Ultimate?' + #13#10 + #13#10 +
-                   'µ ½°¾¹ºи и ´°½½µ ±´ ´°»µ½.', 
+  Result := MsgBox('Are you sure you want to uninstall JARVIS Ultimate?' + #13#10 + #13#10 +
+                   'All user data in the data/ and logs/ folders will be removed.', 
                    mbConfirmation, MB_YESNO) = IDYES;
 end;
 
