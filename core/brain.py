@@ -42,6 +42,19 @@ class JarvisBrain:
         self.ml_engine = None
         self.llm_router = None
 
+        # Проактивный ассистент
+        self.proactive_assistant = None
+        self.system_monitor = None
+        self.smart_home = None
+        self.macro_automation = None
+        self.file_organizer = None
+        self.face_recognition = None
+        self.user_memory = None
+        self.holographic_hud = None
+
+        # Voice Personality
+        self.voice_personality = None
+
         self.modules = {}
         self.running = False
         self.gui_enabled = self.config.get("ui.hud_enabled", True)
@@ -194,6 +207,87 @@ class JarvisBrain:
         except Exception as e:
             self.logger.error(f"Ошибка загрузки HUD: {e}")
             self.hud = None
+
+        # Voice Personality
+        try:
+            from modules.voice_personality import VoicePersonality
+            self.voice_personality = VoicePersonality(self)
+            self.logger.info("Модуль Voice Personality загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Voice Personality: {e}")
+            self.voice_personality = None
+
+        # Proactive Assistant
+        try:
+            from modules.proactive_assistant import ProactiveAssistant
+            self.proactive_assistant = ProactiveAssistant(self)
+            self.logger.info("Модуль Proactive Assistant загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Proactive Assistant: {e}")
+            self.proactive_assistant = None
+
+        # System Monitor
+        try:
+            from modules.system_monitor import SystemMonitor
+            self.system_monitor = SystemMonitor(self)
+            self.logger.info("Модуль System Monitor загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля System Monitor: {e}")
+            self.system_monitor = None
+
+        # Smart Home
+        try:
+            from modules.smart_home import SmartHome
+            self.smart_home = SmartHome(self)
+            self.logger.info("Модуль Smart Home загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Smart Home: {e}")
+            self.smart_home = None
+
+        # Macro Automation
+        try:
+            from modules.macro_automation import MacroAutomation
+            self.macro_automation = MacroAutomation(self)
+            self.logger.info("Модуль Macro Automation загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Macro Automation: {e}")
+            self.macro_automation = None
+
+        # File Organizer
+        try:
+            from modules.file_organizer import FileOrganizer
+            self.file_organizer = FileOrganizer(self)
+            self.logger.info("Модуль File Organizer загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля File Organizer: {e}")
+            self.file_organizer = None
+
+        # Face Recognition
+        try:
+            from modules.face_recognition import FaceRecognition
+            self.face_recognition = FaceRecognition(self)
+            self.logger.info("Модуль Face Recognition загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Face Recognition: {e}")
+            self.face_recognition = None
+
+        # User Memory
+        try:
+            from modules.user_memory import UserMemory
+            self.user_memory = UserMemory(self)
+            self.logger.info("Модуль User Memory загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля User Memory: {e}")
+            self.user_memory = None
+
+        # Holographic HUD
+        try:
+            from ui.holographic_hud import HolographicHUD
+            self.holographic_hud = HolographicHUD(self)
+            self.logger.info("Модуль Holographic HUD загружен")
+        except Exception as e:
+            self.logger.error(f"Ошибка загрузки модуля Holographic HUD: {e}")
+            self.holographic_hud = None
     def _init_voice(self):
         """Инициализация голосовых модулей."""
         # Voice Speaker (синтез речи)
