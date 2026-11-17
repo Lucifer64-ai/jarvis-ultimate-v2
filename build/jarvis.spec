@@ -9,28 +9,34 @@ ROOT_DIR = os.path.abspath(os.path.join(SPEC_DIR, '..'))
 assets_dir = os.path.join(ROOT_DIR, 'assets')
 
 # Все data-файлы для включения в сборку
-datas = [
-    ('../config.json', '.'),
-    ('../.env.example', '.'),
-    ('../requirements.txt', '.'),
-    ('../README.md', '.'),
-    ('../core', 'core'),
-    ('../hud', 'hud'),
-    ('../modules', 'modules'),
-    ('../voice', 'voice'),
-    ('../ui', 'ui'),
-    ('../automation', 'automation'),
-    ('../ai', 'ai'),
-    ('../smart_home', 'smart_home'),
-    ('../mobile', 'mobile'),
-    ('../agents', 'agents'),
-    ('../scripts', 'scripts'),
-    ('../plugins', 'plugins'),
-    ('../hardware', 'hardware'),
-    ('../data', 'data'),
-]
+datas = []
+
+def _add_data(src, dst):
+    """Добавить data-файл/папку только если он существует."""
+    src_path = os.path.join(ROOT_DIR, src)
+    if os.path.exists(src_path):
+        datas.append((src, dst))
+
+_add_data('../config.json', '.')
+_add_data('../.env.example', '.')
+_add_data('../requirements.txt', '.')
+_add_data('../README.md', '.')
+_add_data('../core', 'core')
+_add_data('../hud', 'hud')
+_add_data('../modules', 'modules')
+_add_data('../voice', 'voice')
+_add_data('../ui', 'ui')
+_add_data('../automation', 'automation')
+_add_data('../ai', 'ai')
+_add_data('../smart_home', 'smart_home')
+_add_data('../mobile', 'mobile')
+_add_data('../agents', 'agents')
+_add_data('../scripts', 'scripts')
+_add_data('../plugins', 'plugins')
+_add_data('../hardware', 'hardware')
+_add_data('../data', 'data')
 if os.path.isdir(assets_dir):
-    datas.append(('../assets', 'assets'))
+    _add_data('../assets', 'assets')
 
 # Иконка — только если файл существует
 icon_path = os.path.join(assets_dir, 'jarvis.ico') if os.path.isdir(assets_dir) else None
