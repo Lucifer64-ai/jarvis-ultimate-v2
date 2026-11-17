@@ -35,7 +35,7 @@ jobs:
 
     - name: Install Android SDK components
       run: |
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;25.1.8937393"
 
     - name: Generate debug keystore
       run: |
@@ -54,13 +54,15 @@ jobs:
 
     - name: Generate Gradle wrapper
       working-directory: ./mobile-app/android
-      run: gradle wrapper --gradle-version 8.3
+      run: |
+        chmod +x gradlew 2>/dev/null || true
+        gradle wrapper --gradle-version 8.3
 
     - name: Build Android APK
       working-directory: ./mobile-app/android
       run: |
         chmod +x gradlew
-        ./gradlew assembleRelease --no-daemon --stacktrace
+        ./gradlew assembleRelease --no-daemon --stacktrace --info
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
