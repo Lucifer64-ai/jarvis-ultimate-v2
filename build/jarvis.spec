@@ -13,7 +13,7 @@ datas = []
 
 def _add_data(src, dst):
     """Добавить data-файл/папку только если он существует."""
-    src_path = os.path.join(ROOT_DIR, src)
+    src_path = os.path.normpath(os.path.join(ROOT_DIR, src))
     if os.path.exists(src_path):
         datas.append((src, dst))
 
