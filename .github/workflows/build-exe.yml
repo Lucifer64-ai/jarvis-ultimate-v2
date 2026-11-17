@@ -56,16 +56,23 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller jarvis.spec
+        cd build
+        pyinstaller jarvis.spec --clean --noconfirm
       shell: pwsh
 
     - name: Prepare installer package
       run: |
         New-Item -ItemType Directory -Force -Path installer\package | Out-Null
 
-        if (Test-Path "dist\JARVIS.exe") {
-          Copy-Item dist\JARVIS.exe installer\package\JARVIS.exe -Force
+        if (Test-Path "build\dist\JARVIS.exe") {
+          Copy-Item build\dist\JARVIS.exe installer\package\JARVIS.exe -Force
           Write-Host "EXE copied"
+        } elseif (Test-Path "build\dist\JARVIS\JARVIS.exe") {
+          Copy-Item build\dist\JARVIS\JARVIS.exe installer\package\JARVIS.exe -Force
+          Write-Host "EXE copied from build/dist/JARVIS"
+        } elseif (Test-Path "dist\JARVIS.exe") {
+          Copy-Item dist\JARVIS.exe installer\package\JARVIS.exe -Force
+          Write-Host "EXE copied from dist"
         } elseif (Test-Path "dist\JARVIS\JARVIS.exe") {
           Copy-Item dist\JARVIS\JARVIS.exe installer\package\JARVIS.exe -Force
           Write-Host "EXE copied from dist/JARVIS"
